@@ -37,10 +37,17 @@ public class GatRepository extends AbstractMongoRepository {
 		List<Gat> gats = new ArrayList<>();
 
 		for (Document document : getCollection().find()) {
-			gats.add(gson.fromJson(document.toJson(), Gat.class));
+			gats.add(Gat.fromDocument(document));
 		}
 
 		return gats;
+	}
+
+	public Gat getOne(String guid) {
+
+		Document document = getCollection().find(Filters.eq("guid", guid)).first();
+
+		return Gat.fromDocument(document);
 	}
 
 	/**

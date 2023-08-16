@@ -1,0 +1,23 @@
+h1 {
+	color: #F1D4D4;
+	width: 100%;
+	text-align: center;
+	font-size: 5vh;
+}
+
+
+article {
+	width: 50%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+article figure {
+	width: 30%;
+	float: left
+}
+
+article figure img {
+	width: 100%;
+	border-radius: 25px;
+}

@@ -1,0 +1,36 @@
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title th:text="${gat.title}" />
+	<link th:href="@{/css/common.css}" rel="stylesheet" />
+	<link th:href="@{/css/detail.css}" rel="stylesheet" />
+</head>
+
+<body>
+
+	<nav> <a th:href="@{/}">Home</a></nav>
+
+
+	<article>
+		<header>
+			<h1 th:text="${gat.title}" />
+		</header>
+		<figure>
+			<img th:src="@{'data:image/jpeg;charset=utf-8;base64,'+ ${imageString}}" alt="preview">
+		</figure>
+		<p th:utext="${gat.description}"></p>
+		<ul>
+			<li>
+				<a th:href="${gat.linkURL}">
+					<img alt="odysee logo" class="download" th:src="@{'/img/odysee.jpg'}" />
+				</a>
+			</li>
+			<li>
+				<a th:href="@{'/download/' + ${guid}}">
+					<img alt="download icon" class="download" th:src="@{'/img/download.png'}" />
+				</a>
+			</li>
+		</ul>
+	</article>
+</body>

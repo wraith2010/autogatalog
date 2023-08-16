@@ -1,0 +1,58 @@
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Gat Index</title>
+	<link th:href="@{/css/common.css}" rel="stylesheet" />
+	<link th:href="@{/css/index.css}" rel="stylesheet" />
+</head>
+
+<body>
+
+	<header>
+		<h1 th:text="${appName}" />
+	</header>
+
+	<aside>
+		<ul>
+			<li th:each="entry: ${gatMap}" th:text="${entry.key}"></li>
+		</ul>
+	</aside>
+
+	<main>
+		<section th:each="entry: ${gatMap}">
+			<header>
+				<h2 th:text="${entry.key}" />
+			</header>
+			<article th:each="gat: ${entry.value}" th:with="guid=${gat.guid}">
+				<a th:href="@{'/gat/' + ${guid}}">
+					<figure>
+						<img th:if="${imageStrings.containsKey(guid)}"
+							th:src="@{'data:image/jpeg;charset=utf-8;base64,'+ ${imageStrings.get(guid)}}"
+							alt="preview">
+					</figure>
+
+					<header>
+						<h3 th:text="${gat.title}" />
+					</header>
+				</a>
+
+				<ul>
+					<li>
+						<a th:href="${gat.linkURL}">
+							<img alt="odysee logo" class="download" th:src="@{'/img/odysee.jpg'}" />
+						</a>
+					</li>
+					<li>
+						<a th:href="@{'/download/' + ${guid}}">
+							<img alt="download icon" class="download" th:src="@{'/img/download.png'}" />
+						</a>
+					</li>
+				</ul>
+			</article>
+		</section>
+	</main>
+
+</body>
+
+</html>

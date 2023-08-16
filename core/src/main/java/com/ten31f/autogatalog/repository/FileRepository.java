@@ -5,15 +5,19 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Base64;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
+import com.mongodb.MongoGridFSException;
 import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.GridFSBuckets;
+import com.mongodb.client.gridfs.GridFSDownloadStream;
 import com.mongodb.client.gridfs.model.GridFSUploadOptions;
+import com.ten31f.autogatalog.domain.Gat;
 
 public class FileRepository extends AbstractMongoRepository {
 
@@ -37,6 +41,46 @@ public class FileRepository extends AbstractMongoRepository {
 			return fileId;
 		}
 
+	}
+
+	public ObjectId uploadFile(InputStream inputStream, String name) throws FileNotFoundException, IOException {
+
+		try (inputStream) {
+			GridFSUploadOptions options = new GridFSUploadOptions().chunkSizeBytes(1048576);
+
+			if (name.endsWith("zip")) {
+				options.metadata(new Document("type", "zip archive"));
+			}
+
+			ObjectId fileId = getGridFSBucket().uploadFromStream(name, inputStream, options);
+			logger.atInfo().log(String.format("The file id of the uploaded file is: %s", fileId.toHexString()));
+			return fileId;
+		}
+
+	}
+
+	public String getFileAsBase64String(ObjectId objectId) {
+
+		try (GridFSDownloadStream gridFSDownloadStream = getGridFSBucket().openDownloadStream(objectId)) {
+			return Base64.getEncoder().encodeToString(gridFSDownloadStream.readAllBytes());
+		} catch (IOException | MongoGridFSException exception) {
+			return null;
+		}
+	}
+
+	public String getFileAsBase64String(Gat gat) {
+
+		try (GridFSDownloadStream gridFSDownloadStream = getGridFSBucket()
+				.openDownloadStream(gat.getImagefileObjectID())) {
+			return Base64.getEncoder().encodeToString(gridFSDownloadStream.readAllBytes());
+		} catch (IOException | MongoGridFSException exception) {
+			logger.catching(exception);
+			return null;
+		}
+	}
+
+	public GridFSDownloadStream getFileAsGridFSDownloadStream(ObjectId objectId) {
+		return getGridFSBucket().openDownloadStream(objectId);
 	}
 
 	private GridFSBucket getGridFSBucket() {

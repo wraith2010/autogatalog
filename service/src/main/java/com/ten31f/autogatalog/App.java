@@ -13,6 +13,7 @@ import com.ten31f.autogatalog.repository.GatRepository;
 import com.ten31f.autogatalog.repository.LbryRepository;
 import com.ten31f.autogatalog.repository.WatchURLRepository;
 import com.ten31f.autogatalog.tasks.Downloader;
+import com.ten31f.autogatalog.tasks.ImageGrabber;
 import com.ten31f.autogatalog.tasks.Scan;
 
 public class App {
@@ -34,9 +35,11 @@ public class App {
 
 		Scan scan = new Scan(watchURLRepository, gatRepository);
 		Downloader downloader = new Downloader(gatRepository, fileRepository, lbryRepository, 20);
+		ImageGrabber imageGrabber = new ImageGrabber(gatRepository, fileRepository, 20);
 
 		ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
 		scheduledExecutorService.scheduleAtFixedRate(scan, 0, 10, TimeUnit.MINUTES);
-		scheduledExecutorService.scheduleAtFixedRate(downloader, 2, 10, TimeUnit.MINUTES);
+		scheduledExecutorService.scheduleAtFixedRate(downloader, 4, 10, TimeUnit.MINUTES);
+		scheduledExecutorService.scheduleAtFixedRate(imageGrabber, 6, 10, TimeUnit.MINUTES);
 	}
 }

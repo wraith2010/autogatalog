@@ -1,5 +1,7 @@
 package com.ten31f.autogatalog.domain;
 
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.Date;
 
@@ -28,6 +30,7 @@ public class Gat {
 	private String author;
 	private String imageURL;
 	private ObjectId fileObjectID = null;
+	private ObjectId imagefileObjectID = null;
 
 	public String getDescription() {
 		return description;
@@ -93,6 +96,14 @@ public class Gat {
 		this.fileObjectID = fileObjectID;
 	}
 
+	public ObjectId getImagefileObjectID() {
+		return imagefileObjectID;
+	}
+
+	public void setImagefileObjectID(ObjectId imagefileObjectID) {
+		this.imagefileObjectID = imagefileObjectID;
+	}
+
 	public Document toDocument() {
 
 		Document document = new Document();
@@ -112,7 +123,41 @@ public class Gat {
 			document.append("fileObjectID", new BsonObjectId(getFileObjectID()));
 		}
 
+		if (getImagefileObjectID() != null) {
+			document.append("imageFileObjectID", new BsonObjectId(getImagefileObjectID()));
+		}
+
 		return document;
+	}
+	
+	public static Gat fromDocument(Document document) {
+		
+		Gat gat = new Gat();
+		
+		gat.setGuid(document.getString("guid"));
+		gat.setDescription(document.getString("description"));
+		try {
+			gat.setLinkURL(URI.create(document.getString("linkURL")).toURL());
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		if(document.containsKey("publishedDate")) {
+			gat.setPublishedDate(document.getDate("publishedDate"));
+		}
+		
+		gat.setTitle(document.getString("title"));
+		gat.setAuthor(document.getString("author"));
+		
+		gat.setImageURL(document.getString("imageURL"));
+		
+		gat.setFileObjectID(document.getObjectId("fileObjectID"));
+		gat.setImagefileObjectID(document.getObjectId("imageFileObjectID"));
+
+		
+		return gat;
+		
 	}
 
 }

@@ -55,8 +55,7 @@ public class Downloader implements Runnable {
 				gat.setFileObjectID(fileObjectID);
 				getGatRepository().repalceGat(gat);
 			} catch (IOException ioException) {
-				logger.catching(ioException);
-				return;
+				logger.catching(ioException);				
 			}
 		}
 	}
