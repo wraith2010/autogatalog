@@ -16,6 +16,7 @@ import com.mongodb.MongoGridFSException;
 import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.GridFSBuckets;
 import com.mongodb.client.gridfs.GridFSDownloadStream;
+import com.mongodb.client.gridfs.GridFSFindIterable;
 import com.mongodb.client.gridfs.model.GridFSUploadOptions;
 import com.ten31f.autogatalog.domain.Gat;
 
@@ -57,6 +58,14 @@ public class FileRepository extends AbstractMongoRepository {
 			return fileId;
 		}
 
+	}
+
+	public void test() {
+
+		GridFSFindIterable gridFSFindIterable = getGridFSBucket().find();
+		
+		//gridFSFindIterable.
+		
 	}
 
 	public String getFileAsBase64String(ObjectId objectId) {

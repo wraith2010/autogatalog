@@ -1,5 +1,6 @@
 package com.ten31f.autogatalog.controller;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -17,6 +19,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.mongodb.client.gridfs.GridFSDownloadStream;
 import com.mongodb.client.gridfs.model.GridFSFile;
@@ -29,7 +35,9 @@ import jakarta.servlet.http.HttpServletResponse;
 @Controller
 public class SimpleController {
 
-		@Value("${spring.application.name}")
+	private static final Logger logger = LogManager.getLogger(SimpleController.class);
+
+	@Value("${spring.application.name}")
 	private String appName;
 
 	@Autowired
@@ -70,6 +78,40 @@ public class SimpleController {
 		model.addAttribute("imageString", getFileRepository().getFileAsBase64String(gat));
 
 		return "detail";
+	}
+	
+	@GetMapping("/image")
+    public String imageUploadPage() {
+        return "imageUpload";
+    }
+	
+
+	@PostMapping("/image/upload")
+	public String uploadFile(@RequestParam("file") MultipartFile file, RedirectAttributes attributes) {
+
+		// check if file is empty
+		if (file.isEmpty()) {
+			attributes.addFlashAttribute("message", "Please select a file to upload.");
+			return "redirect:/";
+		}
+
+		// normalize the file path
+		String fileName = file.getOriginalFilename();
+
+		try {
+			ObjectId objectId = getFileRepository().uploadFile(new BufferedInputStream(file.getInputStream()),
+					fileName);
+			logger.atInfo().log(String.format("You successfully uploaded %s(%s)!", fileName, objectId));
+			// return success response
+			attributes.addFlashAttribute("message",
+					String.format("You successfully uploaded %s(%s)!", fileName, objectId));
+		} catch (IOException e) {
+			logger.catching(e);
+
+			attributes.addFlashAttribute("message", "You failed to uploaded " + fileName + '!');
+		}
+
+		return "redirect:/";
 	}
 
 	@GetMapping(path = "/download/{guid}")

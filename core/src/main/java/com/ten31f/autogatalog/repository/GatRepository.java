@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
 import com.google.gson.Gson;
 import com.mongodb.MongoWriteException;
@@ -48,6 +49,21 @@ public class GatRepository extends AbstractMongoRepository {
 		Document document = getCollection().find(Filters.eq("guid", guid)).first();
 
 		return Gat.fromDocument(document);
+	}
+
+	public Gat findBy(ObjectId objectId) {
+
+		Document document = getCollection().find(Filters.eq("imagefileObjectID", objectId)).first();
+
+		if (document != null)
+			return Gat.fromDocument(document);
+
+		document = getCollection().find(Filters.eq("imagefileObjectID", objectId)).first();
+
+		if (document != null)
+			return Gat.fromDocument(document);
+
+		return null;
 	}
 
 	/**

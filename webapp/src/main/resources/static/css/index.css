@@ -5,6 +5,30 @@ h1 {
 	font-size: 10vh;
 }
 
+aside {
+	float: left;
+	width: 18%;
+}
+
+
+
+aside ul {
+	list-style: none;
+	color: #F1D4D4;
+	font-weight: bold;
+	font-size: 1rem;
+	text-transform: uppercase
+}
+
+aside ul a {
+	text-decoration: none;
+}
+
+aside ul a li {
+	text-decoration: none;
+	color: #F1D4D4;
+}
+
 article {
 	width: 20%;
 	border-radius: 25px;

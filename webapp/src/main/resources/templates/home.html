@@ -1,4 +1,4 @@
-<html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
 	<meta charset="UTF-8">
@@ -15,14 +15,24 @@
 
 	<aside>
 		<ul>
-			<li th:each="entry: ${gatMap}" th:text="${entry.key}"></li>
+			<a th:each="entry: ${gatMap}" th:href="'#'+${entry.key}">
+				<li th:text="${entry.key}"></li>
+			</a>
 		</ul>
+		<ul>
+			<a th:href="@{/image}">
+				<li>image upload</li>
+			</a>
+		</ul>
+
 	</aside>
 
 	<main>
 		<section th:each="entry: ${gatMap}">
 			<header>
-				<h2 th:text="${entry.key}" />
+				<a th:id="'#'+${entry.key}">
+					<h2 th:text="${entry.key}" />
+				</a>
 			</header>
 			<article th:each="gat: ${entry.value}" th:with="guid=${gat.guid}">
 				<a th:href="@{'/gat/' + ${guid}}">
