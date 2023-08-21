@@ -66,6 +66,15 @@ public class GatRepository extends AbstractMongoRepository {
 		return null;
 	}
 
+	public boolean isPresent(ObjectId objectId) {
+
+		if (getCollection().countDocuments(Filters.eq("imagefileObjectID", objectId)) > 0) {
+			return true;
+		}
+
+		return (getCollection().countDocuments(Filters.eq("fileObjectID", objectId)) > 0);
+	}
+
 	/**
 	 * insert a single gat
 	 * 

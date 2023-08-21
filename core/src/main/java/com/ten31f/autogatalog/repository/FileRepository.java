@@ -5,7 +5,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
+import java.util.function.Consumer;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,7 +19,7 @@ import com.mongodb.MongoGridFSException;
 import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.GridFSBuckets;
 import com.mongodb.client.gridfs.GridFSDownloadStream;
-import com.mongodb.client.gridfs.GridFSFindIterable;
+import com.mongodb.client.gridfs.model.GridFSFile;
 import com.mongodb.client.gridfs.model.GridFSUploadOptions;
 import com.ten31f.autogatalog.domain.Gat;
 
@@ -60,12 +63,19 @@ public class FileRepository extends AbstractMongoRepository {
 
 	}
 
-	public void test() {
+	public List<ObjectId> listAllFileObjectIDs() {
 
-		GridFSFindIterable gridFSFindIterable = getGridFSBucket().find();
-		
-		//gridFSFindIterable.
-		
+		List<ObjectId> fileObjectIDs = new ArrayList<>();
+
+		gridFSBucket.find().forEach(new Consumer<GridFSFile>() {
+			@Override
+			public void accept(final GridFSFile gridFSFile) {
+				fileObjectIDs.add(gridFSFile.getObjectId());
+			}
+		});
+
+		return fileObjectIDs;
+
 	}
 
 	public String getFileAsBase64String(ObjectId objectId) {
