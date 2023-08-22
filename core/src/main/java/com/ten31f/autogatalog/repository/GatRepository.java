@@ -53,7 +53,7 @@ public class GatRepository extends AbstractMongoRepository {
 
 	public Gat findBy(ObjectId objectId) {
 
-		Document document = getCollection().find(Filters.eq("imagefileObjectID", objectId)).first();
+		Document document = getCollection().find(Filters.eq("imageFileObjectID", objectId)).first();
 
 		if (document != null)
 			return Gat.fromDocument(document);
@@ -68,11 +68,8 @@ public class GatRepository extends AbstractMongoRepository {
 
 	public boolean isPresent(ObjectId objectId) {
 
-		if (getCollection().countDocuments(Filters.eq("imagefileObjectID", objectId)) > 0) {
-			return true;
-		}
-
-		return (getCollection().countDocuments(Filters.eq("fileObjectID", objectId)) > 0);
+		return (getCollection().countDocuments(Filters.eq("imageFileObjectID", objectId)) > 0)
+				|| ((getCollection().countDocuments(Filters.eq("fileObjectID", objectId)) > 0));
 	}
 
 	/**

@@ -1,0 +1,32 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+</head>
+
+<body>
+	<nav> <a th:href="@{/}">Home</a></nav>
+
+	<h1><span th:text="${orphanCount}"></span>/<span th:text="${count}"></span> Orphaned Files</h1>
+
+	<section style="display: flex; flex-wrap: wrap;">
+
+		<article th:each="orphan: ${orphanFiles}">
+			<ul>
+				<li>File Name: <span th:text="${orphan.filename}"></span></li>
+				<li>Metadata: <span th:text="${orphan.metadata}"></span></li>
+				<li>ObjectID: <span th:text="${orphan.objectId}"></span></li>
+				<li>Upload Date: <span th:text="${orphan.uploadDate}"></span></li>
+				<li>ID: <span th:text="${orphan.id}"></span></li>
+			</ul>
+			<form method="post" th:action="@{/orphan/delete}" enctype="multipart/form-data">
+				<input type="hidden" th:value="${orphan.id}" name="id" />
+				<button type="submit" class="btn btn-primary">Delete</button>
+			</form>
+		</article>
+
+	</section>
+
+</body>
+
+</html>

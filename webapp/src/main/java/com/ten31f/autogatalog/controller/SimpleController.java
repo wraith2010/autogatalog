@@ -61,6 +61,7 @@ public class SimpleController {
 				.collect(Collectors.toMap(Gat::getGuid, gat -> getFileRepository().getFileAsBase64String(gat))));
 
 		model.addAttribute("appName", getAppName());
+		model.addAttribute("gatCount", gats.size());
 		model.addAttribute("gats", gats);
 		model.addAttribute("gatMap", gatMap);
 
@@ -79,12 +80,35 @@ public class SimpleController {
 
 		return "detail";
 	}
-	
+
 	@GetMapping("/image")
-    public String imageUploadPage() {
-        return "imageUpload";
-    }
-	
+	public String imageUploadPage() {
+		return "imageUpload";
+	}
+
+	@GetMapping("/orphan")
+	public String orphan(Model model) {
+
+		List<GridFSFile> gridFSFiles = getFileRepository().listAllFiles();
+
+		model.addAttribute("count", gridFSFiles.size());
+
+		gridFSFiles = gridFSFiles.stream().filter(gridFSFile -> !getGatRepository().isPresent(gridFSFile.getObjectId()))
+				.toList();
+
+		model.addAttribute("orphanFiles", gridFSFiles);
+		model.addAttribute("orphanCount", gridFSFiles.size());
+
+		return "orphanList";
+	}
+
+	@PostMapping("/orphan/delete")
+	public String orphan(@RequestParam("id") String id, Model model) {
+
+		logger.atInfo().log(String.format("Deleteing:\t%s", id));
+
+		return "redirect:/orphan";
+	}
 
 	@PostMapping("/image/upload")
 	public String uploadFile(@RequestParam("file") MultipartFile file, RedirectAttributes attributes) {

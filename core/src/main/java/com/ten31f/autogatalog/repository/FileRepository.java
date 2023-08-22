@@ -67,7 +67,7 @@ public class FileRepository extends AbstractMongoRepository {
 
 		List<ObjectId> fileObjectIDs = new ArrayList<>();
 
-		gridFSBucket.find().forEach(new Consumer<GridFSFile>() {
+		getGridFSBucket().find().forEach(new Consumer<>() {
 			@Override
 			public void accept(final GridFSFile gridFSFile) {
 				fileObjectIDs.add(gridFSFile.getObjectId());
@@ -75,6 +75,21 @@ public class FileRepository extends AbstractMongoRepository {
 		});
 
 		return fileObjectIDs;
+
+	}
+
+	public List<GridFSFile> listAllFiles() {
+
+		List<GridFSFile> gridFSFiles = new ArrayList<>();
+
+		getGridFSBucket().find().forEach(gridFSFiles::add);
+
+		return gridFSFiles;
+	}
+
+	public void delete(ObjectId objectId) {
+
+		getGridFSBucket().delete(objectId);
 
 	}
 

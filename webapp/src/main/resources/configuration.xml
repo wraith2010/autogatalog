@@ -15,6 +15,10 @@
 		</File>
 	</Appenders>
 	<Loggers>
+		<Logger name="com.ten31f.autogatalog.repository" level="trace"
+			additivity="false">
+			<AppenderRef ref="Console" />
+		</Logger>
 		<Root level="debug">
 			<AppenderRef ref="Console" />
 			<AppenderRef ref="FileAppender" />

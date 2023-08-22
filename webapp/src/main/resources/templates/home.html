@@ -23,11 +23,15 @@
 			<a th:href="@{/image}">
 				<li>image upload</li>
 			</a>
+			<a th:href="@{/orphan}">
+				<li>orphans</li>
+			</a>
 		</ul>
 
 	</aside>
 
 	<main>
+		<h2>Gats(<span th:text="${gatCount}"></span>)</h2>
 		<section th:each="entry: ${gatMap}">
 			<header>
 				<a th:id="'#'+${entry.key}">

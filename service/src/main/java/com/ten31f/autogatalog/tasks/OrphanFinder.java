@@ -38,7 +38,7 @@ public class OrphanFinder implements Runnable {
 		}
 
 		fileObjectIds.stream()
-				.forEach(fileObjectId -> logger.atInfo().log(String.format("File() is and orphan", fileObjectId)));
+				.forEach(fileObjectId -> logger.atInfo().log(String.format("File(%s) is and orphan", fileObjectId)));
 
 	}
 
