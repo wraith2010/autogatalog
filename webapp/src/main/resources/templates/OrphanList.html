@@ -9,6 +9,8 @@
 
 	<h1><span th:text="${orphanCount}"></span>/<span th:text="${count}"></span> Orphaned Files</h1>
 
+	<p th:text="${message}" th:if="${message ne null}"></p>
+
 	<section style="display: flex; flex-wrap: wrap;">
 
 		<article th:each="orphan: ${orphanFiles}">
@@ -20,7 +22,7 @@
 				<li>ID: <span th:text="${orphan.id}"></span></li>
 			</ul>
 			<form method="post" th:action="@{/orphan/delete}" enctype="multipart/form-data">
-				<input type="hidden" th:value="${orphan.id}" name="id" />
+				<input type="hidden" th:value="${orphan.id.value}" name="id" />
 				<button type="submit" class="btn btn-primary">Delete</button>
 			</form>
 		</article>

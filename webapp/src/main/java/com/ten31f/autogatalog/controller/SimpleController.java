@@ -103,9 +103,15 @@ public class SimpleController {
 	}
 
 	@PostMapping("/orphan/delete")
-	public String orphan(@RequestParam("id") String id, Model model) {
+	public String orphan(@RequestParam("id") String id, Model mode, RedirectAttributes attributes) {
 
-		logger.atInfo().log(String.format("Deleteing:\t%s", id));
+		ObjectId objectId = new ObjectId(id);
+
+		getFileRepository().delete(objectId);
+
+		attributes.addFlashAttribute("message", String.format("Deleteing:\t%s", objectId));
+
+		logger.atInfo().log(String.format("Deleteing:\t%s", objectId));
 
 		return "redirect:/orphan";
 	}
