@@ -1,20 +1,6 @@
-h1 {
-	color: #F1D4D4;
-	width: 100%;
-	text-align: center;
-	font-size: 10vh;
-}
-
-aside {
-	float: left;
-	width: 18%;
-}
-
-
-
 aside ul {
 	list-style: none;
-	color: #F1D4D4;
+	color: #FFFFFF;
 	font-weight: bold;
 	font-size: 1rem;
 	text-transform: uppercase
@@ -26,7 +12,7 @@ aside ul a {
 
 aside ul a li {
 	text-decoration: none;
-	color: #F1D4D4;
+	color: #FFFFFF;
 }
 
 article {
@@ -47,7 +33,6 @@ article a {
 article a header h3 {
 	width: 100%;
 	margin: 0px;
-	color: #F1D4D4;
 	font-size: 2em;
 }
 

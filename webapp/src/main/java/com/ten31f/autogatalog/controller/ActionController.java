@@ -3,17 +3,12 @@ package com.ten31f.autogatalog.controller;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,77 +28,35 @@ import com.ten31f.autogatalog.repository.GatRepository;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
-public class SimpleController {
+public class ActionController {
 
-	private static final Logger logger = LogManager.getLogger(SimpleController.class);
-
-	@Value("${spring.application.name}")
-	private String appName;
+	private static final Logger logger = LogManager.getLogger(ActionController.class);
 
 	@Autowired
 	private GatRepository gatRepository;
 
 	@Autowired
 	private FileRepository fileRepository;
-
-	@GetMapping("/")
-	public String homePage(Model model) {
-
-		List<Gat> gats = getGatRepository().getAll();
-
-		gats.stream().forEach(this::cleanDescription);
-
-		Map<String, List<Gat>> gatMap = new HashMap<>();
-
-		gats.stream().forEach(gat -> mapGatAuthor(gatMap, gat));
-
-		model.addAttribute("imageStrings", gats.stream().filter(gat -> gat.getImagefileObjectID() != null)
-				.collect(Collectors.toMap(Gat::getGuid, gat -> getFileRepository().getFileAsBase64String(gat))));
-
-		model.addAttribute("appName", getAppName());
-		model.addAttribute("gatCount", gats.size());
-		model.addAttribute("gats", gats);
-		model.addAttribute("gatMap", gatMap);
-
-		return "home";
+	
+	@PostMapping("/orphan/deleteAll")
+	public String orphanDeleteAll(Model mode, RedirectAttributes attributes) {
+		
+		int orpahCount = 0;
+		
+		List<GridFSFile> gridFSFiles = getFileRepository().listAllFiles().stream().filter(gridFSFile -> !getGatRepository().isPresent(gridFSFile.getObjectId()))
+				.toList();		
+		
+		orpahCount = gridFSFiles.size();
+		
+		attributes.addFlashAttribute("message", String.format("Deleteing:\t%s orphans", orpahCount));
+		
+		gridFSFiles.stream().forEach(gridFSFile -> getFileRepository().delete(gridFSFile.getObjectId()));
+		
+		return "redirect:/orphan";
 	}
-
-	@GetMapping("/gat/{guid}")
-	public String detailPage(@PathVariable("guid") String guid, Model model) {
-
-		Gat gat = getGatRepository().getOne(guid);
-
-		cleanDescription(gat);
-
-		model.addAttribute("gat", gat);
-		model.addAttribute("imageString", getFileRepository().getFileAsBase64String(gat));
-
-		return "detail";
-	}
-
-	@GetMapping("/image")
-	public String imageUploadPage() {
-		return "imageUpload";
-	}
-
-	@GetMapping("/orphan")
-	public String orphan(Model model) {
-
-		List<GridFSFile> gridFSFiles = getFileRepository().listAllFiles();
-
-		model.addAttribute("count", gridFSFiles.size());
-
-		gridFSFiles = gridFSFiles.stream().filter(gridFSFile -> !getGatRepository().isPresent(gridFSFile.getObjectId()))
-				.toList();
-
-		model.addAttribute("orphanFiles", gridFSFiles);
-		model.addAttribute("orphanCount", gridFSFiles.size());
-
-		return "orphanList";
-	}
-
+	
 	@PostMapping("/orphan/delete")
-	public String orphan(@RequestParam("id") String id, Model mode, RedirectAttributes attributes) {
+	public String orphanDelete(@RequestParam("id") String id, Model mode, RedirectAttributes attributes) {
 
 		ObjectId objectId = new ObjectId(id);
 
@@ -171,28 +124,14 @@ public class SimpleController {
 		outputStream.flush();
 		outputStream.close();
 	}
-
-	private void mapGatAuthor(Map<String, List<Gat>> gatMap, Gat gat) {
-		if (!gatMap.containsKey(gat.getAuthor())) {
-			gatMap.put(gat.getAuthor(), new ArrayList<>());
-		}
-
-		gatMap.get(gat.getAuthor()).add(gat);
-	}
-
-	private void cleanDescription(Gat gat) {
-		gat.setDescription(gat.getDescription().substring(gat.getDescription().indexOf("</p>") + 4));
-	}
-
+	
+	
 	private GatRepository getGatRepository() {
 		return this.gatRepository;
-	}
-
-	private String getAppName() {
-		return appName;
 	}
 
 	private FileRepository getFileRepository() {
 		return fileRepository;
 	}
+
 }

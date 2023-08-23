@@ -1,19 +1,23 @@
 body {
-	background-color: #272829;
-	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 1000'%3E%3Cg fill-opacity='0.56'%3E%3Ccircle fill='%23272829' cx='50' cy='0' r='50'/%3E%3Cg fill='%23332746' %3E%3Ccircle cx='0' cy='50' r='50'/%3E%3Ccircle cx='100' cy='50' r='50'/%3E%3C/g%3E%3Ccircle fill='%233d265a' cx='50' cy='100' r='50'/%3E%3Cg fill='%2346256a' %3E%3Ccircle cx='0' cy='150' r='50'/%3E%3Ccircle cx='100' cy='150' r='50'/%3E%3C/g%3E%3Ccircle fill='%234e2478' cx='50' cy='200' r='50'/%3E%3Cg fill='%23552384' %3E%3Ccircle cx='0' cy='250' r='50'/%3E%3Ccircle cx='100' cy='250' r='50'/%3E%3C/g%3E%3Ccircle fill='%235b2290' cx='50' cy='300' r='50'/%3E%3Cg fill='%2361209a' %3E%3Ccircle cx='0' cy='350' r='50'/%3E%3Ccircle cx='100' cy='350' r='50'/%3E%3C/g%3E%3Ccircle fill='%23671fa4' cx='50' cy='400' r='50'/%3E%3Cg fill='%236c1eae' %3E%3Ccircle cx='0' cy='450' r='50'/%3E%3Ccircle cx='100' cy='450' r='50'/%3E%3C/g%3E%3Ccircle fill='%23711db7' cx='50' cy='500' r='50'/%3E%3Cg fill='%23761bbf' %3E%3Ccircle cx='0' cy='550' r='50'/%3E%3Ccircle cx='100' cy='550' r='50'/%3E%3C/g%3E%3Ccircle fill='%237b1ac7' cx='50' cy='600' r='50'/%3E%3Cg fill='%237f18cf' %3E%3Ccircle cx='0' cy='650' r='50'/%3E%3Ccircle cx='100' cy='650' r='50'/%3E%3C/g%3E%3Ccircle fill='%238316d7' cx='50' cy='700' r='50'/%3E%3Cg fill='%238815de' %3E%3Ccircle cx='0' cy='750' r='50'/%3E%3Ccircle cx='100' cy='750' r='50'/%3E%3C/g%3E%3Ccircle fill='%238c13e5' cx='50' cy='800' r='50'/%3E%3Cg fill='%239010ec' %3E%3Ccircle cx='0' cy='850' r='50'/%3E%3Ccircle cx='100' cy='850' r='50'/%3E%3C/g%3E%3Ccircle fill='%23940ef2' cx='50' cy='900' r='50'/%3E%3Cg fill='%23970bf9' %3E%3Ccircle cx='0' cy='950' r='50'/%3E%3Ccircle cx='100' cy='950' r='50'/%3E%3C/g%3E%3Ccircle fill='%239B06FF' cx='50' cy='1000' r='50'/%3E%3C/g%3E%3C/svg%3E");
-	background-attachment: fixed;
-	background-size: contain;
+	background-color: #000000;
 }
 
 h1 {
-	color: #F1D4D4;
-	width: 100%;
+	color: #FFFFFF;
 	text-align: center;
+	text-transform: uppercase;
 	font-size: 10vh;
 }
 
+h2 {
+	color: #FFFFFF;
+	width: 100%;
+	text-align: center;
+	font-size: 3vh;
+}
+
 h3 {
-	color: #F1D4D4;
+	color: #FFFFFF;
 	width: 100%;
 	text-align: center;
 	font-size: 3vh;
@@ -24,6 +28,25 @@ main {
 	margin-right: auto;
 	width: 80%;
 	float: right;
+}
+
+header{
+	margin-left: auto;
+	margin-right: auto;
+	width: 80%;
+	float: right;
+}
+
+aside {
+	float: left;
+	width: 18%;
+}
+
+aside img{
+	width: 100%;
+}
+aside a img{
+	width: 100%;
 }
 
 section {
@@ -40,7 +63,7 @@ section header {
 }
 
 section header h2 {
-	color: #F1D4D4;
+	color: #FFFFFF;
 	width: 100%;
 	text-align: center;
 	font-size: 5vh;

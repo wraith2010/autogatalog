@@ -1,28 +1,45 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-	<title>Spring Boot & Thymeleaf File Upload</title>
+	<meta charset="UTF-8">
+	<title th:text="${gat.title}" />
+	<link th:href="@{/css/common.css}" rel="stylesheet" />
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
 </head>
 
 <body>
 
-	<section class="my-5">
-		<div class="container">
-			<div class="row">
-				<div class="col-md-8 mx-auto">
-					<h2>Upload File Example</h2>
-					<p th:text="${message}" th:if="${message ne null}" class="alert alert-primary"></p>
-					<form method="post" th:action="@{/image/upload}" enctype="multipart/form-data">
-						<div class="form-group">
-							<input type="file" name="file" class="form-control-file">
-						</div>
-						<button type="submit" class="btn btn-primary">Upload File</button>
-					</form>
+	<header>
+		<h1 th:text="${appName}" />
+	</header>
+
+	<aside>
+		<a th:href="@{/}">
+			<img th:src="@{/img/logo.png}" alt="logo" />
+		</a>
+	</aside>
+
+
+	<main>
+
+		<section class="my-5">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-8 mx-auto">
+						<h2>Upload File Example</h2>
+						<p th:text="${message}" th:if="${message ne null}" class="alert alert-primary"></p>
+						<form method="post" th:action="@{/image/upload}" enctype="multipart/form-data">
+							<div class="form-group">
+								<input type="file" name="file" class="form-control-file">
+							</div>
+							<button type="submit" class="btn btn-primary">Upload File</button>
+						</form>
+					</div>
 				</div>
 			</div>
-		</div>
-	</section>
+		</section>
+
+	</main>
 
 </body>
 

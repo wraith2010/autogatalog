@@ -2,7 +2,7 @@
 
 <head>
 	<meta charset="UTF-8">
-	<title>Gat Index</title>
+	<title th:text="${appName}"/>
 	<link th:href="@{/css/common.css}" rel="stylesheet" />
 	<link th:href="@{/css/index.css}" rel="stylesheet" />
 </head>
@@ -14,6 +14,7 @@
 	</header>
 
 	<aside>
+		<img th:src="@{/img/logo.png}" alt="logo" />
 		<ul>
 			<a th:each="entry: ${gatMap}" th:href="'#'+${entry.key}">
 				<li th:text="${entry.key}"></li>
