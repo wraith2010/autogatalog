@@ -72,6 +72,11 @@ public class PageController {
 	public String imageUploadPage() {
 		return "imageUpload";
 	}
+	
+	@GetMapping("/watch")
+	public String wathcURLAdd() {
+		return "addWatchURL";
+	}
 
 	@GetMapping("/orphan")
 	public String orphan(Model model) {

@@ -31,7 +31,7 @@ public class WatchURLRepository extends AbstractMongoRepository {
 
 		MongoCollection<Document> watchURLDocuments = getCollection();
 
-		List<Document> documents = watchURLs.stream().map(watchURL -> Document.parse(gson.toJson(watchURL))).toList();
+		List<Document> documents = watchURLs.stream().map(WatchURL::toDocument).toList();
 
 		for (Document document : documents) {
 			try {
@@ -40,6 +40,25 @@ public class WatchURLRepository extends AbstractMongoRepository {
 				logger.atError().log(mongoWriteException.getMessage());
 			}
 		}
+
+	}
+
+	public boolean insertWatchURL(WatchURL watchURL) {
+
+		MongoCollection<Document> watchURLDocuments = getCollection();
+
+		if (getCollection().countDocuments(Filters.eq("rssURL", watchURL.getRSSURL().toString())) > 0)
+			return false;
+
+		try {
+			watchURLDocuments.insertOne(watchURL.toDocument());
+			logger.atInfo().log(String.format("inserting: %s", watchURL.toDocument()));
+		} catch (MongoWriteException mongoWriteException) {
+			logger.atError().log(mongoWriteException.getMessage());
+			return false;
+		}
+
+		return true;
 
 	}
 

@@ -3,6 +3,8 @@ package com.ten31f.autogatalog.controller;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -22,8 +24,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.mongodb.client.gridfs.GridFSDownloadStream;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import com.ten31f.autogatalog.domain.Gat;
+import com.ten31f.autogatalog.domain.WatchURL;
 import com.ten31f.autogatalog.repository.FileRepository;
 import com.ten31f.autogatalog.repository.GatRepository;
+import com.ten31f.autogatalog.repository.WatchURLRepository;
 
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -37,24 +41,27 @@ public class ActionController {
 
 	@Autowired
 	private FileRepository fileRepository;
-	
+
+	@Autowired
+	private WatchURLRepository watchURLRepository;
+
 	@PostMapping("/orphan/deleteAll")
 	public String orphanDeleteAll(Model mode, RedirectAttributes attributes) {
-		
+
 		int orpahCount = 0;
-		
-		List<GridFSFile> gridFSFiles = getFileRepository().listAllFiles().stream().filter(gridFSFile -> !getGatRepository().isPresent(gridFSFile.getObjectId()))
-				.toList();		
-		
+
+		List<GridFSFile> gridFSFiles = getFileRepository().listAllFiles().stream()
+				.filter(gridFSFile -> !getGatRepository().isPresent(gridFSFile.getObjectId())).toList();
+
 		orpahCount = gridFSFiles.size();
-		
+
 		attributes.addFlashAttribute("message", String.format("Deleteing:\t%s orphans", orpahCount));
-		
+
 		gridFSFiles.stream().forEach(gridFSFile -> getFileRepository().delete(gridFSFile.getObjectId()));
-		
+
 		return "redirect:/orphan";
 	}
-	
+
 	@PostMapping("/orphan/delete")
 	public String orphanDelete(@RequestParam("id") String id, Model mode, RedirectAttributes attributes) {
 
@@ -97,6 +104,28 @@ public class ActionController {
 		return "redirect:/";
 	}
 
+	@PostMapping("/watch/add")
+	public String addNewWatchURL(@RequestParam("rssURL") String rssURL, RedirectAttributes attributes) {
+
+		WatchURL watchURL;
+		try {
+			watchURL = new WatchURL(URI.create(rssURL).toURL());
+			if (!getWatchURLRepository().insertWatchURL(watchURL)) {
+				attributes.addFlashAttribute("message", String.format("(%s) is a duplicate", rssURL));
+			}
+		} catch (MalformedURLException malformedURLException) {
+			logger.catching(malformedURLException);
+			attributes.addFlashAttribute("message",
+					String.format("(%s) is a mallformed url: %s", rssURL, malformedURLException.getMessage()));
+			return "redirect:/watch";
+		}
+
+		attributes.addFlashAttribute("message", String.format("(%s) added", rssURL));
+
+		return "redirect:/watch";
+
+	}
+
 	@GetMapping(path = "/download/{guid}")
 	public void download(@PathVariable("guid") String guid, HttpServletResponse httpServletResponse)
 			throws IOException {
@@ -124,14 +153,17 @@ public class ActionController {
 		outputStream.flush();
 		outputStream.close();
 	}
-	
-	
+
 	private GatRepository getGatRepository() {
 		return this.gatRepository;
 	}
 
 	private FileRepository getFileRepository() {
 		return fileRepository;
+	}
+
+	private WatchURLRepository getWatchURLRepository() {
+		return watchURLRepository;
 	}
 
 }

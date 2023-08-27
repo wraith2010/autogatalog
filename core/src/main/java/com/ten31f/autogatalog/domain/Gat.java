@@ -3,8 +3,12 @@ package com.ten31f.autogatalog.domain;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
+import org.bson.BsonArray;
 import org.bson.BsonDateTime;
 import org.bson.BsonObjectId;
 import org.bson.BsonString;
@@ -31,6 +35,12 @@ public class Gat {
 	private String imageURL;
 	private ObjectId fileObjectID = null;
 	private ObjectId imagefileObjectID = null;
+
+	private List<String> tags = null;
+
+	public Gat() {
+		setTags(new ArrayList<>());
+	}
 
 	public String getDescription() {
 		return description;
@@ -104,6 +114,14 @@ public class Gat {
 		this.imagefileObjectID = imagefileObjectID;
 	}
 
+	public void setTags(List<String> tags) {
+		this.tags = tags;
+	}
+
+	public List<String> getTags() {
+		return tags;
+	}
+
 	public Document toDocument() {
 
 		Document document = new Document();
@@ -127,37 +145,44 @@ public class Gat {
 			document.append("imageFileObjectID", new BsonObjectId(getImagefileObjectID()));
 		}
 
+		BsonArray bsonArray = new BsonArray();
+		getTags().stream().forEach(tag -> bsonArray.add(new BsonString(tag)));
+
+		document.append("tags", bsonArray);
+
 		return document;
 	}
-	
+
 	public static Gat fromDocument(Document document) {
-		
+
 		Gat gat = new Gat();
-		
+
 		gat.setGuid(document.getString("guid"));
 		gat.setDescription(document.getString("description"));
 		try {
 			gat.setLinkURL(URI.create(document.getString("linkURL")).toURL());
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		if(document.containsKey("publishedDate")) {
+
+		if (document.containsKey("publishedDate")) {
 			gat.setPublishedDate(document.getDate("publishedDate"));
 		}
-		
+
 		gat.setTitle(document.getString("title"));
 		gat.setAuthor(document.getString("author"));
-		
+
 		gat.setImageURL(document.getString("imageURL"));
-		
+
 		gat.setFileObjectID(document.getObjectId("fileObjectID"));
 		gat.setImagefileObjectID(document.getObjectId("imageFileObjectID"));
 
-		
+		if (document.containsKey("tags")) {
+			gat.getTags().addAll((Collection<? extends String>) document.get("tags"));
+		}
+
 		return gat;
-		
+
 	}
 
 }

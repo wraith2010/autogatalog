@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 
 import com.ten31f.autogatalog.repository.FileRepository;
 import com.ten31f.autogatalog.repository.GatRepository;
+import com.ten31f.autogatalog.repository.WatchURLRepository;
 
 @SpringBootApplication(exclude = MongoAutoConfiguration.class)
 public class WebappApplication {
@@ -24,7 +25,12 @@ public class WebappApplication {
 	public FileRepository fileRepository() {
 		return new FileRepository(getDatabaseURL());
 	}
-	
+
+	@Bean
+	public WatchURLRepository watchURLRepository() {
+		return new WatchURLRepository(getDatabaseURL());
+	}
+
 	public static void main(String[] args) {
 		SpringApplication.run(WebappApplication.class, args);
 	}
@@ -36,7 +42,5 @@ public class WebappApplication {
 	public void setDatabaseURL(String databaseURL) {
 		this.databaseURL = databaseURL;
 	}
-	
-	
 
 }

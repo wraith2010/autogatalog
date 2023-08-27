@@ -29,6 +29,9 @@
 				<img th:src="@{'data:image/jpeg;charset=utf-8;base64,'+ ${imageString}}" alt="preview">
 			</figure>
 			<p th:utext="${gat.description}"></p>
+			<ol>
+				<li th:each="tag: ${gat.tags}"><span th:text="${tag}"></span></li>
+			</ol>
 			<ul>
 				<li>
 					<a th:href="${gat.linkURL}">

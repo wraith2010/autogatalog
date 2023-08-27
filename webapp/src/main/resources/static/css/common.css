@@ -30,7 +30,7 @@ main {
 	float: right;
 }
 
-header{
+header {
 	margin-left: auto;
 	margin-right: auto;
 	width: 80%;
@@ -42,10 +42,11 @@ aside {
 	width: 18%;
 }
 
-aside img{
+aside img {
 	width: 100%;
 }
-aside a img{
+
+aside a img {
 	width: 100%;
 }
 
@@ -85,4 +86,15 @@ article ul li {
 article ul li a img {
 	width: 30px;
 	border-radius: 5px;
+}
+
+.alert {
+	color: orangered;
+	font-size: 1rem;
+}
+
+ol li {
+	color: orangered;
+	font-size: 1rem;
+	list-style: none;
 }
