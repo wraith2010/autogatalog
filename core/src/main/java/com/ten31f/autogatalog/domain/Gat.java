@@ -17,12 +17,19 @@ import org.bson.types.ObjectId;
 
 public class Gat {
 
+	public static final String MONGO_FIELD_ID = "_id";
+	public static final String MONGO_FIELD_GUID = "guid";
+	public static final String MONGO_FIELD_DESCRIPTION = "description";
+	public static final String MONGO_FIELD_LINKURL = "linkURL";
+	public static final String MONGO_FIELD_TITLE = "title";
+	public static final String MONGO_FIELD_AUTHOR = "author";
+	public static final String MONGO_FIELD_IMAGE_URL = "imageURL";
+	public static final String MONGO_FIELD_FILE_OBJECTID = "fileObjectID";
+	public static final String MONGO_FIELD_IMAGE_FILE_OBJECTID = "imageFileObjectID";
+	public static final String MONGO_FIELD_TAGS = "tags";
+	public static final String MONGO_FIELD_PUBLISHED_DATE = "publishedDate";
+
 	public static final String ITEM = "item";
-	public static final String TITLE = "title";
-	public static final String GUID = "guid";
-	public static final String PUBDATE = "pubDate";
-	public static final String DESCRIPTION = "description";
-	public static final String AUTHOR = "author";
 	public static final String IMAGE = "image";
 	public static final String ENCLOSURE = "enclosure";
 
@@ -126,29 +133,29 @@ public class Gat {
 
 		Document document = new Document();
 
-		document.append("guid", new BsonString(getGuid()));
-		document.append("description", new BsonString(getDescription()));
-		document.append("linkURL", new BsonString(getLinkURL().toString()));
+		document.append(MONGO_FIELD_GUID, new BsonString(getGuid()));
+		document.append(MONGO_FIELD_DESCRIPTION, new BsonString(getDescription()));
+		document.append(MONGO_FIELD_LINKURL, new BsonString(getLinkURL().toString()));
 		if (getPublishedDate() != null) {
-			document.append("publishedDate", new BsonDateTime(getPublishedDate().getTime()));
+			document.append(MONGO_FIELD_PUBLISHED_DATE, new BsonDateTime(getPublishedDate().getTime()));
 		}
 
-		document.append("title", new BsonString(getTitle()));
-		document.append("author", new BsonString(getAuthor()));
-		document.append("imageURL", new BsonString(getImageURL()));
+		document.append(MONGO_FIELD_TITLE, new BsonString(getTitle()));
+		document.append(MONGO_FIELD_AUTHOR, new BsonString(getAuthor()));
+		document.append(MONGO_FIELD_IMAGE_URL, new BsonString(getImageURL()));
 
 		if (getFileObjectID() != null) {
-			document.append("fileObjectID", new BsonObjectId(getFileObjectID()));
+			document.append(MONGO_FIELD_FILE_OBJECTID, new BsonObjectId(getFileObjectID()));
 		}
 
 		if (getImagefileObjectID() != null) {
-			document.append("imageFileObjectID", new BsonObjectId(getImagefileObjectID()));
+			document.append(MONGO_FIELD_IMAGE_FILE_OBJECTID, new BsonObjectId(getImagefileObjectID()));
 		}
 
 		BsonArray bsonArray = new BsonArray();
 		getTags().stream().forEach(tag -> bsonArray.add(new BsonString(tag)));
 
-		document.append("tags", bsonArray);
+		document.append(MONGO_FIELD_TAGS, bsonArray);
 
 		return document;
 	}
@@ -157,27 +164,27 @@ public class Gat {
 
 		Gat gat = new Gat();
 
-		gat.setGuid(document.getString("guid"));
-		gat.setDescription(document.getString("description"));
+		gat.setGuid(document.getString(MONGO_FIELD_GUID));
+		gat.setDescription(document.getString(MONGO_FIELD_DESCRIPTION));
 		try {
-			gat.setLinkURL(URI.create(document.getString("linkURL")).toURL());
+			gat.setLinkURL(URI.create(document.getString(MONGO_FIELD_LINKURL)).toURL());
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
 
-		if (document.containsKey("publishedDate")) {
-			gat.setPublishedDate(document.getDate("publishedDate"));
+		if (document.containsKey(MONGO_FIELD_PUBLISHED_DATE)) {
+			gat.setPublishedDate(document.getDate(MONGO_FIELD_PUBLISHED_DATE));
 		}
 
-		gat.setTitle(document.getString("title"));
-		gat.setAuthor(document.getString("author"));
+		gat.setTitle(document.getString(MONGO_FIELD_TITLE));
+		gat.setAuthor(document.getString(MONGO_FIELD_AUTHOR));
 
-		gat.setImageURL(document.getString("imageURL"));
+		gat.setImageURL(document.getString(MONGO_FIELD_IMAGE_URL));
 
-		gat.setFileObjectID(document.getObjectId("fileObjectID"));
-		gat.setImagefileObjectID(document.getObjectId("imageFileObjectID"));
+		gat.setFileObjectID(document.getObjectId(MONGO_FIELD_FILE_OBJECTID));
+		gat.setImagefileObjectID(document.getObjectId(MONGO_FIELD_IMAGE_FILE_OBJECTID));
 
-		if (document.containsKey("tags")) {
+		if (document.containsKey(MONGO_FIELD_TAGS)) {
 			gat.getTags().addAll((Collection<? extends String>) document.get("tags"));
 		}
 

@@ -19,44 +19,34 @@
 			<img th:src="@{/img/logo.png}" alt="logo" />
 		</a>
 		<ul>
-			<a th:each="author: ${authors}" th:href="@{/author(author = ${author.author})}">
-				<li th:text="${author.author}"></li>
+			<a th:href="@{/}">
+			<li>home</li>
+			</a>
+			<a th:href="@{/author(author = ${author})}">
+			<li th:text="${author}"/>
 			</a>
 		</ul>
-		<ul>
-			<a th:href="@{/image}">
-				<li>image upload</li>
-			</a>
-			<a th:href="@{/orphan}">
-				<li>orphans</li>
-			</a>
-			<a th:href="@{/watch}">
-				<li>Watch URL</li>
-			</a>
-		</ul>
-
 	</aside>
 
 	<main>
 
-
-		<section th:each="author: ${authors}">
+		<section>
 			<header>
-				<a th:href="@{/(author = ${author.author})}">
-					<h2 th:text="${author.author} + '(' + ${author.count} + ')'" />
-				</a>
+				<h2 th:text="${author}" />
 			</header>
 
-			<article th:each="gat: ${gatMap[author.author]}" th:with="guid=${gat.guid}">
+			<article th:each="gat: ${gats}" th:with="guid=${gat.guid}">
 				<a th:href="@{'/gat/' + ${gat.guid}}">
 					<figure>
 						<img th:if="${imageStrings.containsKey(guid)}"
 							th:src="@{'data:image/jpeg;charset=utf-8;base64,'+ ${imageStrings.get(guid)}}"
-							th:id="${guid}" alt="preview">
+							alt="preview">
 					</figure>
+
 					<header>
 						<h3 th:text="${gat.title}" />
 					</header>
+
 					<ul>
 						<li>
 							<a th:href="${gat.linkURL}">
@@ -69,14 +59,7 @@
 							</a>
 						</li>
 					</ul>
-				</a>
-			</article>
 
-			<article th:if="${author.count &gt; 5}">
-				<a th:href="@{/(author = ${author.author})}">
-					<figure>
-						<img th:src="@{/img/ellipse-dots.gif}" alt="elipse">
-					</figure>
 				</a>
 			</article>
 		</section>

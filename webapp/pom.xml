@@ -58,7 +58,7 @@
 			<groupId>com.ten31f.autogatalog</groupId>
 			<artifactId>core</artifactId>
 			<version>${project.version}</version>
-		</dependency>		
+		</dependency>
 	</dependencies>
 
 	<build>

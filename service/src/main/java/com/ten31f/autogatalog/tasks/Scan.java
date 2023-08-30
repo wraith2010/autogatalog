@@ -31,10 +31,10 @@ public class Scan implements Runnable {
 		logger.atInfo().log(String.format("Scanning %s urls", watchURLs.size()));
 
 		watchURLs = watchURLs.stream().filter(watchURL -> watchURL.getLastCheck() == null
-				|| watchURL.getLastCheck().isBefore(Instant.now().minus(24, ChronoUnit.HOURS))).toList();
+				|| watchURL.getLastCheck().isBefore(Instant.now().minus(4, ChronoUnit.HOURS))).toList();
 
 		if (watchURLs == null || watchURLs.isEmpty()) {
-			logger.atInfo().log("All watch urls have been checked with in the last 24 hours");
+			logger.atInfo().log("All watch urls have been checked with in the last 4 hours");
 			return;
 		}
 

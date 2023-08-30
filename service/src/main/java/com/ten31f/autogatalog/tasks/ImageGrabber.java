@@ -43,7 +43,7 @@ public class ImageGrabber implements Runnable {
 		int index = 0;
 		for (Gat gat : gats) {
 			index++;
-			if (index > getDownloadBatchLimit() && getDownloadBatchLimit()!= -1 ) {
+			if (index > getDownloadBatchLimit() && getDownloadBatchLimit() != -1) {
 				logger.atInfo().log(String.format("Download limit(%s) hit", getDownloadBatchLimit()));
 				return;
 			}
@@ -55,8 +55,8 @@ public class ImageGrabber implements Runnable {
 				gat.setImagefileObjectID(fileObjectID);
 				getGatRepository().repalceGat(gat);
 			} catch (IOException ioException) {
-				logger.catching(ioException);
-				logger.atError().log(String.format("Cant download image for: %s", gat.getGuid()));
+				logger.atError().log(String.format("Cant download image for: %s(%s,%s)", gat.getTitle(),
+						gat.getAuthor(), gat.getGuid()));
 			}
 		}
 	}

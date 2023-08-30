@@ -80,10 +80,10 @@ public class RSSDigester {
 			if (event.isStartElement()) {
 				String localPart = event.asStartElement().getName().getLocalPart();
 				switch (localPart) {
-				case Gat.TITLE:
+				case Gat.MONGO_FIELD_TITLE:
 					gat.setTitle(getCharacterData(event, eventReader));
 					break;
-				case Gat.GUID:
+				case Gat.MONGO_FIELD_GUID:
 					String data = getCharacterData(event, eventReader);
 					try {
 						gat.setLinkURL(URI.create(data).toURL());
@@ -92,17 +92,17 @@ public class RSSDigester {
 					}
 					gat.setGuid(data.substring(data.lastIndexOf(':') + 1));
 					break;
-				case Gat.PUBDATE:
+				case Gat.MONGO_FIELD_PUBLISHED_DATE:
 					try {
 						gat.setPublishedDate(Date.valueOf(getCharacterData(event, eventReader)));
 					} catch (IllegalArgumentException e) {
 
 					}
 					break;
-				case Gat.DESCRIPTION:
+				case Gat.MONGO_FIELD_DESCRIPTION:
 					gat.setDescription(getCharacterData(event, eventReader));
 					break;
-				case Gat.AUTHOR:
+				case Gat.MONGO_FIELD_AUTHOR:
 					gat.setAuthor(getCharacterData(event, eventReader));
 					break;
 				case Gat.IMAGE:
