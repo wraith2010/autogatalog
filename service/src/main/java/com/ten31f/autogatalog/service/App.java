@@ -3,8 +3,6 @@ package com.ten31f.autogatalog.service;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
@@ -14,7 +12,8 @@ import com.ten31f.autogatalog.repository.FileRepository;
 import com.ten31f.autogatalog.repository.GatRepository;
 import com.ten31f.autogatalog.repository.LbryRepository;
 import com.ten31f.autogatalog.repository.WatchURLRepository;
-import com.ten31f.autogatalog.tasks.Downloader;
+import com.ten31f.autogatalog.schedule.TrackingScheduledExecutorService;
+import com.ten31f.autogatalog.tasks.Downloadrequestor;
 import com.ten31f.autogatalog.tasks.ImageGrabber;
 import com.ten31f.autogatalog.tasks.Scan;
 
@@ -40,6 +39,8 @@ public class App {
 			return;
 		}
 
+		TrackingScheduledExecutorService trackingScheduledExecutorService = new TrackingScheduledExecutorService();
+
 		String databaseURL = argsList.get(argsList.indexOf(ARG_FLAG_DATABASE_URL) + 1);
 		String lbryURL = argsList.get(argsList.indexOf(ARG_FLAG_LBRY_URL) + 1);
 
@@ -53,15 +54,13 @@ public class App {
 		LbryRepository lbryRepository = new LbryRepository(lbryURL);
 
 		Scan scan = new Scan(watchURLRepository, gatRepository);
-		Downloader downloader = new Downloader(gatRepository, fileRepository, lbryRepository, 20);
+		Downloadrequestor downloadrequestor = new Downloadrequestor(trackingScheduledExecutorService, gatRepository,
+				fileRepository, lbryRepository, 20);
 		ImageGrabber imageGrabber = new ImageGrabber(gatRepository, fileRepository, 20);
-		//OrphanFinder orphanFinder = new OrphanFinder(gatRepository, fileRepository);
 
-		ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
-		scheduledExecutorService.scheduleAtFixedRate(scan, 0, 10, TimeUnit.MINUTES);
-		scheduledExecutorService.scheduleAtFixedRate(downloader, 4, 10, TimeUnit.MINUTES);
-		scheduledExecutorService.scheduleAtFixedRate(imageGrabber, 6, 10, TimeUnit.MINUTES);
-		//scheduledExecutorService.scheduleAtFixedRate(orphanFinder, 0, 10, TimeUnit.MINUTES);
+		trackingScheduledExecutorService.scheduleAtFixedRate(scan, 0, 10, TimeUnit.MINUTES);
+		trackingScheduledExecutorService.scheduleAtFixedRate(downloadrequestor, 2, 10, TimeUnit.MINUTES);
+		trackingScheduledExecutorService.scheduleAtFixedRate(imageGrabber, 6, 10, TimeUnit.MINUTES);
 
 	}
 

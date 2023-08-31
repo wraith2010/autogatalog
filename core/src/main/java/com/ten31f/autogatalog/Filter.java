@@ -5,6 +5,8 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+
 import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
@@ -16,7 +18,7 @@ import com.ten31f.autogatalog.repository.WatchURLRepository;
 
 public class Filter {
 
-	private static final Logger logger = LogManager.getLogger(Filter.class);
+	private static final Logger LOGGER = LogManager.getLogger();
 
 	private static final String URL_PREFIX_A = "https://odysee.com/";
 	private static final String URL_PREFIX_B = "https://odysee.com/$/rss/";
@@ -29,9 +31,9 @@ public class Filter {
 			lines.filter(Filter::isURL).map(Filter::morph).forEach(line -> {
 				try {
 					if (watchURLRepository.insertWatchURL(new WatchURL(URI.create(line.trim()).toURL()))) {
-						logger.atInfo().log(String.format("%s added", line));
+						LOGGER.atInfo().log(String.format("%s added", line));
 					} else {
-						logger.atInfo().log(String.format("%s duplicate", line));
+						LOGGER.atInfo().log(String.format("%s duplicate", line));
 					}
 				} catch (MalformedURLException e) {
 
