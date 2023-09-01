@@ -181,9 +181,13 @@ public class GatRepository extends AbstractMongoRepository {
 		return gats;
 
 	}
-	
-	public  List<Gat> getGatGAtsWithOutFile() {
+
+	public List<Gat> getGatGAtsWithOutFile() {
 		return makeList(getCollection().find(Filters.exists(Gat.MONGO_FIELD_FILE_OBJECTID, false)));
+	}	
+	
+	public long countGats() {
+		return getCollection().countDocuments();
 	}
 
 	private MongoCollection<Document> getCollection() {

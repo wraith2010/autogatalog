@@ -39,7 +39,7 @@ public class Downloadrequestor implements Runnable {
 	@Override
 	public void run() {
 
-		List<Gat> gats = getGatRepository().getGatsWithOutImages(); 
+		List<Gat> gats = getGatRepository().getGatGAtsWithOutFile();
 
 		if (gats.isEmpty()) {
 			logger.atInfo().log("no gats left to download");
