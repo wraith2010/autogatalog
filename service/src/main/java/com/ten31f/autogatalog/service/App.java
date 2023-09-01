@@ -10,10 +10,12 @@ import org.apache.logging.log4j.Logger;
 
 import com.ten31f.autogatalog.repository.FileRepository;
 import com.ten31f.autogatalog.repository.GatRepository;
+import com.ten31f.autogatalog.repository.HealthRepository;
 import com.ten31f.autogatalog.repository.LbryRepository;
 import com.ten31f.autogatalog.repository.WatchURLRepository;
 import com.ten31f.autogatalog.schedule.TrackingScheduledExecutorService;
 import com.ten31f.autogatalog.tasks.Downloadrequestor;
+import com.ten31f.autogatalog.tasks.HealthCheck;
 import com.ten31f.autogatalog.tasks.ImageGrabber;
 import com.ten31f.autogatalog.tasks.Scan;
 
@@ -52,15 +54,18 @@ public class App {
 		WatchURLRepository watchURLRepository = new WatchURLRepository(databaseURL);
 		FileRepository fileRepository = new FileRepository(databaseURL);
 		LbryRepository lbryRepository = new LbryRepository(lbryURL);
+		HealthRepository healthRepository = new HealthRepository(databaseURL);
 
 		Scan scan = new Scan(watchURLRepository, gatRepository);
 		Downloadrequestor downloadrequestor = new Downloadrequestor(trackingScheduledExecutorService, gatRepository,
 				fileRepository, lbryRepository, 20);
 		ImageGrabber imageGrabber = new ImageGrabber(gatRepository, fileRepository, 20);
+		HealthCheck healthCheck = new HealthCheck(fileRepository, gatRepository, healthRepository);
 
 		trackingScheduledExecutorService.scheduleAtFixedRate(scan, 0, 10, TimeUnit.MINUTES);
 		trackingScheduledExecutorService.scheduleAtFixedRate(downloadrequestor, 2, 10, TimeUnit.MINUTES);
 		trackingScheduledExecutorService.scheduleAtFixedRate(imageGrabber, 6, 10, TimeUnit.MINUTES);
+		trackingScheduledExecutorService.scheduleAtFixedRate(healthCheck, 8, 10, TimeUnit.MINUTES);
 
 	}
 

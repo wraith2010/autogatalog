@@ -34,7 +34,7 @@ public abstract class AbstractMongoRepository {
 
 		return mongoClient;
 	}
-
+	
 	private void setMongoClient(MongoClient mongoClient) {
 		this.mongoClient = mongoClient;
 	}

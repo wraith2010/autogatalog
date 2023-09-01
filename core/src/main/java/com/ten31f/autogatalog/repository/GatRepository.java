@@ -11,9 +11,9 @@ import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
-import com.google.gson.Gson;
 import com.mongodb.MongoWriteException;
 import com.mongodb.client.AggregateIterable;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Accumulators;
 import com.mongodb.client.model.Aggregates;
@@ -25,7 +25,6 @@ import com.ten31f.autogatalog.domain.Gat;
 public class GatRepository extends AbstractMongoRepository {
 
 	private static final Logger logger = LogManager.getLogger(GatRepository.class);
-	private static final Gson gson = new Gson();
 
 	public static final String COLLECTION_GATS = "gats";
 
@@ -42,7 +41,7 @@ public class GatRepository extends AbstractMongoRepository {
 	public List<Gat> getAll() {
 
 		long start = System.currentTimeMillis();
-		
+
 		List<Gat> gats = new ArrayList<>();
 
 		for (Document document : getCollection().find()) {
@@ -51,8 +50,9 @@ public class GatRepository extends AbstractMongoRepository {
 
 		Duration duration = Duration.ofMillis(System.currentTimeMillis() - start);
 
-		logger.atInfo().log(String.format("retrieve all duration %s mills(%s seconds) ", duration.toMillis(), duration.toSeconds()));
-		
+		logger.atInfo().log(String.format("retrieve all duration %s mills(%s seconds) ", duration.toMillis(),
+				duration.toSeconds()));
+
 		return gats;
 	}
 
@@ -129,13 +129,7 @@ public class GatRepository extends AbstractMongoRepository {
 
 	public List<Gat> findByAuthor(String author) {
 
-		List<Gat> gats = new ArrayList<>();
-
-		for (Document document : getCollection().find(Filters.eq(Gat.MONGO_FIELD_AUTHOR, author))) {
-			gats.add(Gat.fromDocument(document));
-		}
-
-		return gats;
+		return makeList(getCollection().find(Filters.eq(Gat.MONGO_FIELD_AUTHOR, author)));
 	}
 
 	public boolean isPresent(ObjectId objectId) {
@@ -169,7 +163,23 @@ public class GatRepository extends AbstractMongoRepository {
 
 		UpdateResult updateResult = getCollection().replaceOne(Filters.eq("guid", gat.getGuid()), gat.toDocument());
 
-		logger.atDebug().log(String.format("Update result:\t%s", gson.toJson(updateResult)));
+		logger.atDebug().log(String.format("Update result:\t%s", updateResult.toString()));
+	}
+
+	public List<Gat> getGatsWithOutImages() {
+		return makeList(getCollection().find(Filters.exists(Gat.MONGO_FIELD_IMAGE_FILE_OBJECTID, false)));
+	}
+
+	private List<Gat> makeList(FindIterable<Document> findIterable) {
+
+		List<Gat> gats = new ArrayList<>();
+
+		for (Document document : findIterable) {
+			gats.add(Gat.fromDocument(document));
+		}
+
+		return gats;
+
 	}
 
 	private MongoCollection<Document> getCollection() {
