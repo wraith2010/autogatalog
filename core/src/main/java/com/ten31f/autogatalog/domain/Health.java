@@ -11,10 +11,11 @@ import com.mongodb.client.gridfs.model.GridFSFile;
 
 public class Health {
 
-	private static final String MONGO_FIELD_GAT_COUNT = "gat-count";
-	private static final String MONGO_FIELD_FILE_COUNT = "file-count";
+	private static final String MONGO_FIELD_GAT_COUNT = "gatCount";
+	private static final String MONGO_FIELD_FILE_COUNT = "fileDount";
 	private static final String MONGO_FIELD_ORPHANS = "orphans";
 	private static final String MONGO_FIELD_IMAGELESS = "imageless";
+	private static final String MONGO_FIELD_PENDING_DOWNLOAD = "pendingDownload";
 
 	private static final String MONGO_FIELD_FILENAME = "filename";
 	private static final String MONGO_FIELD_METADATA = "metadata";
@@ -26,6 +27,7 @@ public class Health {
 
 	private List<GridFSFile> orphans = null;
 	private List<Gat> imagelessGats = null;
+	private List<Gat> pendingDownload = null;
 
 	public int getGatCount() {
 		return gatCount;
@@ -59,6 +61,14 @@ public class Health {
 		this.imagelessGats = imagelessGats;
 	}
 
+	public List<Gat> getPendingDownload() {
+		return pendingDownload;
+	}
+
+	public void setPendingDownload(List<Gat> pendingDownload) {
+		this.pendingDownload = pendingDownload;
+	}
+
 	public Document toDocument() {
 
 		Document document = new Document();
@@ -81,6 +91,7 @@ public class Health {
 		document.append(MONGO_FIELD_ORPHANS, orphanDocuemnts);
 
 		document.append(MONGO_FIELD_IMAGELESS, getImagelessGats().stream().map(Gat::toDocument).toList());
+		document.append(MONGO_FIELD_PENDING_DOWNLOAD, getPendingDownload().stream().map(Gat::toDocument).toList());
 
 		return document;
 

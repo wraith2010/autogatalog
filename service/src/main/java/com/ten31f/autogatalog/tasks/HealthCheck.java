@@ -34,6 +34,7 @@ public class HealthCheck implements Runnable {
 
 		health.setOrphans(gridFSFiles);
 		health.setImagelessGats(getGatRepository().getGatsWithOutImages());
+		health.setPendingDownload(getGatRepository().getGatGAtsWithOutFile());
 
 		getHealthRepository().updateHealth(health);
 
