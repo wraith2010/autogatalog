@@ -170,6 +170,7 @@ public class TrackingScheduledExecutorService implements ScheduledExecutorServic
 			return;
 
 		getFutures().get(gat.getGuid()).cancel(false);
+		getFutures().remove(gat.getGuid());
 	}
 
 }

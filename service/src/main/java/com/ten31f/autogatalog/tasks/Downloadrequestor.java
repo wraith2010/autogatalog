@@ -60,19 +60,18 @@ public class Downloadrequestor implements Runnable {
 
 				if (getTrackingScheduledExecutorService().handled(gat)) {
 					logger.atInfo().log(String.format("Monitor already in place for (%s)", gat.getTitle()));
-					return;
+				} else {
+					File file = getLbryRepository().get(gat);
+
+					DownloadMonitor downloadMonitor = new DownloadMonitor(gat, file, getLbryRepository(),
+							getFileRepository(), getGatRepository(), getTrackingScheduledExecutorService());
+
+					getTrackingScheduledExecutorService().scheduleAtFixedRate(downloadMonitor, 1, 2, TimeUnit.MINUTES);
 				}
-
-				File file = getLbryRepository().get(gat);
-
-				DownloadMonitor downloadMonitor = new DownloadMonitor(gat, file, getLbryRepository(),
-						getFileRepository(), getGatRepository(), getTrackingScheduledExecutorService());
-
-				getTrackingScheduledExecutorService().scheduleAtFixedRate(downloadMonitor, 1, 2, TimeUnit.MINUTES);
-
 			} catch (IOException ioException) {
 				logger.catching(ioException);
 			}
+
 		}
 	}
 
