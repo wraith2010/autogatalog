@@ -4,8 +4,10 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.apache.http.ParseException;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Before;
@@ -13,6 +15,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.ten31f.autogatalog.domain.Gat;
+import com.ten31f.autogatalog.repository.LbryRepository.DownloadStatus;
 
 public class LbryRepositoryTest {
 
@@ -41,6 +44,15 @@ public class LbryRepositoryTest {
 			fail();
 		}
 
+	}
+
+	@Test
+	public void getDownloadStatusTest() throws ClientProtocolException, IOException {
+
+		Map<String, DownloadStatus> map = getLbryRepository().getDownloadStatus();
+
+		map.entrySet().stream().map(entry -> String.format("%s(%s|%s)", entry.getKey(),
+				entry.getValue().isComplete(), entry.getValue().getPercentage())).forEach(System.out::println);
 	}
 
 	private LbryRepository getLbryRepository() {

@@ -23,7 +23,7 @@ public class TrackingScheduledExecutorService implements ScheduledExecutorServic
 	private Map<String, ScheduledFuture<?>> futures = null;
 
 	public TrackingScheduledExecutorService() {
-		setScheduledExecutorService(Executors.newSingleThreadScheduledExecutor());
+		setScheduledExecutorService(Executors.newScheduledThreadPool(5));
 		setFutures(new HashMap<>());
 	}
 

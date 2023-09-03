@@ -2,7 +2,9 @@ package com.ten31f.autogatalog.repository;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
@@ -18,6 +20,7 @@ import org.apache.logging.log4j.Logger;
 import org.bson.BsonArray;
 import org.bson.BsonBoolean;
 import org.bson.BsonDocument;
+import org.bson.BsonInt32;
 import org.bson.BsonString;
 import org.bson.BsonValue;
 
@@ -32,10 +35,113 @@ public class LbryRepository {
 	private static final String METHOD_GET = "get";
 	private static final String METHOD_FILE_LIST = "file_list";
 
+	private static final String FIELD_PAGE = "page";
+	private static final String FIELD_PARAMS = "params";
+	private static final String FIELD_METHOD = "method";
+	private static final String FIELD_RESULT = "result";
+
 	private String lbryNodeAddress = null;
 
 	public LbryRepository(String lbryNodeAddress) {
 		setLbryNodeAddress(lbryNodeAddress);
+	}
+
+	public class DownloadStatus {
+		private boolean complete = false;
+		private int percentage = 0;
+
+		public DownloadStatus(boolean complete, int percentage) {
+			setComplete(complete);
+			setPercentage(percentage);
+		}
+
+		public boolean isComplete() {
+			return complete;
+		}
+
+		public void setComplete(boolean complete) {
+			this.complete = complete;
+		}
+
+		public int getPercentage() {
+			return percentage;
+		}
+
+		public void setPercentage(int percentage) {
+			this.percentage = percentage;
+		}
+
+	}
+
+	public Map<String, DownloadStatus> getDownloadStatus() throws ClientProtocolException, IOException {
+
+		Map<String, DownloadStatus> statuses = new HashMap<>();
+
+		BsonDocument bsonDocument = getFilePage(1);
+
+		BsonDocument resultDocument = (BsonDocument) bsonDocument.get(FIELD_RESULT);
+
+		int totalPages = resultDocument.getInt32("total_pages").getValue();
+
+		statuses.putAll(parseFilesResponse(resultDocument));
+
+		for (int page = 2; page <= totalPages; page++) {
+			bsonDocument = getFilePage(page);
+
+			resultDocument = (BsonDocument) bsonDocument.get(FIELD_RESULT);
+			statuses.putAll(parseFilesResponse(resultDocument));
+		}
+
+		return statuses;
+	}
+
+	private Map<String, DownloadStatus> parseFilesResponse(BsonDocument bsonDocument) {
+
+		Map<String, DownloadStatus> statuses = new HashMap<>();
+
+		BsonArray bsonArray = (BsonArray) bsonDocument.get("items");
+
+		List<BsonValue> items = bsonArray.getValues();
+
+		for (BsonValue item : items) {
+			BsonDocument itemDocument = ((BsonDocument) item);
+
+			String claimID = itemDocument.getString("claim_id").getValue();
+			boolean completed = itemDocument.getBoolean("completed").getValue();
+
+			if (completed) {
+				statuses.put(claimID, new DownloadStatus(completed, 100));
+			} else {
+				double blobsCompleted = itemDocument.getInt32("blobs_completed").getValue();
+				double blobsInStream = itemDocument.getInt32("blobs_in_stream").getValue();
+
+				statuses.put(claimID,
+						new DownloadStatus(completed, (int) ((blobsCompleted / blobsInStream) * 100.0)));
+			}
+		}
+
+		return statuses;
+	}
+
+	private BsonDocument getFilePage(int page) throws ClientProtocolException, IOException {
+
+		BsonDocument bsonDocument = new BsonDocument();
+		bsonDocument.append(FIELD_METHOD, new BsonString(METHOD_FILE_LIST));
+
+		BsonDocument paramsBsonDocument = new BsonDocument();
+		paramsBsonDocument.append(FIELD_PAGE, new BsonInt32(page));
+
+		bsonDocument.append(FIELD_PARAMS, paramsBsonDocument);
+
+		StringEntity requestEntity = new StringEntity(bsonDocument.toJson(), ContentType.APPLICATION_JSON);
+
+		HttpResponse response = httpRequest(requestEntity);
+
+		BsonDocument responseBsonDocument = BsonDocument.parse(EntityUtils.toString(response.getEntity()));
+
+		logger.atDebug().log(String.format("resposne:\t%s", responseBsonDocument.toJson()));
+
+		return responseBsonDocument;
 	}
 
 	public File get(Gat gat) throws IOException {
@@ -96,6 +202,11 @@ public class LbryRepository {
 
 		if (item == null)
 			return false;
+
+		if (!item.get("completed").asBoolean().getValue()) {
+			logger.atInfo().log(String.format("%s remaining (%s/%s)", gat.getTitle(), item.get("blobs_remaining"),
+					item.get("blobs_in_stream")));
+		}
 
 		return item.get("completed").asBoolean().getValue();
 	}

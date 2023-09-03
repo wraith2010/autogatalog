@@ -2,6 +2,9 @@ package com.ten31f.autogatalog.tasks;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Map;
 
 import org.apache.http.ParseException;
 import org.apache.logging.log4j.LogManager;
@@ -12,12 +15,16 @@ import com.ten31f.autogatalog.domain.Gat;
 import com.ten31f.autogatalog.repository.FileRepository;
 import com.ten31f.autogatalog.repository.GatRepository;
 import com.ten31f.autogatalog.repository.LbryRepository;
+import com.ten31f.autogatalog.repository.LbryRepository.DownloadStatus;
 import com.ten31f.autogatalog.schedule.TrackingScheduledExecutorService;
 import com.ten31f.autogatalog.taskinterface.GatBased;
 
 public class DownloadMonitor implements Runnable, GatBased {
 
 	private static final Logger logger = LogManager.getLogger(DownloadMonitor.class);
+
+	private static Instant checkTime = null;
+	private static Map<String, DownloadStatus> status;
 
 	private Gat gat = null;
 	private File file = null;
@@ -41,13 +48,22 @@ public class DownloadMonitor implements Runnable, GatBased {
 	@Override
 	public void run() {
 
+		checkStatuses();
+		
+		DownloadStatus downloadStatus = getStatus().get(getGat().getGuid());
+		
+		if(downloadStatus == null) {
+			logger.atInfo().log(String.format("No status for (%s)", getGat().getTitle()));
+			return;
+		}
+		
+		if(!downloadStatus.isComplete()) {
+			logger.atInfo().log(String.format("Downloading not complete for (%s): %s percent", getGat().getTitle(), downloadStatus.getPercentage()));
+			return;
+		}
+		
 		try {
-			if (!getLbryRepository().isDownloadComplete(getGat())) {
-				logger.atInfo().log(String.format("Downloading not complete for (%s)", gat.getTitle()));
-				return;
-			}
-
-			logger.atInfo().log(String.format("Downloading complete for (%s) uploading", gat.getTitle()));
+			logger.atInfo().log(String.format("Downloading complete for (%s) uploading", getGat().getTitle()));
 
 			ObjectId fileObjectID = getFileRepository().uploadFile(getFile());
 			getGat().setFileObjectID(fileObjectID);
@@ -59,6 +75,37 @@ public class DownloadMonitor implements Runnable, GatBased {
 			logger.catching(exception);
 		}
 
+	}
+
+	private synchronized void checkStatuses() {
+
+		if (getCheckTime() != null && getCheckTime().isAfter(Instant.now().minus(2, ChronoUnit.MINUTES))) {
+			return;
+		}
+
+		try {
+			setStatus(getLbryRepository().getDownloadStatus());
+			setCheckTime(Instant.now());
+		} catch (IOException e) {
+			logger.catching(e);
+		}
+
+	}
+
+	public static Instant getCheckTime() {
+		return checkTime;
+	}
+
+	public static void setCheckTime(Instant checkTime) {
+		DownloadMonitor.checkTime = checkTime;
+	}
+
+	public static Map<String, DownloadStatus> getStatus() {
+		return status;
+	}
+
+	public static void setStatus(Map<String, DownloadStatus> status) {
+		DownloadMonitor.status = status;
 	}
 
 	@Override
