@@ -2,6 +2,9 @@ package com.ten31f.autogatalog.tasks;
 
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.mongodb.client.gridfs.model.GridFSFile;
 import com.ten31f.autogatalog.domain.Health;
 import com.ten31f.autogatalog.repository.FileRepository;
@@ -9,6 +12,8 @@ import com.ten31f.autogatalog.repository.GatRepository;
 import com.ten31f.autogatalog.repository.HealthRepository;
 
 public class HealthCheck implements Runnable {
+
+	private static final Logger logger = LogManager.getLogger(HealthCheck.class);
 
 	private FileRepository fileRepository;
 	private GatRepository gatRepository;
@@ -36,6 +41,8 @@ public class HealthCheck implements Runnable {
 		health.setImagelessGats(getGatRepository().getGatsWithOutImages());
 		health.setPendingDownload(getGatRepository().getGatGAtsWithOutFile());
 		health.setGatCount((int) getGatRepository().countGats());
+
+		logger.atDebug().log(String.format("Health info:\t%s", health.toDocument().toJson()));
 
 		getHealthRepository().updateHealth(health);
 

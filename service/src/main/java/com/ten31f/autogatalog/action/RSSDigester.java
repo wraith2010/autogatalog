@@ -17,15 +17,10 @@ import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.XMLEvent;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.ten31f.autogatalog.domain.Gat;
 import com.ten31f.autogatalog.domain.WatchURL;
 
 public class RSSDigester {
-
-	private static final Logger logger = LogManager.getLogger(RSSDigester.class);
 
 	private WatchURL watchURL = null;
 
@@ -34,8 +29,6 @@ public class RSSDigester {
 	}
 
 	public List<Gat> readFeed() {
-
-		logger.atInfo().log(String.format("Analyzing: %s", getWatchURL().getRSSURL().toString()));
 
 		List<Gat> items = new ArrayList<>();
 
@@ -63,9 +56,6 @@ public class RSSDigester {
 		} catch (XMLStreamException e) {
 			e.printStackTrace();
 		}
-
-		logger.atInfo().log(
-				String.format("Collected (%s) items from: %s", items.size(), getWatchURL().getRSSURL().toString()));
 
 		return items;
 	}

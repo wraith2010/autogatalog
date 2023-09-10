@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -21,6 +22,7 @@ import com.mongodb.client.gridfs.GridFSBuckets;
 import com.mongodb.client.gridfs.GridFSDownloadStream;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import com.mongodb.client.gridfs.model.GridFSUploadOptions;
+import com.mongodb.client.model.Filters;
 import com.ten31f.autogatalog.domain.Gat;
 
 public class FileRepository extends AbstractMongoRepository {
@@ -87,6 +89,11 @@ public class FileRepository extends AbstractMongoRepository {
 		return gridFSFiles;
 	}
 
+	public GridFSFile findGridFSFile(ObjectId objectId) {
+
+		return getGridFSBucket().find(Filters.eq("_id", objectId)).first();
+	}
+
 	public void delete(ObjectId objectId) {
 
 		getGridFSBucket().delete(objectId);
@@ -104,12 +111,27 @@ public class FileRepository extends AbstractMongoRepository {
 
 	public String getFileAsBase64String(Gat gat) {
 
-		try (GridFSDownloadStream gridFSDownloadStream = getGridFSBucket()
-				.openDownloadStream(gat.getImagefileObjectID())) {
-			return Base64.getEncoder().encodeToString(gridFSDownloadStream.readAllBytes());
+		long start = System.currentTimeMillis();
+
+		try (GridFSDownloadStream gridFSDownloadStream =
+
+				getGridFSBucket().openDownloadStream(gat.getImagefileObjectID())) {
+
+			byte[] bytes = gridFSDownloadStream.readAllBytes();
+
+			logger.atInfo()
+					.log(String.format("'%s' Image size %s(%skb) ", gat.getTitle(), bytes.length, bytes.length / 1024));
+
+			return Base64.getEncoder().encodeToString(bytes);
 		} catch (IOException | MongoGridFSException exception) {
 			logger.catching(exception);
 			return null;
+		} finally {
+			Duration duration = Duration.ofMillis(System.currentTimeMillis() - start);
+
+			logger.atInfo().log(String.format("Image string retrieval %s mills(%s seconds) ", duration.toMillis(),
+					duration.toSeconds()));
+
 		}
 	}
 

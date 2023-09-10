@@ -21,7 +21,7 @@
 	</Appenders>
 	<Loggers>
 		<Logger name="com.ten31f.autogatalog.repository"
-			additivity="false" level="trace">
+			additivity="false" level="info">
 			<AppenderRef ref="Console" />
 			<AppenderRef ref="FileAppender" />
 		</Logger>

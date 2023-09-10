@@ -21,11 +21,11 @@
 	</Appenders>
 	<Loggers>
 		<Logger name="com.ten31f.autogatalog"
-			additivity="false" level="info">
+			additivity="false" level="debug">
 			<AppenderRef ref="Console" />
 			<AppenderRef ref="FileAppender" />
 		</Logger>
-		<Root level="error">
+		<Root level="info">
 			<AppenderRef ref="Console" />
 			<AppenderRef ref="FileAppender" />
 		</Root>

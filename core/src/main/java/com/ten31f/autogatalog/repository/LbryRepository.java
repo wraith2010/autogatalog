@@ -83,6 +83,8 @@ public class LbryRepository {
 
 		int totalPages = resultDocument.getInt32("total_pages").getValue();
 
+		logger.atInfo().log(String.format("Retrieveing %s pages of files info", totalPages));
+
 		statuses.putAll(parseFilesResponse(resultDocument));
 
 		for (int page = 2; page <= totalPages; page++) {
@@ -115,8 +117,7 @@ public class LbryRepository {
 				double blobsCompleted = itemDocument.getInt32("blobs_completed").getValue();
 				double blobsInStream = itemDocument.getInt32("blobs_in_stream").getValue();
 
-				statuses.put(claimID,
-						new DownloadStatus(completed, (int) ((blobsCompleted / blobsInStream) * 100.0)));
+				statuses.put(claimID, new DownloadStatus(completed, (int) ((blobsCompleted / blobsInStream) * 100.0)));
 			}
 		}
 
@@ -139,8 +140,6 @@ public class LbryRepository {
 
 		BsonDocument responseBsonDocument = BsonDocument.parse(EntityUtils.toString(response.getEntity()));
 
-		logger.atDebug().log(String.format("resposne:\t%s", responseBsonDocument.toJson()));
-
 		return responseBsonDocument;
 	}
 
@@ -161,9 +160,12 @@ public class LbryRepository {
 
 		BsonDocument responseBsonDocument = BsonDocument.parse(EntityUtils.toString(response.getEntity()));
 
-		logger.atDebug().log(String.format("resposne:\t%s", responseBsonDocument.toJson()));
-
 		BsonDocument resultBsonDocument = (BsonDocument) responseBsonDocument.get("result");
+
+		if (resultBsonDocument.get("download_path") == null) {
+			logger.atError().log(String.format("No DownLoadPath: \t%s", resultBsonDocument.toJson()));
+			return null;
+		}
 
 		File file = new File(((BsonString) resultBsonDocument.get("download_path")).getValue());
 
@@ -189,8 +191,6 @@ public class LbryRepository {
 		HttpResponse response = httpRequest(requestEntity);
 
 		BsonDocument responseBsonDocument = BsonDocument.parse(EntityUtils.toString(response.getEntity()));
-
-		logger.atInfo().log(String.format("resposne:\t%s", responseBsonDocument.toJson()));
 
 		BsonDocument resultBsonDocument = (BsonDocument) responseBsonDocument.get("result");
 
@@ -228,7 +228,15 @@ public class LbryRepository {
 		HttpPost httpPost = getHttpPost();
 		httpPost.setEntity(requestEntity);
 
-		return getHttpClient().execute(httpPost);
+		HttpResponse httpResponse = getHttpClient().execute(httpPost);
+
+		if (httpResponse.getStatusLine().getStatusCode() != 200) {
+			logger.atError().log(String.format("http reqeust:\t%s", httpPost));
+			logger.atError().log(String.format("Response status:\t%s", httpResponse.getStatusLine()));
+			logger.atError().log(String.format("Response\t%s", httpResponse));
+		}
+
+		return httpResponse;
 
 	}
 

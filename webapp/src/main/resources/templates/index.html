@@ -40,7 +40,7 @@
 	<main>
 
 
-		<section th:each="author: ${authors}">
+		<section th:each="author: ${pagenatedAuthors}">
 			<header>
 				<a th:href="@{/(author = ${author.author})}">
 					<h2 th:text="${author.author} + '(' + ${author.count} + ')'" />
@@ -50,9 +50,9 @@
 			<article th:each="gat: ${gatMap[author.author]}" th:with="guid=${gat.guid}">
 				<a th:href="@{'/gat/' + ${gat.guid}}">
 					<figure>
-						<img th:if="${imageStrings.containsKey(guid)}"
+						<!--<img th:if="${imageStrings.containsKey(guid)}"
 							th:src="@{'data:image/jpeg;charset=utf-8;base64,'+ ${imageStrings.get(guid)}}"
-							th:id="${guid}" alt="preview">
+							th:id="${guid}" alt="preview"> -->
 					</figure>
 					<header>
 						<h3 th:text="${gat.title}" />

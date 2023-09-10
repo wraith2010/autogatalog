@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
@@ -105,6 +106,8 @@ public class TrackingScheduledExecutorService implements ScheduledExecutorServic
 		if (command instanceof GatBased gatBased) {
 			getFutures().put(gatBased.getGat().getGuid(), scheduledFuture);
 		}
+
+		getFutures().entrySet().stream().map(Entry::getValue).forEach(System.out::println);
 
 		return scheduledFuture;
 	}

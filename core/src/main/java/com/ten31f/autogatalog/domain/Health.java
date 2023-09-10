@@ -1,7 +1,9 @@
 package com.ten31f.autogatalog.domain;
 
+import java.time.Instant;
 import java.util.List;
 
+import org.bson.BsonDateTime;
 import org.bson.BsonInt32;
 import org.bson.BsonObjectId;
 import org.bson.BsonString;
@@ -17,6 +19,7 @@ public class Health {
 	private static final String MONGO_FIELD_IMAGELESS = "imageless";
 	private static final String MONGO_FIELD_PENDING_DOWNLOAD = "pendingDownload";
 	private static final String MONGO_FIELD_PENDING_DOWNLOAD_COUNT = "pendingCount";
+	private static final String MONGO_FIELD_CREATED = "created";
 
 	private static final String MONGO_FIELD_FILENAME = "filename";
 	private static final String MONGO_FIELD_METADATA = "metadata";
@@ -26,10 +29,15 @@ public class Health {
 	private int gatCount = 0;
 	private int fileCount = 0;
 	private int pendingDownloadCount = 0;
+	private Instant createdInstant = null;
 
 	private List<GridFSFile> orphans = null;
 	private List<Gat> imagelessGats = null;
 	private List<Gat> pendingDownload = null;
+
+	public Health() {
+		setCreatedInstant(Instant.now());
+	}
 
 	public int getGatCount() {
 		return gatCount;
@@ -71,8 +79,14 @@ public class Health {
 		this.pendingDownload = pendingDownload;
 	}
 
-	
-	
+	public void setCreatedInstant(Instant createdInstant) {
+		this.createdInstant = createdInstant;
+	}
+
+	public Instant getCreatedInstant() {
+		return createdInstant;
+	}
+
 	public int getPendingDownloadCount() {
 		return pendingDownloadCount;
 	}
@@ -103,10 +117,11 @@ public class Health {
 		document.append(MONGO_FIELD_ORPHANS, orphanDocuemnts);
 
 		List<Document> pending = getPendingDownload().stream().map(Gat::toDocument).toList();
-		
+
 		document.append(MONGO_FIELD_IMAGELESS, getImagelessGats().stream().map(Gat::toDocument).toList());
 		document.append(MONGO_FIELD_PENDING_DOWNLOAD, pending);
 		document.append(MONGO_FIELD_PENDING_DOWNLOAD_COUNT, new BsonInt32(pending.size()));
+		document.append(MONGO_FIELD_CREATED, new BsonDateTime(getCreatedInstant().toEpochMilli()));
 
 		return document;
 
