@@ -67,10 +67,10 @@ public class PageController {
 
 		filteredGats.stream().forEach(this::cleanDescription);
 
-		Map<String, String> imageStrings = filteredGats.stream().filter(gat -> gat.getImagefileObjectID() != null)
-				.collect(Collectors.toMap(Gat::getGuid, gat -> getFileRepository().getFileAsBase64String(gat)));
+//		Map<String, String> imageStrings = filteredGats.stream().filter(gat -> gat.getImagefileObjectID() != null)
+//				.collect(Collectors.toMap(Gat::getGuid, gat -> getFileRepository().getFileAsBase64String(gat)));
 
-		model.addAttribute("imageStrings", imageStrings);
+//		model.addAttribute("imageStrings", imageStrings);
 
 		model.addAttribute("pagenatedAuthors", pagenatedAuthors);
 		model.addAttribute("gats", filteredGats);

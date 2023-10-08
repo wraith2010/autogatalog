@@ -38,12 +38,32 @@ public class Scan implements Runnable {
 			return;
 		}
 
+		if (watchURLs.size() > 20) {
+			watchURLs = watchURLs.subList(0, 10);
+			logger.atInfo().log("Checking the first 10 urls;");
+		}
+
 		List<RSSDigester> rssDigesters = watchURLs.parallelStream().map(RSSDigester::new).toList();
 
-		rssDigesters.stream().map(RSSDigester::readFeed).forEach(
-				gats -> logger.atInfo().log(String.format("%s new gats found", getGatRepository().insertGats(gats))));
+		rssDigesters.stream().forEach(this::read);
 
-		rssDigesters.stream().forEachOrdered(rssDigester -> getWatchURLRepository().update(rssDigester.getWatchURL()));
+		logger.atInfo().log("Scan complete");
+	}
+
+	public void read(RSSDigester rssDigester) {
+
+		try {
+			logger.atInfo()
+					.log(String.format("%s new gats found", getGatRepository().insertGats(rssDigester.readFeed())));
+
+			getWatchURLRepository().update(rssDigester.getWatchURL());
+
+		} catch (Exception exception) {
+			logger.atError().log(exception);
+		}
+
+		logger.atInfo().log(String.format("Scan complete for(%s)", rssDigester.getWatchURL().getRSSURL()));
+
 	}
 
 	private WatchURLRepository getWatchURLRepository() {

@@ -62,7 +62,7 @@ public class App {
 		ImageGrabber imageGrabber = new ImageGrabber(gatRepository, fileRepository, 20);
 		HealthCheck healthCheck = new HealthCheck(fileRepository, gatRepository, healthRepository);
 
-		trackingScheduledExecutorService.scheduleAtFixedRate(scan, 10, 10, TimeUnit.MINUTES);
+		trackingScheduledExecutorService.scheduleAtFixedRate(scan, 0, 4, TimeUnit.MINUTES);
 		trackingScheduledExecutorService.scheduleAtFixedRate(downloadrequestor, 0, 4, TimeUnit.MINUTES);
 		trackingScheduledExecutorService.scheduleAtFixedRate(imageGrabber, 6, 10, TimeUnit.MINUTES);
 		trackingScheduledExecutorService.scheduleAtFixedRate(healthCheck, 0, 5, TimeUnit.MINUTES);
