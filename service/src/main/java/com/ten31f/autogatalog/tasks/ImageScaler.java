@@ -3,8 +3,9 @@ package com.ten31f.autogatalog.tasks;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -34,45 +35,88 @@ public class ImageScaler implements Runnable {
 	@Override
 	public void run() {
 
-		List<Gat> gats = getGatRepository().getAll();
+		List<Gat> gats = retrieveGats();
 
-		gats = gats.parallelStream().filter(gat -> gat.getImagefileObjectID() != null).toList();
+		Gat gat = gats.get(0);
 
-		for (Gat gat : gats) {
+		File tempFile = writeTempFile(gat);
 
-			GridFSFile gridFSFile = getFileRepository().findGridFSFile(gat.getImagefileObjectID());
+		try {
 
-			GridFSDownloadStream gridFSDownloadStream = getFileRepository()
-					.getFileAsGridFSDownloadStream(gat.getImagefileObjectID());
+			BufferedImage originalImage = ImageIO.read(tempFile.getAbsoluteFile());
 
-			BufferedImage originalImage;
-			try {
+			if (originalImage == null)
+				throw new IOException(String.format("Can't read file (%s)", tempFile.getAbsolutePath()));
 
-				ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
-						gridFSDownloadStream.readAllBytes());
+			int newHeight = (int) (originalImage.getHeight() * (((float) 300) / ((float) originalImage.getWidth())));
 
-				originalImage = ImageIO.read(byteArrayInputStream);
+			Image newResizedImage = originalImage.getScaledInstance(300, newHeight, Image.SCALE_SMOOTH);
 
-				int newHeight = (int) (originalImage.getHeight()
-						* (((float) 300) / ((float) originalImage.getWidth())));
+			BufferedImage newResizedImageBuffer = convertToBufferedImage(newResizedImage);
 
-				Image newResizedImage = originalImage.getScaledInstance(300, newHeight, Image.SCALE_SMOOTH);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ImageIO.write(newResizedImageBuffer, "png", baos);
+			byte[] bytes = baos.toByteArray();
 
-				BufferedImage newResizedImageBuffer = convertToBufferedImage(newResizedImage);
+			logger.atInfo().log(String.format("'%s' now %s(%skb)", gat.getTitle(), bytes.length, bytes.length / 1024));
 
-				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				ImageIO.write(newResizedImageBuffer, "png", baos);
-				byte[] bytes = baos.toByteArray();
-
-				logger.atInfo().log(String.format("'%s' Image size %s(%skb) now %s(%skb)", gat.getTitle(),
-						gridFSFile.getLength(), gridFSFile.getLength() / 1024, bytes.length, bytes.length / 1024));
-
-			} catch (IOException ioException) {
-				logger.catching(ioException);
-			}
-
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
+		delete(tempFile);
+
+	}
+
+	private void delete(File tempFile) {
+
+		logger.atInfo().log(String.format("deleting temp file(%s)", tempFile.getAbsolutePath()));
+		if (tempFile.exists()) {
+			tempFile.delete();
+		}
+	}
+
+	private File writeTempFile(Gat gat) {
+
+		GridFSFile gridFSFile = getFileRepository().findGridFSFile(gat.getImagefileObjectID());
+
+		logger.atInfo().log(String.format("Filename:\t%s", gridFSFile.getFilename()));
+		String suffix = gridFSFile.getFilename().substring(gridFSFile.getFilename().lastIndexOf('.'));
+
+		File tempFile = null;
+		try {
+			tempFile = File.createTempFile("full-size-image", suffix);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		try (GridFSDownloadStream gridFSDownloadStream = getFileRepository()
+				.getFileAsGridFSDownloadStream(gat.getImagefileObjectID());
+				FileOutputStream fileOutputStream = new FileOutputStream(tempFile)
+
+		) {
+
+			gridFSDownloadStream.transferTo(fileOutputStream);
+
+			fileOutputStream.flush();
+			
+		} catch (IOException ioException) {
+			logger.catching(ioException);
+		}
+
+		logger.atInfo().log(String.format("Creating temp file(%s)", tempFile.getAbsolutePath()));
+
+		logger.atInfo().log(String.format("'%s' Image size %s(%skb)", gat.getTitle(), gridFSFile.getLength(),
+				gridFSFile.getLength() / 1024));
+
+		return tempFile;
+	}
+
+	private List<Gat> retrieveGats() {
+
+		return getGatRepository().getAll().parallelStream().filter(gat -> gat.getImagefileObjectID() != null).toList();
 	}
 
 	public static BufferedImage convertToBufferedImage(Image img) {
