@@ -139,7 +139,9 @@ public class PageController {
 	public String imageUploadPage(Model model) {
 
 		common(model);
-
+		
+		model.addAttribute("gats", getGatRepository().getGatsWithOutImages());	
+		
 		return "imageUpload";
 	}
 

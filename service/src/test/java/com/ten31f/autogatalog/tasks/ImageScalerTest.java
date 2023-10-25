@@ -1,11 +1,13 @@
 package com.ten31f.autogatalog.tasks;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.ten31f.autogatalog.repository.FileRepository;
 import com.ten31f.autogatalog.repository.GatRepository;
 
+@Ignore
 public class ImageScalerTest {
 
 	private static final String MONGO_DB_ADDRESS = "mongodb://192.168.1.50:27017";

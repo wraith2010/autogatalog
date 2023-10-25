@@ -163,7 +163,7 @@ public class LbryRepository {
 		BsonDocument resultBsonDocument = (BsonDocument) responseBsonDocument.get("result");
 
 		if (resultBsonDocument.get("download_path") == null) {
-			logger.atError().log(String.format("No DownLoadPath: \t%s", resultBsonDocument.toJson()));
+			logger.atError().log(String.format("No DownLoadPath: \t%s\t%s", resultBsonDocument.toJson(), gat.getGuid()));
 			return null;
 		}
 

@@ -37,22 +37,22 @@
 			<dependency>
 				<groupId>org.mongodb</groupId>
 				<artifactId>mongodb-driver-sync</artifactId>
-				<version>4.2.3</version>
+				<version>4.11.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mongodb</groupId>
 				<artifactId>mongodb-driver-core</artifactId>
-				<version>4.2.3</version>
+				<version>4.11.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mongodb</groupId>
 				<artifactId>mongodb-driver-reactivestreams</artifactId>
-				<version>4.2.3</version>
+				<version>4.11.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mongodb</groupId>
 				<artifactId>bson</artifactId>
-				<version>4.2.3</version>
+				<version>4.11.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.httpcomponents</groupId>
@@ -107,6 +107,11 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-starter-test</artifactId>
 				<version>3.2.0-M1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.data</groupId>
+				<artifactId>spring-data-mongodb</artifactId>
+				<version>4.1.5</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

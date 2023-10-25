@@ -5,7 +5,7 @@
 	<meta charset="UTF-8">
 	<title th:text="${appName}" />
 	<link th:href="@{/css/common.css}" rel="stylesheet" />
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+	<link th:href="@{/css/image-upload.css}" rel="stylesheet" />
 </head>
 
 <body>
@@ -22,21 +22,42 @@
 
 	<main>
 
+		<p th:text="${message}" th:if="${message ne null}" class="alert alert-primary"></p>
+
 		<section class="my-5">
-			<div class="container">
-				<div class="row">
-					<div class="col-md-8 mx-auto">
-						<h2>Upload File Example</h2>
-						<p th:text="${message}" th:if="${message ne null}" class="alert alert-primary"></p>
-						<form method="post" th:action="@{/image/upload}" enctype="multipart/form-data">
-							<div class="form-group">
-								<input type="file" name="file" class="form-control-file">
-							</div>
-							<button type="submit" class="btn btn-primary">Upload File</button>
-						</form>
+
+			<article th:each="gat: ${gats}" th:with="guid=${gat.guid}">
+
+
+				<header>
+					<h3 th:text="${gat.title}" />
+				</header>
+
+				<ul>
+					<li>
+						<a th:href="${gat.linkURL}">
+							<img alt="odysee logo" class="download" th:src="@{'/img/odysee.jpg'}" />
+						</a>
+					</li>
+					<li>
+						<a th:href="@{'/download/' + ${guid}}">
+							<img alt="download icon" class="download" th:src="@{'/img/download.png'}" />
+						</a>
+					</li>
+				</ul>
+
+				<a th:href="@{'/gat/' + ${gat.guid}}" th:text="${gat.guid}"></a>
+
+				<form method="post" th:action="@{'/image/upload/' + ${gat.guid}}" enctype="multipart/form-data">
+					<div class="form-group">
+						<input type="file" name="file" class="form-control-file">
 					</div>
-				</div>
-			</div>
+					<button type="submit" class="btn btn-primary">Upload File</button>
+				</form>
+
+
+			</article>
+
 		</section>
 
 	</main>

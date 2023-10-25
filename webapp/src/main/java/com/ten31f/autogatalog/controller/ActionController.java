@@ -2,9 +2,9 @@ package com.ten31f.autogatalog.controller;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.time.Duration;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -12,12 +12,15 @@ import org.apache.logging.log4j.Logger;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -29,6 +32,7 @@ import com.ten31f.autogatalog.repository.FileRepository;
 import com.ten31f.autogatalog.repository.GatRepository;
 import com.ten31f.autogatalog.repository.WatchURLRepository;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
@@ -76,8 +80,9 @@ public class ActionController {
 		return "redirect:/orphan";
 	}
 
-	@PostMapping("/image/upload")
-	public String uploadFile(@RequestParam("file") MultipartFile file, RedirectAttributes attributes) {
+	@PostMapping("/image/upload/{guid}")
+	public String uploadFile(@RequestParam("file") MultipartFile file, @PathVariable("guid") String guid,
+			RedirectAttributes attributes) {
 
 		// check if file is empty
 		if (file.isEmpty()) {
@@ -95,6 +100,13 @@ public class ActionController {
 			// return success response
 			attributes.addFlashAttribute("message",
 					String.format("You successfully uploaded %s(%s)!", fileName, objectId));
+
+			Gat gat = getGatRepository().getOne(guid);
+			if (gat != null && objectId != null) {
+				gat.setImagefileObjectID(objectId);
+				getGatRepository().repalceGat(gat);
+			}
+
 		} catch (IOException e) {
 			logger.catching(e);
 
@@ -126,7 +138,6 @@ public class ActionController {
 
 	}
 
-	@GetMapping(path = "/download/{guid}")
 	public void download(@PathVariable("guid") String guid, HttpServletResponse httpServletResponse)
 			throws IOException {
 
@@ -137,21 +148,94 @@ public class ActionController {
 
 		GridFSFile gridFSFile = gridFSDownloadStream.getGridFSFile();
 
+		logger.info("ID...........: " + gridFSFile.getId());
+		logger.info("FileName.....: " + gridFSFile.getFilename());
+		logger.info("Length.......: " + gridFSFile.getLength());
+		logger.info("Upload Date..: " + gridFSFile.getUploadDate());
+
 		httpServletResponse.setHeader("Content-Disposition", "attachment; filename=\"" + gridFSFile.getFilename());
+		httpServletResponse.setContentLength(Long.valueOf(gridFSFile.getLength()).intValue());
 
 		HttpHeaders header = new HttpHeaders();
 		header.set(HttpHeaders.CONTENT_DISPOSITION,
 				"attachment; filename=" + gridFSFile.getFilename().replace(" ", "_"));
 
-		int read = 0;
-		byte[] bytes = new byte[64];
-		OutputStream outputStream = httpServletResponse.getOutputStream();
+		getFileRepository().downloadToStream(gat.getFileObjectID(), httpServletResponse.getOutputStream());
+	}
 
-		while ((read = gridFSDownloadStream.read(bytes)) != -1) {
-			outputStream.write(bytes, 0, read);
+	@GetMapping(path = "/download/{guid}")
+	public void test(@PathVariable("guid") String guid, HttpServletResponse httpServletResponse) throws IOException {
+
+		Gat gat = getGatRepository().getOne(guid);
+
+		GridFSDownloadStream gridFSDownloadStream = getFileRepository()
+				.getFileAsGridFSDownloadStream(gat.getFileObjectID());
+
+		GridFSFile gridFSFile = gridFSDownloadStream.getGridFSFile();
+
+		logger.info("ID...........: " + gridFSFile.getId());
+		logger.info("FileName.....: " + gridFSFile.getFilename());
+		logger.info("Length.......: " + gridFSFile.getLength());
+		logger.info("Upload Date..: " + gridFSFile.getUploadDate());
+
+		long now = -System.currentTimeMillis();
+
+		logger.atInfo().log("Starting stream");
+
+		int fileLength = (int) gridFSDownloadStream.getGridFSFile().getLength();
+		byte[] bytesToWriteTo = new byte[fileLength];
+		gridFSDownloadStream.read(bytesToWriteTo);
+		gridFSDownloadStream.close();
+
+		httpServletResponse.getOutputStream().write(bytesToWriteTo);
+
+		Duration duration = Duration.ofMillis(now + System.currentTimeMillis());
+
+		logger.atInfo().log(String.format("Duration: %s seconds", duration.getSeconds()));
+
+	}
+
+	public @ResponseBody byte[] downloadFilebyID(@PathVariable("guid") String guid) throws IOException {
+
+		Gat gat = getGatRepository().getOne(guid);
+
+		GridFSDownloadStream gridFSDownloadStream = getFileRepository()
+				.getFileAsGridFSDownloadStream(gat.getFileObjectID());
+
+		GridFSFile gridFSFile = gridFSDownloadStream.getGridFSFile();
+
+		logger.info("ID...........: " + gridFSFile.getId());
+		logger.info("FileName.....: " + gridFSFile.getFilename());
+		logger.info("Length.......: " + gridFSFile.getLength());
+		logger.info("Upload Date..: " + gridFSFile.getUploadDate());
+
+		return gridFSDownloadStream.readAllBytes();
+	}
+
+	public ResponseEntity<?> downloadFile(@PathVariable("guid") String guid, HttpServletRequest request)
+			throws IOException {
+
+		Gat gat = getGatRepository().getOne(guid);
+
+		GridFSDownloadStream gridFSDownloadStream = getFileRepository()
+				.getFileAsGridFSDownloadStream(gat.getFileObjectID());
+
+		GridFSFile gridFSFile = gridFSDownloadStream.getGridFSFile();
+
+		// Try to determine file's content type
+		String contentType = null;
+//        try {
+//            contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+//        } catch (IOException ex) {
+//            logger.info("Could not determine file type.");
+//        }
+
+		// Fallback to the default content type if type could not be determined
+		if (contentType == null) {
+			contentType = "application/octet-stream";
 		}
-		outputStream.flush();
-		outputStream.close();
+
+		return ResponseEntity.ok(gridFSDownloadStream.readAllBytes());
 	}
 
 	private GatRepository getGatRepository() {

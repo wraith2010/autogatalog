@@ -1,4 +1,4 @@
-package com.ten31f.autogatalog.service;
+package com.ten31f.autogatalog;
 
 import java.util.Arrays;
 import java.util.Calendar;
