@@ -22,6 +22,7 @@ public class LbryRepositoryTest {
 	private static final Logger logger = LogManager.getLogger(LbryRepositoryTest.class);
 
 	private static final String LBRY_ADDRESS = "http://localhost:5279/";
+	private static final String SF5_GUID = "ad575051553e2ab5c3b6a721756039f7461ec3e6";
 
 	private LbryRepository lbryRepository = null;
 
@@ -30,12 +31,12 @@ public class LbryRepositoryTest {
 		setLbryRepository(new LbryRepository(LBRY_ADDRESS));
 	}
 
-	@Ignore
 	@Test
+	@Ignore
 	public void isDownLoadComplete() {
 
 		Gat gat = new Gat();
-		gat.setGuid("c7a9a79f325d99c044e3a2ecb077cd9ad8443375");
+		gat.setGuid(SF5_GUID);
 
 		try {
 			assertTrue(getLbryRepository().isDownloadComplete(gat));
@@ -51,8 +52,8 @@ public class LbryRepositoryTest {
 
 		Map<String, DownloadStatus> map = getLbryRepository().getDownloadStatus();
 
-		map.entrySet().stream().map(entry -> String.format("%s(%s|%s)", entry.getKey(),
-				entry.getValue().isComplete(), entry.getValue().getPercentage())).forEach(System.out::println);
+		map.entrySet().stream().map(entry -> String.format("%s(%s|%s)", entry.getKey(), entry.getValue().isComplete(),
+				entry.getValue().getPercentage())).forEach(System.out::println);
 	}
 
 	private LbryRepository getLbryRepository() {

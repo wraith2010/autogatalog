@@ -35,7 +35,6 @@ public class FileRepository extends AbstractMongoRepository {
 
 	public FileRepository(String databaseURL) {
 		super(databaseURL);
-
 	}
 
 	public ObjectId uploadFile(File file) throws FileNotFoundException, IOException {
@@ -110,7 +109,6 @@ public class FileRepository extends AbstractMongoRepository {
 		}
 	}
 
-
 	public String getFileAsBase64String(Gat gat) {
 
 		long start = System.currentTimeMillis();
@@ -138,27 +136,29 @@ public class FileRepository extends AbstractMongoRepository {
 	}
 
 	public GridFSDownloadStream getFileAsGridFSDownloadStream(ObjectId objectId) {
+
 		return getGridFSBucket().openDownloadStream(objectId);
+
 	}
 
 	public void downloadToStream(ObjectId objectId, OutputStream outputStream) throws IOException {
-		
+
 		long now = -System.currentTimeMillis();
-		
+
 		logger.atInfo().log("Starting stream");
-		
+
 		getGridFSBucket().downloadToStream(objectId, outputStream);
-		
+
 		Duration duration = Duration.ofMillis(now + System.currentTimeMillis());
-		
+
 		logger.atInfo().log(String.format("Duration: %s seconds", duration.getSeconds()));
-		
-		
+
 		outputStream.close();
 	}
 
 	private GridFSBucket getGridFSBucket() {
 		if (gridFSBucket == null) {
+
 			setGridFSBucket(GridFSBuckets.create(getMongoDatabase(), BUCKET_NAME));
 		}
 		return gridFSBucket;
