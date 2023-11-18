@@ -22,13 +22,14 @@ import com.ten31f.autogatalog.domain.Gat;
 import com.ten31f.autogatalog.repository.FileRepository;
 import com.ten31f.autogatalog.repository.GatRepository;
 import com.ten31f.autogatalog.repository.GatRepository.AuthorCount;
+import com.ten31f.autogatalog.util.AuthorNormalizer;
 
 @Controller
 public class PageController {
 
 	private static final Logger logger = LogManager.getLogger(PageController.class);
 
-	private static final int PAGE_SIZE = 5;
+	// private static final int PAGE_SIZE = 5;
 
 	@Value("${spring.application.name}")
 	private String appName;
@@ -51,10 +52,6 @@ public class PageController {
 
 		model.addAttribute("authors", getGatRepository().listAuthors());
 
-		int index = ((page - 1) * PAGE_SIZE);
-
-		List<AuthorCount> pagenatedAuthors = authorCounts.subList(index, index + PAGE_SIZE);
-
 		List<Gat> gats = getGatRepository().getAll();
 
 		Map<String, List<Gat>> gatMap = new HashMap<>();
@@ -62,17 +59,17 @@ public class PageController {
 		gats.stream().forEach(gat -> mapGatAuthor(gatMap, gat));
 
 		List<Gat> filteredGats = new ArrayList<>();
-		pagenatedAuthors.stream().map(AuthorCount::getAuthor).map(author -> gatMap.get(author))
+		authorCounts.stream().map(AuthorCount::getAuthor).map(author -> gatMap.get(author))
 				.forEach(filteredGats::addAll);
 
 		filteredGats.stream().forEach(this::cleanDescription);
 
-//		Map<String, String> imageStrings = filteredGats.stream().filter(gat -> gat.getImagefileObjectID() != null)
-//				.collect(Collectors.toMap(Gat::getGuid, gat -> getFileRepository().getFileAsBase64String(gat)));
+		Map<String, String> imageStrings = filteredGats.stream().filter(gat -> gat.getImagefileObjectID() != null)
+				.collect(Collectors.toMap(Gat::getGuid, gat -> getFileRepository().getFileAsBase64String(gat)));
 
-//		model.addAttribute("imageStrings", imageStrings);
+		model.addAttribute("imageStrings", imageStrings);
 
-		model.addAttribute("pagenatedAuthors", pagenatedAuthors);
+		model.addAttribute("pagenatedAuthors", authorCounts);
 		model.addAttribute("gats", filteredGats);
 		model.addAttribute("gatMap", gatMap);
 
@@ -80,14 +77,17 @@ public class PageController {
 	}
 
 	private void mapGatAuthor(Map<String, List<Gat>> gatMap, Gat gat) {
-		if (!gatMap.containsKey(gat.getAuthor())) {
-			gatMap.put(gat.getAuthor(), new ArrayList<>());
+
+		String author = AuthorNormalizer.cleanAuthor(gat.getAuthor());
+
+		if (!gatMap.containsKey(author)) {
+			gatMap.put(author, new ArrayList<>());
 		}
 
-		if (gatMap.get(gat.getAuthor()).size() > 4)
+		if (gatMap.get(author).size() > 4)
 			return;
 
-		gatMap.get(gat.getAuthor()).add(gat);
+		gatMap.get(author).add(gat);
 	}
 
 	@GetMapping("/author")
@@ -120,6 +120,12 @@ public class PageController {
 		return "author";
 	}
 
+	@GetMapping("/search/{searchString}")
+	public String searchPage(@PathVariable("searchString") String searchString, Model model) {
+
+		return "search";
+	}
+
 	@GetMapping("/gat/{guid}")
 	public String detailPage(@PathVariable("guid") String guid, Model model) {
 
@@ -139,9 +145,9 @@ public class PageController {
 	public String imageUploadPage(Model model) {
 
 		common(model);
-		
-		model.addAttribute("gats", getGatRepository().getGatsWithOutImages());	
-		
+
+		model.addAttribute("gats", getGatRepository().getGatsWithOutImages());
+
 		return "imageUpload";
 	}
 

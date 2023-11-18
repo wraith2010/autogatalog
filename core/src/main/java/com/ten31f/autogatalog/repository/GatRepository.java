@@ -21,6 +21,7 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.result.UpdateResult;
 import com.ten31f.autogatalog.domain.Gat;
+import com.ten31f.autogatalog.util.AuthorNormalizer;
 
 public class GatRepository extends AbstractMongoRepository {
 
@@ -87,7 +88,7 @@ public class GatRepository extends AbstractMongoRepository {
 
 		for (Document document : aggregateIterable) {
 			AuthorCount authorCount = new AuthorCount();
-			authorCount.setAuthor(document.getString("_id"));
+			authorCount.setAuthor(AuthorNormalizer.cleanAuthor(document.getString("_id")));
 			authorCount.setCount(document.getInteger("count"));
 			authors.add(authorCount);
 		}
@@ -96,6 +97,8 @@ public class GatRepository extends AbstractMongoRepository {
 
 		return authors;
 	}
+	
+	
 
 	public class AuthorCount implements Comparable<AuthorCount> {
 

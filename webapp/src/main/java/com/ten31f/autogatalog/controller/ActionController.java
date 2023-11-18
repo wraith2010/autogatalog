@@ -163,7 +163,7 @@ public class ActionController {
 	}
 
 	@GetMapping(path = "/download/{guid}")
-	public void test(@PathVariable("guid") String guid, HttpServletResponse httpServletResponse) throws IOException {
+	public void downloadStream(@PathVariable("guid") String guid, HttpServletResponse httpServletResponse) throws IOException {
 
 		Gat gat = getGatRepository().getOne(guid);
 
@@ -181,12 +181,16 @@ public class ActionController {
 
 		logger.atInfo().log("Starting stream");
 
-		int fileLength = (int) gridFSDownloadStream.getGridFSFile().getLength();
-		byte[] bytesToWriteTo = new byte[fileLength];
-		gridFSDownloadStream.read(bytesToWriteTo);
-		gridFSDownloadStream.close();
+		int data = gridFSDownloadStream.read();
 
-		httpServletResponse.getOutputStream().write(bytesToWriteTo);
+		while (data >= 0) {
+
+			httpServletResponse.getOutputStream().write((char) data);
+
+			data = gridFSDownloadStream.read();
+		}
+
+		gridFSDownloadStream.close();
 
 		Duration duration = Duration.ofMillis(now + System.currentTimeMillis());
 

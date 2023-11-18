@@ -111,27 +111,15 @@ public class FileRepository extends AbstractMongoRepository {
 
 	public String getFileAsBase64String(Gat gat) {
 
-		long start = System.currentTimeMillis();
-
-		try (GridFSDownloadStream gridFSDownloadStream =
-
-				getGridFSBucket().openDownloadStream(gat.getImagefileObjectID())) {
+		try (GridFSDownloadStream gridFSDownloadStream = getGridFSBucket()
+				.openDownloadStream(gat.getImagefileObjectID())) {
 
 			byte[] bytes = gridFSDownloadStream.readAllBytes();
-
-			logger.atInfo()
-					.log(String.format("'%s' Image size %s(%skb) ", gat.getTitle(), bytes.length, bytes.length / 1024));
 
 			return Base64.getEncoder().encodeToString(bytes);
 		} catch (IOException | MongoGridFSException exception) {
 			logger.catching(exception);
 			return null;
-		} finally {
-			Duration duration = Duration.ofMillis(System.currentTimeMillis() - start);
-
-			logger.atInfo().log(String.format("Image string retrieval %s mills(%s seconds) ", duration.toMillis(),
-					duration.toSeconds()));
-
 		}
 	}
 
