@@ -109,7 +109,7 @@ public class FileRepository extends AbstractMongoRepository {
 		}
 	}
 
-	public String getFileAsBase64String(Gat gat) {
+	public String getImageFileAsBase64String(Gat gat) {
 
 		try (GridFSDownloadStream gridFSDownloadStream = getGridFSBucket()
 				.openDownloadStream(gat.getImagefileObjectID())) {
@@ -146,7 +146,6 @@ public class FileRepository extends AbstractMongoRepository {
 
 	private GridFSBucket getGridFSBucket() {
 		if (gridFSBucket == null) {
-
 			setGridFSBucket(GridFSBuckets.create(getMongoDatabase(), BUCKET_NAME));
 		}
 		return gridFSBucket;

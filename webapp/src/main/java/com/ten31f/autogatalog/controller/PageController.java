@@ -29,8 +29,6 @@ public class PageController {
 
 	private static final Logger logger = LogManager.getLogger(PageController.class);
 
-	// private static final int PAGE_SIZE = 5;
-
 	@Value("${spring.application.name}")
 	private String appName;
 
@@ -65,7 +63,7 @@ public class PageController {
 		filteredGats.stream().forEach(this::cleanDescription);
 
 		Map<String, String> imageStrings = filteredGats.stream().filter(gat -> gat.getImagefileObjectID() != null)
-				.collect(Collectors.toMap(Gat::getGuid, gat -> getFileRepository().getFileAsBase64String(gat)));
+				.collect(Collectors.toMap(Gat::getGuid, gat -> getFileRepository().getImageFileAsBase64String(gat)));
 
 		model.addAttribute("imageStrings", imageStrings);
 
@@ -108,7 +106,7 @@ public class PageController {
 
 		model.addAttribute("author", author);
 		model.addAttribute("imageStrings", gats.stream().filter(gat -> gat.getImagefileObjectID() != null)
-				.collect(Collectors.toMap(Gat::getGuid, gat -> getFileRepository().getFileAsBase64String(gat))));
+				.collect(Collectors.toMap(Gat::getGuid, gat -> getFileRepository().getImageFileAsBase64String(gat))));
 
 		model.addAttribute("gats", gats);
 
@@ -136,7 +134,9 @@ public class PageController {
 		cleanDescription(gat);
 
 		model.addAttribute("gat", gat);
-		model.addAttribute("imageString", getFileRepository().getFileAsBase64String(gat));
+		if (gat.getImagefileObjectID() != null) {
+			model.addAttribute("imageString", getFileRepository().getImageFileAsBase64String(gat));
+		}
 
 		return "detail";
 	}
