@@ -125,7 +125,7 @@ public class FileRepository extends AbstractMongoRepository {
 
 	public GridFSDownloadStream getFileAsGridFSDownloadStream(ObjectId objectId) {
 
-		return getGridFSBucket().openDownloadStream(objectId);
+		return getGridFSBucket().openDownloadStream(objectId, true);
 
 	}
 
