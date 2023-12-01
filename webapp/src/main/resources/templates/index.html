@@ -43,7 +43,7 @@
 		<section th:each="author: ${pagenatedAuthors}">
 			<header>
 				<a th:href="@{/(author = ${author.author})}">
-					<h2 th:text="${author.author} + '(' + ${author.count} + ')'" />
+					<h2 th:text="${author.author}"/><h2 th:if="${author.count > 4}" th:text="'(' + ${author.count} + ')'" />
 				</a>
 			</header>
 
@@ -69,14 +69,6 @@
 							</a>
 						</li>
 					</ul>
-				</a>
-			</article>
-
-			<article th:if="${author.count &gt; 5}">
-				<a th:href="@{/(author = ${author.author})}">
-					<figure>
-						<!--<img th:src="@{/img/ellipse-dots.gif}" width="50px" alt="elipse">-->
-					</figure>
 				</a>
 			</article>
 		</section>

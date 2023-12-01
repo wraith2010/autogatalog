@@ -162,6 +162,9 @@ public class ActionController {
 
 		Gat gat = getGatRepository().getOne(guid);
 
+		if (gat.getFileObjectID() == null)
+			return;
+
 		GridFSDownloadStream gridFSDownloadStream = getFileRepository()
 				.getFileAsGridFSDownloadStream(gat.getFileObjectID());
 

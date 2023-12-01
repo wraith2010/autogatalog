@@ -1,3 +1,11 @@
+section header h2 {
+	display: inline;
+}
+
+section header a {
+	text-decoration: none;
+}
+
 aside ul {
 	list-style: none;
 	color: #FFFFFF;
@@ -29,6 +37,8 @@ article a header {
 article a {
 	text-decoration: none;
 }
+
+
 
 article a header h3 {
 	width: 100%;

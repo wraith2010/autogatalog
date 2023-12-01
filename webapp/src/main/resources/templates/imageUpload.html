@@ -40,7 +40,7 @@
 						</a>
 					</li>
 					<li>
-						<a th:href="@{'/download/' + ${guid}}">
+						<a th:href="@{'/download/' + ${guid}}" th:if="${gat.fileObjectID ne null}" >
 							<img alt="download icon" class="download" th:src="@{'/img/download.png'}" />
 						</a>
 					</li>

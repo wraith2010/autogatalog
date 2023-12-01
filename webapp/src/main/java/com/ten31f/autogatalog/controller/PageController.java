@@ -82,7 +82,7 @@ public class PageController {
 			gatMap.put(author, new ArrayList<>());
 		}
 
-		if (gatMap.get(author).size() > 4)
+		if (gatMap.get(author).size() > 3)
 			return;
 
 		gatMap.get(author).add(gat);
