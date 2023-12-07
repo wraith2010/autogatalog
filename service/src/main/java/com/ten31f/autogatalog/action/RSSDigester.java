@@ -58,7 +58,7 @@ public class RSSDigester {
 			}
 
 		} catch (XMLStreamException xmlStreamException) {
-			logger.error(String.format("Error parsing url for (%s)", getWatchURL().getRSSURL(), null),
+			logger.error(String.format("Error parsing url for (%s)", getWatchURL().getRssURL(), null),
 					xmlStreamException);
 		}
 
@@ -145,7 +145,7 @@ public class RSSDigester {
 	private InputStream read() {
 		try {
 			getWatchURL().setLastCheck(Instant.now());
-			return getWatchURL().getRSSURL().openStream();
+			return getWatchURL().getRssURL().openStream();
 		} catch (IOException ioException) {
 			throw new RuntimeException(ioException);
 		}

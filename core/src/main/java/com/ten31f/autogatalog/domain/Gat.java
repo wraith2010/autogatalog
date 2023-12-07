@@ -15,6 +15,11 @@ import org.bson.BsonString;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class Gat {
 
 	public static final String MONGO_FIELD_ID = "_id";
@@ -47,86 +52,6 @@ public class Gat {
 
 	public Gat() {
 		setTags(new ArrayList<>());
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public URL getLinkURL() {
-		return linkURL;
-	}
-
-	public void setLinkURL(URL linkURL) {
-		this.linkURL = linkURL;
-	}
-
-	public String getGuid() {
-		return guid;
-	}
-
-	public void setGuid(String guid) {
-		this.guid = guid;
-	}
-
-	public Date getPublishedDate() {
-		return publishedDate;
-	}
-
-	public void setPublishedDate(Date publishedDate) {
-		this.publishedDate = publishedDate;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public String getAuthor() {
-		return author;
-	}
-
-	public void setAuthor(String author) {
-		this.author = author;
-	}
-
-	public String getImageURL() {
-		return imageURL;
-	}
-
-	public void setImageURL(String imageURL) {
-		this.imageURL = imageURL;
-	}
-
-	public ObjectId getFileObjectID() {
-		return fileObjectID;
-	}
-
-	public void setFileObjectID(ObjectId fileObjectID) {
-		this.fileObjectID = fileObjectID;
-	}
-
-	public ObjectId getImagefileObjectID() {
-		return imagefileObjectID;
-	}
-
-	public void setImagefileObjectID(ObjectId imagefileObjectID) {
-		this.imagefileObjectID = imagefileObjectID;
-	}
-
-	public void setTags(List<String> tags) {
-		this.tags = tags;
-	}
-
-	public List<String> getTags() {
-		return tags;
 	}
 
 	public Document toDocument() {

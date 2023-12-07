@@ -23,9 +23,10 @@ import com.mongodb.client.result.UpdateResult;
 import com.ten31f.autogatalog.domain.Gat;
 import com.ten31f.autogatalog.util.AuthorNormalizer;
 
-public class GatRepository extends AbstractMongoRepository {
+import lombok.extern.slf4j.Slf4j;
 
-	private static final Logger logger = LogManager.getLogger(GatRepository.class);
+@Slf4j
+public class GatRepository extends AbstractMongoRepository {
 
 	public static final String COLLECTION_GATS = "gats";
 
@@ -35,7 +36,7 @@ public class GatRepository extends AbstractMongoRepository {
 
 	public long insertGats(List<Gat> gats) {
 
-		return gats.stream().map(this::insertGat).filter(result -> result).count();
+		return gats.stream().map(this::insertGat).count();
 
 	}
 
@@ -51,7 +52,7 @@ public class GatRepository extends AbstractMongoRepository {
 
 		Duration duration = Duration.ofMillis(System.currentTimeMillis() - start);
 
-		logger.atInfo().log(String.format("retrieve all duration %s mills(%s seconds) ", duration.toMillis(),
+		log.atInfo().log(String.format("retrieve all duration %s mills(%s seconds) ", duration.toMillis(),
 				duration.toSeconds()));
 
 		return gats;
@@ -155,7 +156,7 @@ public class GatRepository extends AbstractMongoRepository {
 			gatDocuments.insertOne(gat.toDocument());
 
 		} catch (MongoWriteException mongoWriteException) {
-			logger.atTrace().log(mongoWriteException.getMessage());
+			log.atTrace().log(mongoWriteException.getMessage());
 			return false;
 		}
 
@@ -166,7 +167,7 @@ public class GatRepository extends AbstractMongoRepository {
 
 		UpdateResult updateResult = getCollection().replaceOne(Filters.eq("guid", gat.getGuid()), gat.toDocument());
 
-		logger.atDebug().log(String.format("Update result:\t%s", updateResult.toString()));
+		log.atDebug().log(String.format("Update result:\t%s", updateResult.toString()));
 	}
 
 	public List<Gat> getGatsWithOutImages() {

@@ -47,7 +47,7 @@ public class WatchURLRepository extends AbstractMongoRepository {
 
 		MongoCollection<Document> watchURLDocuments = getCollection();
 
-		if (getCollection().countDocuments(Filters.eq("rssURL", watchURL.getRSSURL().toString())) > 0)
+		if (getCollection().countDocuments(Filters.eq("rssURL", watchURL.getRssURL().toString())) > 0)
 			return false;
 
 		try {
@@ -79,7 +79,7 @@ public class WatchURLRepository extends AbstractMongoRepository {
 
 	public void update(WatchURL watchURL) {
 
-		UpdateResult updateResult = getCollection().replaceOne(Filters.eq("rssURL", watchURL.getRSSURL().toString()),
+		UpdateResult updateResult = getCollection().replaceOne(Filters.eq("rssURL", watchURL.getRssURL().toString()),
 				watchURL.toDocument());
 
 		logger.atDebug().log(String.format("Update result:\t%s", gson.toJson(updateResult)));

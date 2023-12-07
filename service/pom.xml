@@ -33,6 +33,10 @@
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-mongodb</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -47,7 +51,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>com.ten31f.autogatalog.service.App</mainClass>
+							<mainClass>com.ten31f.autogatalog.App</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

@@ -5,18 +5,16 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.ten31f.autogatalog.domain.Gat;
 import com.ten31f.autogatalog.repository.FileRepository;
 import com.ten31f.autogatalog.repository.GatRepository;
 import com.ten31f.autogatalog.repository.LbryRepository;
 import com.ten31f.autogatalog.schedule.TrackingScheduledExecutorService;
 
-public class Downloadrequestor implements Runnable {
+import lombok.extern.slf4j.Slf4j;
 
-	private static final Logger logger = LogManager.getLogger(Downloadrequestor.class);
+@Slf4j
+public class Downloadrequestor implements Runnable {
 
 	private LbryRepository lbryRepository = null;
 	private FileRepository fileRepository = null;
@@ -42,24 +40,24 @@ public class Downloadrequestor implements Runnable {
 		List<Gat> gats = getGatRepository().getGatGAtsWithOutFile();
 
 		if (gats.isEmpty()) {
-			logger.atInfo().log("no gats left to download");
+			log.atInfo().log("no gats left to download");
 		} else {
-			logger.atInfo().log(String.format("(%s) gats pending download", gats.size()));
+			log.atInfo().log(String.format("(%s) gats pending download", gats.size()));
 		}
 
 		int index = 0;
 		for (Gat gat : gats) {
 			index++;
 			if (index > getDownloadBatchLimit()) {
-				logger.atInfo().log(String.format("Download limit(%s) hit", getDownloadBatchLimit()));
+				log.atInfo().log(String.format("Download limit(%s) hit", getDownloadBatchLimit()));
 				return;
 			}
 			try {
 
-				logger.atInfo().log(String.format("Downloading files for (%s)", gat.getTitle()));
+				log.atInfo().log(String.format("Downloading files for (%s)", gat.getTitle()));
 
 				if (getTrackingScheduledExecutorService().handled(gat)) {
-					logger.atInfo().log(String.format("Monitor already in place for (%s)", gat.getTitle()));
+					log.atInfo().log(String.format("Monitor already in place for (%s)", gat.getTitle()));
 				} else {
 					File file = getLbryRepository().get(gat);
 
@@ -73,7 +71,7 @@ public class Downloadrequestor implements Runnable {
 					}
 				}
 			} catch (IOException ioException) {
-				logger.catching(ioException);
+				log.error("Exception reqeusting download", ioException);
 			}
 
 		}

@@ -12,8 +12,6 @@ import java.util.Base64;
 import java.util.List;
 import java.util.function.Consumer;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
@@ -26,9 +24,11 @@ import com.mongodb.client.gridfs.model.GridFSUploadOptions;
 import com.mongodb.client.model.Filters;
 import com.ten31f.autogatalog.domain.Gat;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class FileRepository extends AbstractMongoRepository {
 
-	private static final Logger logger = LogManager.getLogger(FileRepository.class);
 	public static final String BUCKET_NAME = "gatFileBucket";
 
 	private GridFSBucket gridFSBucket = null;
@@ -43,7 +43,7 @@ public class FileRepository extends AbstractMongoRepository {
 			GridFSUploadOptions options = new GridFSUploadOptions().chunkSizeBytes(1048576)
 					.metadata(new Document("type", "zip archive"));
 			ObjectId fileId = getGridFSBucket().uploadFromStream(file.getName(), streamToUploadFrom, options);
-			logger.atInfo().log(String.format("The file id of the uploaded file is: %s", fileId.toHexString()));
+			log.atInfo().log(String.format("The file id of the uploaded file is: %s", fileId.toHexString()));
 			return fileId;
 		}
 
@@ -59,7 +59,7 @@ public class FileRepository extends AbstractMongoRepository {
 			}
 
 			ObjectId fileId = getGridFSBucket().uploadFromStream(name, inputStream, options);
-			logger.atInfo().log(String.format("The file id of the uploaded file is: %s", fileId.toHexString()));
+			log.atInfo().log(String.format("The file id of the uploaded file is: %s", fileId.toHexString()));
 			return fileId;
 		}
 
@@ -118,7 +118,7 @@ public class FileRepository extends AbstractMongoRepository {
 
 			return Base64.getEncoder().encodeToString(bytes);
 		} catch (IOException | MongoGridFSException exception) {
-			logger.catching(exception);
+			log.error("exception retreiveing image as base 64 string", exception);
 			return null;
 		}
 	}
@@ -133,13 +133,13 @@ public class FileRepository extends AbstractMongoRepository {
 
 		long now = -System.currentTimeMillis();
 
-		logger.atInfo().log("Starting stream");
+		log.atInfo().log("Starting stream");
 
 		getGridFSBucket().downloadToStream(objectId, outputStream, true);
 
 		Duration duration = Duration.ofMillis(now + System.currentTimeMillis());
 
-		logger.atInfo().log(String.format("Duration: %s seconds", duration.getSeconds()));
+		log.atInfo().log(String.format("Duration: %s seconds", duration.getSeconds()));
 
 		outputStream.close();
 	}

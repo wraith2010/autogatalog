@@ -19,6 +19,7 @@
 		<maven.compiler.source>20</maven.compiler.source>
 		<maven.compiler.target>20</maven.compiler.target>
 		<mongo.version>4.11.1</mongo.version>
+		<lombok.version>1.18.30</lombok.version>
 	</properties>
 
 	<dependencyManagement>
@@ -86,18 +87,7 @@
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-starter</artifactId>
-				<version>3.2.0-M1</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.springframework.boot</groupId>
-						<artifactId>spring-boot-starter-logging</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.logging.log4j</groupId>
-				<artifactId>log4j-api</artifactId>
-				<version>2.20.0</version>
+				<version>3.2.0-M1</version>				
 			</dependency>
 			<dependency>
 				<groupId>org.apache.logging.log4j</groupId>
@@ -114,13 +104,12 @@
 				<artifactId>spring-data-mongodb</artifactId>
 				<version>4.1.5</version>
 			</dependency>
-			<!-- https://mvnrepository.com/artifact/org.slf4j/jul-to-slf4j -->
 			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>jul-to-slf4j</artifactId>
-				<version>2.0.9</version>
+				<groupId>org.projectlombok</groupId>
+				<artifactId>lombok</artifactId>
+				<version>${lombok.version}</version>
+				<scope>provided</scope>
 			</dependency>
-
 		</dependencies>
 	</dependencyManagement>
 
@@ -139,7 +128,7 @@
 				</plugin>
 				<plugin>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.8.0</version>
+					<version>3.10.1</version>
 				</plugin>
 				<plugin>
 					<artifactId>maven-surefire-plugin</artifactId>
@@ -199,7 +188,6 @@
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
-
 
 
 </project>

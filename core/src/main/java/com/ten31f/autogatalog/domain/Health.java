@@ -1,6 +1,8 @@
 package com.ten31f.autogatalog.domain;
 
+import java.net.URL;
 import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 
 import org.bson.BsonDateTime;
@@ -8,9 +10,15 @@ import org.bson.BsonInt32;
 import org.bson.BsonObjectId;
 import org.bson.BsonString;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
 import com.mongodb.client.gridfs.model.GridFSFile;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class Health {
 
 	private static final String MONGO_FIELD_GAT_COUNT = "gatCount";
@@ -37,63 +45,7 @@ public class Health {
 
 	public Health() {
 		setCreatedInstant(Instant.now());
-	}
-
-	public int getGatCount() {
-		return gatCount;
-	}
-
-	public void setGatCount(int gatCount) {
-		this.gatCount = gatCount;
-	}
-
-	public int getFileCount() {
-		return fileCount;
-	}
-
-	public void setFileCount(int fileCount) {
-		this.fileCount = fileCount;
-	}
-
-	public List<GridFSFile> getOrphans() {
-		return orphans;
-	}
-
-	public void setOrphans(List<GridFSFile> orphans) {
-		this.orphans = orphans;
-	}
-
-	public List<Gat> getImagelessGats() {
-		return imagelessGats;
-	}
-
-	public void setImagelessGats(List<Gat> imagelessGats) {
-		this.imagelessGats = imagelessGats;
-	}
-
-	public List<Gat> getPendingDownload() {
-		return pendingDownload;
-	}
-
-	public void setPendingDownload(List<Gat> pendingDownload) {
-		this.pendingDownload = pendingDownload;
-	}
-
-	public void setCreatedInstant(Instant createdInstant) {
-		this.createdInstant = createdInstant;
-	}
-
-	public Instant getCreatedInstant() {
-		return createdInstant;
-	}
-
-	public int getPendingDownloadCount() {
-		return pendingDownloadCount;
-	}
-
-	public void setPendingDownloadCount(int pendingDownloadCount) {
-		this.pendingDownloadCount = pendingDownloadCount;
-	}
+	}	
 
 	public Document toDocument() {
 

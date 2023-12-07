@@ -15,8 +15,6 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.bson.BsonArray;
 import org.bson.BsonBoolean;
 import org.bson.BsonDocument;
@@ -26,9 +24,10 @@ import org.bson.BsonValue;
 
 import com.ten31f.autogatalog.domain.Gat;
 
-public class LbryRepository {
+import lombok.extern.slf4j.Slf4j;
 
-	private static final Logger logger = LogManager.getLogger(LbryRepository.class);
+@Slf4j
+public class LbryRepository {
 
 	private static final String FORMAT_STRING = "astream#%s";
 
@@ -83,7 +82,7 @@ public class LbryRepository {
 
 		int totalPages = resultDocument.getInt32("total_pages").getValue();
 
-		logger.atInfo().log(String.format("Retrieveing %s pages of files info", totalPages));
+		log.atInfo().log(String.format("Retrieveing %s pages of files info", totalPages));
 
 		statuses.putAll(parseFilesResponse(resultDocument));
 
@@ -163,7 +162,8 @@ public class LbryRepository {
 		BsonDocument resultBsonDocument = (BsonDocument) responseBsonDocument.get("result");
 
 		if (resultBsonDocument.get("download_path") == null) {
-			logger.atError().log(String.format("No DownLoadPath: \t%s\t%s", resultBsonDocument.toJson(), gat.getGuid()));
+			log.atError()
+					.log(String.format("No DownLoadPath: \t%s\t%s", resultBsonDocument.toJson(), gat.getGuid()));
 			return null;
 		}
 
@@ -204,7 +204,7 @@ public class LbryRepository {
 			return false;
 
 		if (!item.get("completed").asBoolean().getValue()) {
-			logger.atInfo().log(String.format("%s remaining (%s/%s)", gat.getTitle(), item.get("blobs_remaining"),
+			log.atInfo().log(String.format("%s remaining (%s/%s)", gat.getTitle(), item.get("blobs_remaining"),
 					item.get("blobs_in_stream")));
 		}
 
@@ -231,9 +231,9 @@ public class LbryRepository {
 		HttpResponse httpResponse = getHttpClient().execute(httpPost);
 
 		if (httpResponse.getStatusLine().getStatusCode() != 200) {
-			logger.atError().log(String.format("http reqeust:\t%s", httpPost));
-			logger.atError().log(String.format("Response status:\t%s", httpResponse.getStatusLine()));
-			logger.atError().log(String.format("Response\t%s", httpResponse));
+			log.atError().log(String.format("http reqeust:\t%s", httpPost));
+			log.atError().log(String.format("Response status:\t%s", httpResponse.getStatusLine()));
+			log.atError().log(String.format("Response\t%s", httpResponse));
 		}
 
 		return httpResponse;

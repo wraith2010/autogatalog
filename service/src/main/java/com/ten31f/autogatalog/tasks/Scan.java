@@ -62,7 +62,7 @@ public class Scan implements Runnable {
 			logger.atError().log(exception);
 		}
 
-		logger.atInfo().log(String.format("Scan complete for(%s)", rssDigester.getWatchURL().getRSSURL()));
+		logger.atInfo().log(String.format("Scan complete for(%s)", rssDigester.getWatchURL().getRssURL()));
 
 	}
 

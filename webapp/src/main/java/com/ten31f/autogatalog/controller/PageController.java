@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -24,10 +22,11 @@ import com.ten31f.autogatalog.repository.GatRepository;
 import com.ten31f.autogatalog.repository.GatRepository.AuthorCount;
 import com.ten31f.autogatalog.util.AuthorNormalizer;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Controller
 public class PageController {
-
-	private static final Logger logger = LogManager.getLogger(PageController.class);
 
 	@Value("${spring.application.name}")
 	private String appName;
@@ -99,7 +98,7 @@ public class PageController {
 
 		Duration duration = Duration.ofMillis(System.currentTimeMillis() - start);
 
-		logger.atInfo()
+		log.atInfo()
 				.log(String.format("gat retrieval %s mills(%s seconds) ", duration.toMillis(), duration.toSeconds()));
 
 		gats.stream().forEach(this::cleanDescription);
@@ -112,7 +111,7 @@ public class PageController {
 
 		duration = Duration.ofMillis(System.currentTimeMillis() - start);
 
-		logger.atInfo().log(
+		log.atInfo().log(
 				String.format("Author page duration %s mills(%s seconds) ", duration.toMillis(), duration.toSeconds()));
 
 		return "author";

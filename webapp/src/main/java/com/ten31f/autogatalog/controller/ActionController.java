@@ -7,8 +7,6 @@ import java.net.URI;
 import java.time.Duration;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -30,11 +28,11 @@ import com.ten31f.autogatalog.repository.GatRepository;
 import com.ten31f.autogatalog.repository.WatchURLRepository;
 
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Controller
 public class ActionController {
-
-	private static final Logger logger = LogManager.getLogger(ActionController.class);
 
 	@Autowired
 	private GatRepository gatRepository;
@@ -71,7 +69,7 @@ public class ActionController {
 
 		attributes.addFlashAttribute("message", String.format("Deleteing:\t%s", objectId));
 
-		logger.atInfo().log(String.format("Deleteing:\t%s", objectId));
+		log.atInfo().log(String.format("Deleteing:\t%s", objectId));
 
 		return "redirect:/orphan";
 	}
@@ -92,7 +90,7 @@ public class ActionController {
 		try {
 			ObjectId objectId = getFileRepository().uploadFile(new BufferedInputStream(file.getInputStream()),
 					fileName);
-			logger.atInfo().log(String.format("You successfully uploaded %s(%s)!", fileName, objectId));
+			log.atInfo().log(String.format("You successfully uploaded %s(%s)!", fileName, objectId));
 			// return success response
 			attributes.addFlashAttribute("message",
 					String.format("You successfully uploaded %s(%s)!", fileName, objectId));
@@ -103,8 +101,8 @@ public class ActionController {
 				getGatRepository().repalceGat(gat);
 			}
 
-		} catch (IOException e) {
-			logger.catching(e);
+		} catch (IOException exception) {
+			log.error("Failed upload",exception);
 
 			attributes.addFlashAttribute("message", "You failed to uploaded " + fileName + '!');
 		}
@@ -122,7 +120,7 @@ public class ActionController {
 				attributes.addFlashAttribute("message", String.format("(%s) is a duplicate", rssURL));
 			}
 		} catch (MalformedURLException malformedURLException) {
-			logger.catching(malformedURLException);
+			log.error("malformed url excpetion", malformedURLException);
 			attributes.addFlashAttribute("message",
 					String.format("(%s) is a mallformed url: %s", rssURL, malformedURLException.getMessage()));
 			return "redirect:/watch";
@@ -181,7 +179,7 @@ public class ActionController {
 
 		long now = -System.currentTimeMillis();
 
-		logger.atInfo().log("Starting stream");
+		log.atInfo().log("Starting stream");
 
 		int data = gridFSDownloadStream.read();
 
@@ -196,17 +194,17 @@ public class ActionController {
 
 		Duration duration = Duration.ofMillis(now + System.currentTimeMillis());
 
-		logger.atInfo().log(String.format("Duration: %s seconds", duration.getSeconds()));
+		log.atInfo().log(String.format("Duration: %s seconds", duration.getSeconds()));
 
 	}
 
 	private void logFileInfo(GridFSFile gridFSFile) {
 
-		if (logger.isInfoEnabled()) {
-			logger.info(String.format("ID...........: %s", gridFSFile.getId()));
-			logger.info(String.format("FileName.....: %s", gridFSFile.getFilename()));
-			logger.info(String.format("Length.......: %s", gridFSFile.getLength()));
-			logger.info(String.format("Upload Date..: %s", gridFSFile.getUploadDate()));
+		if (log.isInfoEnabled()) {
+			log.info(String.format("ID...........: %s", gridFSFile.getId()));
+			log.info(String.format("FileName.....: %s", gridFSFile.getFilename()));
+			log.info(String.format("Length.......: %s", gridFSFile.getLength()));
+			log.info(String.format("Upload Date..: %s", gridFSFile.getUploadDate()));
 		}
 	}
 

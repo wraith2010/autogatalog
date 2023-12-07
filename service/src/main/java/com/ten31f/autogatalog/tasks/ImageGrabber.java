@@ -5,17 +5,18 @@ import java.net.URI;
 import java.net.URL;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.bson.types.ObjectId;
 
 import com.ten31f.autogatalog.domain.Gat;
 import com.ten31f.autogatalog.repository.FileRepository;
 import com.ten31f.autogatalog.repository.GatRepository;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class ImageGrabber implements Runnable {
 
-	private static final Logger logger = LogManager.getLogger(ImageGrabber.class);
+	
 
 	private GatRepository gatRepository = null;
 	private FileRepository fileRepository = null;
@@ -35,16 +36,16 @@ public class ImageGrabber implements Runnable {
 		gats = gats.stream().filter(gat -> gat.getImagefileObjectID() == null).toList();
 
 		if (gats.isEmpty()) {
-			logger.atInfo().log("no gats images left to download");
+			log.atInfo().log("no gats images left to download");
 		} else {
-			logger.atInfo().log(String.format("(%s) gat images pending download", gats.size()));
+			log.atInfo().log(String.format("(%s) gat images pending download", gats.size()));
 		}
 
 		int index = 0;
 		for (Gat gat : gats) {
 			index++;
 			if (index > getDownloadBatchLimit() && getDownloadBatchLimit() != -1) {
-				logger.atInfo().log(String.format("Download limit(%s) hit", getDownloadBatchLimit()));
+				log.atInfo().log(String.format("Download limit(%s) hit", getDownloadBatchLimit()));
 				return;
 			}
 
@@ -55,7 +56,7 @@ public class ImageGrabber implements Runnable {
 				gat.setImagefileObjectID(fileObjectID);
 				getGatRepository().repalceGat(gat);
 			} catch (IOException ioException) {
-				logger.atError().log(String.format("Cant download image for: %s(%s,%s)", gat.getTitle(),
+				log.atError().log(String.format("Cant download image for: %s(%s,%s)", gat.getTitle(),
 						gat.getAuthor(), gat.getGuid()));
 			}
 		}

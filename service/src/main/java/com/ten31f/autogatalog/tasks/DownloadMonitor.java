@@ -7,8 +7,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.Map;
 
 import org.apache.http.ParseException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.bson.types.ObjectId;
 
 import com.ten31f.autogatalog.domain.Gat;
@@ -19,9 +17,10 @@ import com.ten31f.autogatalog.repository.LbryRepository.DownloadStatus;
 import com.ten31f.autogatalog.schedule.TrackingScheduledExecutorService;
 import com.ten31f.autogatalog.taskinterface.GatBased;
 
-public class DownloadMonitor implements Runnable, GatBased {
+import lombok.extern.slf4j.Slf4j;
 
-	private static final Logger logger = LogManager.getLogger(DownloadMonitor.class);
+@Slf4j
+public class DownloadMonitor implements Runnable, GatBased {
 
 	private static Instant checkTime = null;
 	private static Map<String, DownloadStatus> status;
@@ -49,21 +48,22 @@ public class DownloadMonitor implements Runnable, GatBased {
 	public void run() {
 
 		checkStatuses();
-		
+
 		DownloadStatus downloadStatus = getStatus().get(getGat().getGuid());
-		
-		if(downloadStatus == null) {
-			logger.atInfo().log(String.format("No status for (%s)", getGat().getTitle()));
+
+		if (downloadStatus == null) {
+			log.atInfo().log(String.format("No status for (%s)", getGat().getTitle()));
 			return;
 		}
-		
-		if(!downloadStatus.isComplete()) {
-			logger.atInfo().log(String.format("Downloading not complete for (%s): %s percent", getGat().getTitle(), downloadStatus.getPercentage()));
+
+		if (!downloadStatus.isComplete()) {
+			log.atInfo().log(String.format("Downloading not complete for (%s): %s percent", getGat().getTitle(),
+					downloadStatus.getPercentage()));
 			return;
 		}
-		
+
 		try {
-			logger.atInfo().log(String.format("Downloading complete for (%s) uploading", getGat().getTitle()));
+			log.atInfo().log(String.format("Downloading complete for (%s) uploading", getGat().getTitle()));
 
 			ObjectId fileObjectID = getFileRepository().uploadFile(getFile());
 			getGat().setFileObjectID(fileObjectID);
@@ -72,7 +72,7 @@ public class DownloadMonitor implements Runnable, GatBased {
 			getTrackingScheduledExecutorService().cancel(getGat());
 
 		} catch (IOException | ParseException exception) {
-			logger.catching(exception);
+			log.error("Error monitor download", exception);
 		}
 
 	}
@@ -86,8 +86,8 @@ public class DownloadMonitor implements Runnable, GatBased {
 		try {
 			setStatus(getLbryRepository().getDownloadStatus());
 			setCheckTime(Instant.now());
-		} catch (IOException e) {
-			logger.catching(e);
+		} catch (IOException exception) {
+			log.error("Error checking status", exception);
 		}
 
 	}
