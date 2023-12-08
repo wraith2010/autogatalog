@@ -8,12 +8,14 @@ import com.ten31f.autogatalog.repository.FileRepository;
 import com.ten31f.autogatalog.repository.GatRepository;
 import com.ten31f.autogatalog.repository.HealthRepository;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
+@Getter
+@Setter
 @Slf4j
 public class HealthCheck implements Runnable {
-
-	
 
 	private FileRepository fileRepository;
 	private GatRepository gatRepository;
@@ -46,30 +48,6 @@ public class HealthCheck implements Runnable {
 
 		getHealthRepository().updateHealth(health);
 
-	}
-
-	public FileRepository getFileRepository() {
-		return fileRepository;
-	}
-
-	public void setFileRepository(FileRepository fileRepository) {
-		this.fileRepository = fileRepository;
-	}
-
-	public GatRepository getGatRepository() {
-		return gatRepository;
-	}
-
-	public void setGatRepository(GatRepository gatRepository) {
-		this.gatRepository = gatRepository;
-	}
-
-	public HealthRepository getHealthRepository() {
-		return healthRepository;
-	}
-
-	public void setHealthRepository(HealthRepository healthRepository) {
-		this.healthRepository = healthRepository;
 	}
 
 }

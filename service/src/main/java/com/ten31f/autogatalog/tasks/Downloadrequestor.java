@@ -11,8 +11,12 @@ import com.ten31f.autogatalog.repository.GatRepository;
 import com.ten31f.autogatalog.repository.LbryRepository;
 import com.ten31f.autogatalog.schedule.TrackingScheduledExecutorService;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
+@Getter
+@Setter
 @Slf4j
 public class Downloadrequestor implements Runnable {
 
@@ -41,9 +45,10 @@ public class Downloadrequestor implements Runnable {
 
 		if (gats.isEmpty()) {
 			log.atInfo().log("no gats left to download");
-		} else {
-			log.atInfo().log(String.format("(%s) gats pending download", gats.size()));
+			return;
 		}
+
+		log.atInfo().log(String.format("(%s) gats pending download", gats.size()));
 
 		int index = 0;
 		for (Gat gat : gats) {
@@ -75,47 +80,6 @@ public class Downloadrequestor implements Runnable {
 			}
 
 		}
-	}
-
-	private FileRepository getFileRepository() {
-		return fileRepository;
-	}
-
-	private void setFileRepository(FileRepository fileRepository) {
-		this.fileRepository = fileRepository;
-	}
-
-	private GatRepository getGatRepository() {
-		return gatRepository;
-	}
-
-	private void setGatRepository(GatRepository gatRepository) {
-		this.gatRepository = gatRepository;
-	}
-
-	private LbryRepository getLbryRepository() {
-		return lbryRepository;
-	}
-
-	private void setLbryRepository(LbryRepository lbryRepository) {
-		this.lbryRepository = lbryRepository;
-	}
-
-	private int getDownloadBatchLimit() {
-		return downloadBatchLimit;
-	}
-
-	private void setDownloadBatchLimit(int downloadBatchLimit) {
-		this.downloadBatchLimit = downloadBatchLimit;
-	}
-
-	private TrackingScheduledExecutorService getTrackingScheduledExecutorService() {
-		return trackingScheduledExecutorService;
-	}
-
-	private void setTrackingScheduledExecutorService(
-			TrackingScheduledExecutorService trackingScheduledExecutorService) {
-		this.trackingScheduledExecutorService = trackingScheduledExecutorService;
 	}
 
 }

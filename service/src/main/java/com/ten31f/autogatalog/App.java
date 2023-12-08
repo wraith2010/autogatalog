@@ -1,79 +1,59 @@
 package com.ten31f.autogatalog;
 
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 
-import com.ten31f.autogatalog.repository.FileRepository;
-import com.ten31f.autogatalog.repository.GatRepository;
-import com.ten31f.autogatalog.repository.HealthRepository;
-import com.ten31f.autogatalog.repository.LbryRepository;
-import com.ten31f.autogatalog.repository.WatchURLRepository;
 import com.ten31f.autogatalog.schedule.TrackingScheduledExecutorService;
 import com.ten31f.autogatalog.tasks.Downloadrequestor;
 import com.ten31f.autogatalog.tasks.HealthCheck;
 import com.ten31f.autogatalog.tasks.ImageGrabber;
 import com.ten31f.autogatalog.tasks.Scan;
 
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Getter
+@SpringBootApplication
 public class App {
 
-	private static final Logger logger = LogManager.getLogger(App.class);
+	@Autowired
+	private TrackingScheduledExecutorService trackingScheduledExecutorService;
 
-	private static final String DATABSE_URL_EXAMPLE = "mongodb://localhost:27017";
-	private static final String LBRY_NODE_ADDRESS_EXAMPLE = "http://localhost:5279/";
+	@Autowired
+	private Scan scan;
 
-	private static final String USAGE_PATTERN = "usage java -jar %s %s %s %s %s";
+	@Autowired
+	private Downloadrequestor downloadrequestor;
 
-	private static final String ARG_FLAG_DATABASE_URL = "-db";
-	private static final String ARG_FLAG_LBRY_URL = "-lb";
+	@Autowired
+	private ImageGrabber imageGrabber;
+
+	@Autowired
+	private HealthCheck healthCheck;
+
+	@EventListener(ApplicationReadyEvent.class)
+	public void doSomethingAfterStartup() {
+
+		log.info(String.format("Damon launch at: %s", Calendar.getInstance().getTime()));
+
+		getTrackingScheduledExecutorService().scheduleAtFixedRate(scan, 0, 4, TimeUnit.MINUTES);
+		getTrackingScheduledExecutorService().scheduleAtFixedRate(downloadrequestor, 0, 4, TimeUnit.MINUTES);
+		getTrackingScheduledExecutorService().scheduleAtFixedRate(imageGrabber, 6, 10, TimeUnit.MINUTES);
+		getTrackingScheduledExecutorService().scheduleAtFixedRate(healthCheck, 0, 5, TimeUnit.MINUTES);
+
+		log.info(String.format("Executors loaded at: %s", Calendar.getInstance().getTime()));
+
+	}
 
 	public static void main(String[] args) {
-
-		List<String> argsList = Arrays.asList(args);
-
-		if (argsList.size() != 4 || !argsList.contains(ARG_FLAG_DATABASE_URL)
-				|| !argsList.contains(ARG_FLAG_LBRY_URL)) {
-			printUsage();
-			return;
-		}
-
-		TrackingScheduledExecutorService trackingScheduledExecutorService = new TrackingScheduledExecutorService();
-
-		String databaseURL = argsList.get(argsList.indexOf(ARG_FLAG_DATABASE_URL) + 1);
-		String lbryURL = argsList.get(argsList.indexOf(ARG_FLAG_LBRY_URL) + 1);
-
-		Logger logger = LogManager.getRootLogger();
-
-		logger.atInfo().log(String.format("Damon launch at: %s", Calendar.getInstance().getTime()));
-
-		GatRepository gatRepository = new GatRepository(databaseURL);
-		WatchURLRepository watchURLRepository = new WatchURLRepository(databaseURL);
-		FileRepository fileRepository = new FileRepository(databaseURL);
-		LbryRepository lbryRepository = new LbryRepository(lbryURL);
-		HealthRepository healthRepository = new HealthRepository(databaseURL);
-
-		Scan scan = new Scan(watchURLRepository, gatRepository);
-		Downloadrequestor downloadrequestor = new Downloadrequestor(trackingScheduledExecutorService, gatRepository,
-				fileRepository, lbryRepository, 20);
-		ImageGrabber imageGrabber = new ImageGrabber(gatRepository, fileRepository, 20);
-		HealthCheck healthCheck = new HealthCheck(fileRepository, gatRepository, healthRepository);
-
-		trackingScheduledExecutorService.scheduleAtFixedRate(scan, 0, 4, TimeUnit.MINUTES);
-		trackingScheduledExecutorService.scheduleAtFixedRate(downloadrequestor, 0, 4, TimeUnit.MINUTES);
-		trackingScheduledExecutorService.scheduleAtFixedRate(imageGrabber, 6, 10, TimeUnit.MINUTES);
-		trackingScheduledExecutorService.scheduleAtFixedRate(healthCheck, 0, 5, TimeUnit.MINUTES);
-
+		SpringApplication.run(App.class, args);
 	}
 
-	private static void printUsage() {
-		String jarName = new java.io.File(App.class.getProtectionDomain().getCodeSource().getLocation().getPath())
-				.getName();
-
-		logger.atError().log(String.format(USAGE_PATTERN, jarName, ARG_FLAG_DATABASE_URL, DATABSE_URL_EXAMPLE,
-				ARG_FLAG_LBRY_URL, LBRY_NODE_ADDRESS_EXAMPLE));
-	}
 }

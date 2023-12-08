@@ -11,12 +11,14 @@ import com.ten31f.autogatalog.domain.Gat;
 import com.ten31f.autogatalog.repository.FileRepository;
 import com.ten31f.autogatalog.repository.GatRepository;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
+@Getter
+@Setter
 @Slf4j
 public class ImageGrabber implements Runnable {
-
-	
 
 	private GatRepository gatRepository = null;
 	private FileRepository fileRepository = null;
@@ -56,34 +58,10 @@ public class ImageGrabber implements Runnable {
 				gat.setImagefileObjectID(fileObjectID);
 				getGatRepository().repalceGat(gat);
 			} catch (IOException ioException) {
-				log.atError().log(String.format("Cant download image for: %s(%s,%s)", gat.getTitle(),
-						gat.getAuthor(), gat.getGuid()));
+				log.atError().log(String.format("Cant download image for: %s(%s,%s)", gat.getTitle(), gat.getAuthor(),
+						gat.getGuid()));
 			}
 		}
-	}
-
-	private GatRepository getGatRepository() {
-		return gatRepository;
-	}
-
-	private void setGatRepository(GatRepository gatRepository) {
-		this.gatRepository = gatRepository;
-	}
-
-	private int getDownloadBatchLimit() {
-		return downloadBatchLimit;
-	}
-
-	private void setDownloadBatchLimit(int downloadBatchLimit) {
-		this.downloadBatchLimit = downloadBatchLimit;
-	}
-
-	private FileRepository getFileRepository() {
-		return fileRepository;
-	}
-
-	private void setFileRepository(FileRepository fileRepository) {
-		this.fileRepository = fileRepository;
-	}
+	}	
 
 }

@@ -17,15 +17,18 @@ import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.XMLEvent;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.ten31f.autogatalog.domain.Gat;
 import com.ten31f.autogatalog.domain.WatchURL;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+
+@Getter
+@Setter
+@Slf4j
 public class RSSDigester {
 
-	private static final Logger logger = LogManager.getLogger(RSSDigester.class);
 	private WatchURL watchURL = null;
 
 	public RSSDigester(WatchURL watchURL) {
@@ -58,8 +61,7 @@ public class RSSDigester {
 			}
 
 		} catch (XMLStreamException xmlStreamException) {
-			logger.error(String.format("Error parsing url for (%s)", getWatchURL().getRssURL(), null),
-					xmlStreamException);
+			log.error(String.format("Error parsing url for (%s)", getWatchURL().getRssURL()), xmlStreamException);
 		}
 
 		watchURL.setLastCheck(Instant.now());
@@ -149,14 +151,6 @@ public class RSSDigester {
 		} catch (IOException ioException) {
 			throw new RuntimeException(ioException);
 		}
-	}
-
-	public WatchURL getWatchURL() {
-		return watchURL;
-	}
-
-	private void setWatchURL(WatchURL watchURL) {
-		this.watchURL = watchURL;
 	}
 
 }

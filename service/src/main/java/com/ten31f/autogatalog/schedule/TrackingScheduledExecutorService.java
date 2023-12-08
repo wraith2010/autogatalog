@@ -17,10 +17,14 @@ import java.util.concurrent.TimeoutException;
 import com.ten31f.autogatalog.domain.Gat;
 import com.ten31f.autogatalog.taskinterface.GatBased;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class TrackingScheduledExecutorService implements ScheduledExecutorService {
 
 	private ScheduledExecutorService scheduledExecutorService = null;
-
 	private Map<String, ScheduledFuture<?>> futures = null;
 
 	public TrackingScheduledExecutorService() {
@@ -141,22 +145,6 @@ public class TrackingScheduledExecutorService implements ScheduledExecutorServic
 		}
 
 		return scheduledFuture;
-	}
-
-	private ScheduledExecutorService getScheduledExecutorService() {
-		return scheduledExecutorService;
-	}
-
-	private void setScheduledExecutorService(ScheduledExecutorService scheduledExecutorService) {
-		this.scheduledExecutorService = scheduledExecutorService;
-	}
-
-	private Map<String, ScheduledFuture<?>> getFutures() {
-		return futures;
-	}
-
-	private void setFutures(Map<String, ScheduledFuture<?>> futures) {
-		this.futures = futures;
 	}
 
 	public boolean handled(Gat gat) {
