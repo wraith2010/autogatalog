@@ -28,9 +28,11 @@ import com.ten31f.autogatalog.repository.GatRepository;
 import com.ten31f.autogatalog.repository.WatchURLRepository;
 
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Getter
 @Controller
 public class ActionController {
 
@@ -206,18 +208,6 @@ public class ActionController {
 			log.info(String.format("Length.......: %s", gridFSFile.getLength()));
 			log.info(String.format("Upload Date..: %s", gridFSFile.getUploadDate()));
 		}
-	}
-
-	private GatRepository getGatRepository() {
-		return this.gatRepository;
-	}
-
-	private FileRepository getFileRepository() {
-		return fileRepository;
-	}
-
-	private WatchURLRepository getWatchURLRepository() {
-		return watchURLRepository;
 	}
 
 }

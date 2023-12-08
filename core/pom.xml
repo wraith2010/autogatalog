@@ -58,17 +58,11 @@
 		<dependency>
 			<groupId>org.mongodb</groupId>
 			<artifactId>mongodb-driver-sync</artifactId>
-			<version>4.12.0-SNAPSHOT</version>
-			<scope>system</scope>
-			<systemPath>
-				${project.basedir}/src/main/library/mongodb-driver-sync-4.12.0-SNAPSHOT.jar</systemPath>
 		</dependency>
-
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 		</dependency>
-
 	</dependencies>
 
 	<build>

@@ -22,9 +22,11 @@ import com.ten31f.autogatalog.repository.GatRepository;
 import com.ten31f.autogatalog.repository.GatRepository.AuthorCount;
 import com.ten31f.autogatalog.util.AuthorNormalizer;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Getter
 @Controller
 public class PageController {
 
@@ -186,17 +188,5 @@ public class PageController {
 			return;
 
 		gat.setDescription(gat.getDescription().substring(gat.getDescription().indexOf("</p>") + 4));
-	}
-
-	private GatRepository getGatRepository() {
-		return this.gatRepository;
-	}
-
-	private String getAppName() {
-		return appName;
-	}
-
-	private FileRepository getFileRepository() {
-		return fileRepository;
-	}
+	}	
 }

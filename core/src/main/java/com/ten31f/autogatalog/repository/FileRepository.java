@@ -112,7 +112,7 @@ public class FileRepository extends AbstractMongoRepository {
 	public String getImageFileAsBase64String(Gat gat) {
 
 		try (GridFSDownloadStream gridFSDownloadStream = getGridFSBucket()
-				.openDownloadStream(gat.getImagefileObjectID(), true)) {
+				.openDownloadStream(gat.getImagefileObjectID())) {
 
 			byte[] bytes = gridFSDownloadStream.readAllBytes();
 
@@ -125,7 +125,7 @@ public class FileRepository extends AbstractMongoRepository {
 
 	public GridFSDownloadStream getFileAsGridFSDownloadStream(ObjectId objectId) {
 
-		return getGridFSBucket().openDownloadStream(objectId, true);
+		return getGridFSBucket().openDownloadStream(objectId);
 
 	}
 
@@ -135,7 +135,7 @@ public class FileRepository extends AbstractMongoRepository {
 
 		log.atInfo().log("Starting stream");
 
-		getGridFSBucket().downloadToStream(objectId, outputStream, true);
+		getGridFSBucket().downloadToStream(objectId, outputStream);
 
 		Duration duration = Duration.ofMillis(now + System.currentTimeMillis());
 

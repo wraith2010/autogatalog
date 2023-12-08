@@ -1,8 +1,6 @@
 package com.ten31f.autogatalog.domain;
 
-import java.net.URL;
 import java.time.Instant;
-import java.util.Date;
 import java.util.List;
 
 import org.bson.BsonDateTime;
@@ -10,7 +8,6 @@ import org.bson.BsonInt32;
 import org.bson.BsonObjectId;
 import org.bson.BsonString;
 import org.bson.Document;
-import org.bson.types.ObjectId;
 
 import com.mongodb.client.gridfs.model.GridFSFile;
 

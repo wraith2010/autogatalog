@@ -10,6 +10,9 @@ import com.ten31f.autogatalog.repository.FileRepository;
 import com.ten31f.autogatalog.repository.GatRepository;
 import com.ten31f.autogatalog.repository.WatchURLRepository;
 
+import lombok.Getter;
+
+@Getter
 @SpringBootApplication(exclude = MongoAutoConfiguration.class)
 public class WebappApplication {
 
@@ -33,14 +36,6 @@ public class WebappApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(WebappApplication.class, args);
-	}
-
-	public String getDatabaseURL() {
-		return databaseURL;
-	}
-
-	public void setDatabaseURL(String databaseURL) {
-		this.databaseURL = databaseURL;
 	}
 
 }

@@ -35,12 +35,6 @@
 				<artifactId>gson</artifactId>
 				<version>2.10.1</version>
 			</dependency>
-
-			<dependency>
-				<groupId>org.mongodb</groupId>
-				<artifactId>mongodb-driver-sync</artifactId>
-				<version>${mongo.version}</version>
-			</dependency>
 			<dependency>
 				<groupId>org.mongodb</groupId>
 				<artifactId>mongodb-driver-core</artifactId>
@@ -87,7 +81,7 @@
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-starter</artifactId>
-				<version>3.2.0-M1</version>				
+				<version>3.2.0-M1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.logging.log4j</groupId>
@@ -109,6 +103,11 @@
 				<artifactId>lombok</artifactId>
 				<version>${lombok.version}</version>
 				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.mongodb</groupId>
+				<artifactId>mongodb-driver-sync</artifactId>
+				<version>4.11.1</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
