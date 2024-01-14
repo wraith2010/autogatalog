@@ -1,4 +1,4 @@
-package com.ten31f.autogatalog.repository;
+package com.ten31f.autogatalog.old.repository;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -24,9 +24,9 @@ public abstract class AbstractMongoRepository {
 
 	private MongoClient getMongoClient() {
 		if (mongoClient == null) {
-			log.atDebug().log(String.format("Getting Mongo client for url: \t%s", getDatabaseURL()));
+			log.debug(String.format("Getting Mongo client for url: \t%s", getDatabaseURL()));
 			setMongoClient(MongoClients.create(getDatabaseURL()));
-			log.atDebug().log(String.format("Mongo client established: \t%s", this.mongoClient));
+			log.debug(String.format("Mongo client established: \t%s", this.mongoClient));
 		}
 
 		return mongoClient;

@@ -3,12 +3,14 @@ package com.ten31f.autogatalog.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
-import com.ten31f.autogatalog.repository.FileRepository;
-import com.ten31f.autogatalog.repository.GatRepository;
-import com.ten31f.autogatalog.repository.HealthRepository;
-import com.ten31f.autogatalog.repository.LbryRepository;
-import com.ten31f.autogatalog.repository.WatchURLRepository;
+import com.ten31f.autogatalog.old.repository.FileRepository;
+import com.ten31f.autogatalog.old.repository.GatRepository;
+import com.ten31f.autogatalog.old.repository.HealthRepository;
+import com.ten31f.autogatalog.old.repository.LbryRepository;
+import com.ten31f.autogatalog.repository.GatRepo;
+import com.ten31f.autogatalog.repository.WatchURLRepo;
 import com.ten31f.autogatalog.schedule.TrackingScheduledExecutorService;
 import com.ten31f.autogatalog.tasks.Downloadrequestor;
 import com.ten31f.autogatalog.tasks.HealthCheck;
@@ -19,13 +21,14 @@ import lombok.Getter;
 
 @Getter
 @Configuration
+@EnableMongoRepositories(basePackages = { "com.ten31f.autogatalog.repository", "com.ten31f.autogatalog.domain" })
 public class AppConfig {
 
 	@Value("${autogatalog.databaseurl}")
-	private String databaseURL;
+	public String databaseURL;
 
 	@Value("${autogatalog.lbryurl}")
-	private String lbryURL;
+	public String lbryURL;
 
 	@Bean
 	public TrackingScheduledExecutorService trackingScheduledExecutorService() {
@@ -35,11 +38,6 @@ public class AppConfig {
 	@Bean
 	public GatRepository gatRepository() {
 		return new GatRepository(getDatabaseURL());
-	}
-
-	@Bean
-	public WatchURLRepository watchURLRepository() {
-		return new WatchURLRepository(getDatabaseURL());
 	}
 
 	@Bean
@@ -58,26 +56,24 @@ public class AppConfig {
 	}
 
 	@Bean
-	public Scan scan(WatchURLRepository watchURLRepository, GatRepository gatRepository) {
-		return new Scan(watchURLRepository, gatRepository);
+	public Scan scan(WatchURLRepo watchURLRepo, GatRepo gatRepo) {
+		return new Scan(watchURLRepo, gatRepo);
 	}
 
 	@Bean
 	public Downloadrequestor downloadrequestor(TrackingScheduledExecutorService trackingScheduledExecutorService,
-			GatRepository gatRepository, FileRepository fileRepository, LbryRepository lbryRepository) {
-		return new Downloadrequestor(trackingScheduledExecutorService, gatRepository, fileRepository, lbryRepository,
-				20);
+			GatRepo gatRepo, FileRepository fileRepository, LbryRepository lbryRepository) {
+		return new Downloadrequestor(lbryRepository, fileRepository, gatRepo, 20, trackingScheduledExecutorService);
 	}
 
 	@Bean
-	public ImageGrabber imageGrabber(GatRepository gatRepository, FileRepository fileRepository) {
-		return new ImageGrabber(gatRepository, fileRepository, 20);
+	public ImageGrabber imageGrabber(GatRepo gatRepo, FileRepository fileRepository) {
+		return new ImageGrabber(gatRepo, fileRepository, 20);
 	}
 
 	@Bean
-	public HealthCheck healthCheck(FileRepository fileRepository, GatRepository gatRepository,
-			HealthRepository healthRepository) {
-		return new HealthCheck(fileRepository, gatRepository, healthRepository);
+	public HealthCheck healthCheck(FileRepository fileRepository, GatRepo gatRepo, HealthRepository healthRepository) {
+		return new HealthCheck(fileRepository, gatRepo, healthRepository);
 	}
 
 }

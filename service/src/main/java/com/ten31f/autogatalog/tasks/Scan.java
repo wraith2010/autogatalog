@@ -6,29 +6,28 @@ import java.util.List;
 
 import com.ten31f.autogatalog.action.RSSDigester;
 import com.ten31f.autogatalog.domain.WatchURL;
-import com.ten31f.autogatalog.repository.GatRepository;
-import com.ten31f.autogatalog.repository.WatchURLRepository;
+import com.ten31f.autogatalog.repository.GatRepo;
+import com.ten31f.autogatalog.repository.WatchURLRepo;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 @Getter
 @Setter
-@Log4j2
+@AllArgsConstructor
+@NoArgsConstructor
+@Slf4j
 public class Scan implements Runnable {
 
-	private WatchURLRepository watchURLRepository = null;
-	private GatRepository gatRepository = null;
-
-	public Scan(WatchURLRepository watchURLRepository, GatRepository gatRepository) {
-		setWatchURLRepository(watchURLRepository);
-		setGatRepository(gatRepository);
-	}
+	private WatchURLRepo watchURLRepo;
+	private GatRepo gatRepo;
 
 	@Override
 	public void run() {
-		List<WatchURL> watchURLs = getWatchURLRepository().getAll();
+		List<WatchURL> watchURLs = getWatchURLRepo().findAll();
 
 		log.info(String.format("Scanning %s urls", watchURLs.size()));
 
@@ -55,9 +54,10 @@ public class Scan implements Runnable {
 	public void read(RSSDigester rssDigester) {
 
 		try {
-			log.info(String.format("%s new gats found", getGatRepository().insertGats(rssDigester.readFeed())));
 
-			getWatchURLRepository().update(rssDigester.getWatchURL());
+			rssDigester.readFeed().stream().forEach(stl -> getGatRepo().save(stl));
+
+			getWatchURLRepo().insert(rssDigester.getWatchURL());
 
 		} catch (Exception exception) {
 			log.error("error reading rss feed", exception);

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+	<aside th:fragment="aside">
+		<a th:href="@{/}"> <img th:src="@{/img/logo.png}" alt="logo" />
+		</a>
+		<ul>
+			<a th:each="author: ${authors}"
+				th:href="@{/author(author = ${author.author})}">
+				<li th:text="${author.author}"></li>
+			</a>
+		</ul>
+		<ul>
+			<a th:href="@{/image}">
+				<li>image upload</li>
+			</a>
+			<a th:href="@{/orphan}">
+				<li>orphans</li>
+			</a>
+			<a th:href="@{/watch}">
+				<li>Watch URL</li>
+			</a>
+		</ul>
+
+	</aside>
+</body>
+</html>

@@ -6,6 +6,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.time.Duration;
 import java.util.List;
+import java.util.Optional;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +24,9 @@ import com.mongodb.client.gridfs.GridFSDownloadStream;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import com.ten31f.autogatalog.domain.Gat;
 import com.ten31f.autogatalog.domain.WatchURL;
-import com.ten31f.autogatalog.repository.FileRepository;
-import com.ten31f.autogatalog.repository.GatRepository;
-import com.ten31f.autogatalog.repository.WatchURLRepository;
+import com.ten31f.autogatalog.old.repository.FileRepository;
+import com.ten31f.autogatalog.repository.GatRepo;
+import com.ten31f.autogatalog.repository.WatchURLRepo;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
@@ -37,13 +38,13 @@ import lombok.extern.slf4j.Slf4j;
 public class ActionController {
 
 	@Autowired
-	private GatRepository gatRepository;
+	private GatRepo gatRepo;
 
 	@Autowired
 	private FileRepository fileRepository;
 
 	@Autowired
-	private WatchURLRepository watchURLRepository;
+	private WatchURLRepo watchURLRepo;
 
 	@PostMapping("/orphan/deleteAll")
 	public String orphanDeleteAll(Model mode, RedirectAttributes attributes) {
@@ -51,7 +52,9 @@ public class ActionController {
 		int orpahCount = 0;
 
 		List<GridFSFile> gridFSFiles = getFileRepository().listAllFiles().stream()
-				.filter(gridFSFile -> !getGatRepository().isPresent(gridFSFile.getObjectId())).toList();
+				.filter(gridFSFile -> !getGatRepo().existsGatByFileObjectID(gridFSFile.getObjectId().toHexString())
+						|| getGatRepo().existsGatByImagefileObjectID(gridFSFile.getObjectId().toHexString()))
+				.toList();
 
 		orpahCount = gridFSFiles.size();
 
@@ -97,14 +100,15 @@ public class ActionController {
 			attributes.addFlashAttribute("message",
 					String.format("You successfully uploaded %s(%s)!", fileName, objectId));
 
-			Gat gat = getGatRepository().getOne(guid);
-			if (gat != null && objectId != null) {
-				gat.setImagefileObjectID(objectId);
-				getGatRepository().repalceGat(gat);
+			Optional<Gat> optionalGat = getGatRepo().findByGuid(guid);
+			if (optionalGat.isPresent()) {
+				Gat gat = optionalGat.get();
+				gat.setImagefileObjectID(objectId.toString());
+				getGatRepo().save(gat);
 			}
 
 		} catch (IOException exception) {
-			log.error("Failed upload",exception);
+			log.error("Failed upload", exception);
 
 			attributes.addFlashAttribute("message", "You failed to uploaded " + fileName + '!');
 		}
@@ -117,10 +121,11 @@ public class ActionController {
 
 		WatchURL watchURL;
 		try {
-			watchURL = new WatchURL(URI.create(rssURL).toURL());
-			if (!getWatchURLRepository().insertWatchURL(watchURL)) {
-				attributes.addFlashAttribute("message", String.format("(%s) is a duplicate", rssURL));
-			}
+			watchURL = new WatchURL();
+			watchURL.setRssURL(URI.create(rssURL).toURL());
+
+			getWatchURLRepo().save(watchURL);
+
 		} catch (MalformedURLException malformedURLException) {
 			log.error("malformed url excpetion", malformedURLException);
 			attributes.addFlashAttribute("message",
@@ -137,10 +142,15 @@ public class ActionController {
 	public void download(@PathVariable("guid") String guid, HttpServletResponse httpServletResponse)
 			throws IOException {
 
-		Gat gat = getGatRepository().getOne(guid);
+		Optional<Gat> optionalGat = getGatRepo().findByGuid(guid);
+
+		if (!optionalGat.isPresent())
+			return;
+
+		Gat gat = optionalGat.get();
 
 		GridFSDownloadStream gridFSDownloadStream = getFileRepository()
-				.getFileAsGridFSDownloadStream(gat.getFileObjectID());
+				.getFileAsGridFSDownloadStream(new ObjectId(gat.getFileObjectID()));
 
 		GridFSFile gridFSFile = gridFSDownloadStream.getGridFSFile();
 
@@ -153,20 +163,26 @@ public class ActionController {
 		header.set(HttpHeaders.CONTENT_DISPOSITION,
 				"attachment; filename=" + gridFSFile.getFilename().replace(" ", "_"));
 
-		getFileRepository().downloadToStream(gat.getFileObjectID(), httpServletResponse.getOutputStream());
+		getFileRepository().downloadToStream(new ObjectId(gat.getFileObjectID()),
+				httpServletResponse.getOutputStream());
 	}
 
 	@GetMapping(path = "/download/{guid}")
 	public void downloadStream(@PathVariable("guid") String guid, HttpServletResponse httpServletResponse)
 			throws IOException {
 
-		Gat gat = getGatRepository().getOne(guid);
+		Optional<Gat> gatOptional = gatRepo.findByGuid(guid);
+
+		if (!gatOptional.isPresent())
+			return;
+
+		Gat gat = gatOptional.get();
 
 		if (gat.getFileObjectID() == null)
 			return;
 
 		GridFSDownloadStream gridFSDownloadStream = getFileRepository()
-				.getFileAsGridFSDownloadStream(gat.getFileObjectID());
+				.getFileAsGridFSDownloadStream(new ObjectId(gat.getFileObjectID()));
 
 		GridFSFile gridFSFile = gridFSDownloadStream.getGridFSFile();
 

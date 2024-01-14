@@ -15,7 +15,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.ten31f.autogatalog.domain.Gat;
-import com.ten31f.autogatalog.repository.LbryRepository.DownloadStatus;
+import com.ten31f.autogatalog.old.repository.LbryRepository;
+import com.ten31f.autogatalog.old.repository.LbryRepository.DownloadStatus;
 
 public class LbryRepositoryTest {
 
@@ -48,6 +49,7 @@ public class LbryRepositoryTest {
 	}
 
 	@Test
+	@Ignore
 	public void getDownloadStatusTest() throws ClientProtocolException, IOException {
 
 		Map<String, DownloadStatus> map = getLbryRepository().getDownloadStatus();

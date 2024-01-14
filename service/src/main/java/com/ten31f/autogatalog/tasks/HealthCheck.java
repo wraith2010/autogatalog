@@ -1,31 +1,37 @@
 package com.ten31f.autogatalog.tasks;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import com.ten31f.autogatalog.domain.Health;
-import com.ten31f.autogatalog.repository.FileRepository;
-import com.ten31f.autogatalog.repository.GatRepository;
-import com.ten31f.autogatalog.repository.HealthRepository;
+import com.ten31f.autogatalog.old.repository.FileRepository;
+import com.ten31f.autogatalog.old.repository.HealthRepository;
+import com.ten31f.autogatalog.repository.GatRepo;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Getter
 @Setter
+@Document(collection = "health")
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Slf4j
 public class HealthCheck implements Runnable {
 
 	private FileRepository fileRepository;
-	private GatRepository gatRepository;
+	private GatRepo gatRepo;
 	private HealthRepository healthRepository;
-
-	public HealthCheck(FileRepository fileRepository, GatRepository gatRepository, HealthRepository healthRepository) {
-		setFileRepository(fileRepository);
-		setGatRepository(gatRepository);
-		setHealthRepository(healthRepository);
-	}
 
 	@Override
 	public void run() {
@@ -36,17 +42,21 @@ public class HealthCheck implements Runnable {
 
 		health.setFileCount(gridFSFiles.size());
 
-		gridFSFiles = gridFSFiles.stream().filter(gridFSFile -> !getGatRepository().isPresent(gridFSFile.getObjectId()))
-				.toList();
+//		gridFSFiles = gridFSFiles.stream().filter(gridFSFile -> ! getGatRepository().isPresent(gridFSFile.getObjectId()))
+//				.toList();
 
-		health.setOrphans(gridFSFiles);
-		health.setImagelessGats(getGatRepository().getGatsWithOutImages());
-		health.setPendingDownload(getGatRepository().getGatGAtsWithOutFile());
-		health.setGatCount((int) getGatRepository().countGats());
+		health.setOrphans(new ArrayList<>());
+		health.setImagelessGats(getGatRepo().findAllWithOutImage());
+		health.setPendingDownload(getGatRepo().findAllWithOutFile());
+		health.setGatCount(getGatRepo().count());
 
-		log.atDebug().log(String.format("Health info:\t%s", health.toDocument().toJson()));
-
-		getHealthRepository().updateHealth(health);
+		try {
+			log.debug(String.format("Health info:\t%s", new ObjectMapper().writeValueAsString(health)));
+			getHealthRepository().updateHealth(health);
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 

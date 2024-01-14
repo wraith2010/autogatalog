@@ -1,4 +1,4 @@
-package com.ten31f.autogatalog.repository;
+package com.ten31f.autogatalog.old.repository;
 
 import java.io.File;
 import java.io.IOException;
@@ -82,7 +82,7 @@ public class LbryRepository {
 
 		int totalPages = resultDocument.getInt32("total_pages").getValue();
 
-		log.atInfo().log(String.format("Retrieveing %s pages of files info", totalPages));
+		log.info(String.format("Retrieveing %s pages of files info", totalPages));
 
 		statuses.putAll(parseFilesResponse(resultDocument));
 
@@ -162,8 +162,7 @@ public class LbryRepository {
 		BsonDocument resultBsonDocument = (BsonDocument) responseBsonDocument.get("result");
 
 		if (resultBsonDocument.get("download_path") == null) {
-			log.atError()
-					.log(String.format("No DownLoadPath: \t%s\t%s", resultBsonDocument.toJson(), gat.getGuid()));
+			log.error(String.format("No DownLoadPath: \t%s\t%s", resultBsonDocument.toJson(), gat.getGuid()));
 			return null;
 		}
 
@@ -204,7 +203,7 @@ public class LbryRepository {
 			return false;
 
 		if (!item.get("completed").asBoolean().getValue()) {
-			log.atInfo().log(String.format("%s remaining (%s/%s)", gat.getTitle(), item.get("blobs_remaining"),
+			log.info(String.format("%s remaining (%s/%s)", gat.getTitle(), item.get("blobs_remaining"),
 					item.get("blobs_in_stream")));
 		}
 
@@ -231,9 +230,9 @@ public class LbryRepository {
 		HttpResponse httpResponse = getHttpClient().execute(httpPost);
 
 		if (httpResponse.getStatusLine().getStatusCode() != 200) {
-			log.atError().log(String.format("http reqeust:\t%s", httpPost));
-			log.atError().log(String.format("Response status:\t%s", httpResponse.getStatusLine()));
-			log.atError().log(String.format("Response\t%s", httpResponse));
+			log.error(String.format("http reqeust:\t%s", httpPost));
+			log.error(String.format("Response status:\t%s", httpResponse.getStatusLine()));
+			log.error(String.format("Response\t%s", httpResponse));
 		}
 
 		return httpResponse;

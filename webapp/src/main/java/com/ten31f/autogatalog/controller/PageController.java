@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +19,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.mongodb.client.gridfs.model.GridFSFile;
 import com.ten31f.autogatalog.domain.Gat;
-import com.ten31f.autogatalog.repository.FileRepository;
-import com.ten31f.autogatalog.repository.GatRepository;
-import com.ten31f.autogatalog.repository.GatRepository.AuthorCount;
+import com.ten31f.autogatalog.old.repository.FileRepository;
+import com.ten31f.autogatalog.old.repository.GatRepository;
+import com.ten31f.autogatalog.repository.GatRepo;
 import com.ten31f.autogatalog.util.AuthorNormalizer;
 
 import lombok.Getter;
@@ -37,6 +39,9 @@ public class PageController {
 	private GatRepository gatRepository;
 
 	@Autowired
+	private GatRepo gatRepo;
+
+	@Autowired
 	private FileRepository fileRepository;
 
 	@GetMapping("/")
@@ -47,19 +52,22 @@ public class PageController {
 		if (page == null)
 			page = 1;
 
-		List<AuthorCount> authorCounts = getGatRepository().listAuthors();
+		List<String> authors = getGatRepo().listAllAuthors();
 
-		model.addAttribute("authors", getGatRepository().listAuthors());
+		Map<String, Long> counted = authors.stream()
+				.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
 
-		List<Gat> gats = getGatRepository().getAll();
+		model.addAttribute("authors", counted);
+
+		List<Gat> gats = getGatRepo().findAll();
 
 		Map<String, List<Gat>> gatMap = new HashMap<>();
 
 		gats.stream().forEach(gat -> mapGatAuthor(gatMap, gat));
 
 		List<Gat> filteredGats = new ArrayList<>();
-		authorCounts.stream().map(AuthorCount::getAuthor).map(author -> gatMap.get(author))
-				.forEach(filteredGats::addAll);
+//		authorCounts.stream().map(AuthorCount::getAuthor).map(author -> gatMap.get(author))
+//				.forEach(filteredGats::addAll);
 
 		filteredGats.stream().forEach(this::cleanDescription);
 
@@ -68,7 +76,7 @@ public class PageController {
 
 		model.addAttribute("imageStrings", imageStrings);
 
-		model.addAttribute("pagenatedAuthors", authorCounts);
+//		model.addAttribute("pagenatedAuthors", authorCounts);
 		model.addAttribute("gats", filteredGats);
 		model.addAttribute("gatMap", gatMap);
 
@@ -96,12 +104,11 @@ public class PageController {
 
 		common(model);
 
-		List<Gat> gats = getGatRepository().findByAuthor(author);
+		List<Gat> gats = getGatRepo().findAllByAuthor(author);
 
 		Duration duration = Duration.ofMillis(System.currentTimeMillis() - start);
 
-		log.atInfo()
-				.log(String.format("gat retrieval %s mills(%s seconds) ", duration.toMillis(), duration.toSeconds()));
+		log.info(String.format("gat retrieval %s mills(%s seconds) ", duration.toMillis(), duration.toSeconds()));
 
 		gats.stream().forEach(this::cleanDescription);
 
@@ -113,7 +120,7 @@ public class PageController {
 
 		duration = Duration.ofMillis(System.currentTimeMillis() - start);
 
-		log.atInfo().log(
+		log.info(
 				String.format("Author page duration %s mills(%s seconds) ", duration.toMillis(), duration.toSeconds()));
 
 		return "author";
@@ -130,12 +137,17 @@ public class PageController {
 
 		common(model);
 
-		Gat gat = getGatRepository().getOne(guid);
+		Optional<Gat> optionalGat = getGatRepo().findByGuid(guid);
+
+		if (optionalGat.isPresent())
+			return "404";
+
+		Gat gat = optionalGat.get();
 
 		cleanDescription(gat);
 
 		model.addAttribute("gat", gat);
-		if (gat.getImagefileObjectID() != null) {
+		if (gat.hasImage()) {
 			model.addAttribute("imageString", getFileRepository().getImageFileAsBase64String(gat));
 		}
 
@@ -147,7 +159,7 @@ public class PageController {
 
 		common(model);
 
-		model.addAttribute("gats", getGatRepository().getGatsWithOutImages());
+		model.addAttribute("gats", getGatRepo().findAllWithOutImage());
 
 		return "imageUpload";
 	}
@@ -169,7 +181,9 @@ public class PageController {
 
 		model.addAttribute("count", gridFSFiles.size());
 
-		gridFSFiles = gridFSFiles.stream().filter(gridFSFile -> !getGatRepository().isPresent(gridFSFile.getObjectId()))
+		gridFSFiles = gridFSFiles.stream()
+				.filter(gridFSFile -> !getGatRepo().existsGatByFileObjectID(gridFSFile.getObjectId().toHexString())
+						&& !getGatRepo().existsGatByImagefileObjectID(gridFSFile.getObjectId().toHexString()))
 				.toList();
 
 		model.addAttribute("orphanFiles", gridFSFiles);
@@ -188,5 +202,35 @@ public class PageController {
 			return;
 
 		gat.setDescription(gat.getDescription().substring(gat.getDescription().indexOf("</p>") + 4));
-	}	
+	}
+
+	public class AuthorCount implements Comparable<AuthorCount> {
+
+		private String author = null;
+		private int count = 0;
+
+		public String getAuthor() {
+			return author;
+		}
+
+		public void setAuthor(String author) {
+			this.author = author;
+		}
+
+		public int getCount() {
+			return count;
+		}
+
+		public void setCount(int count) {
+			this.count = count;
+		}
+
+		@Override
+		public int compareTo(AuthorCount authorCount) {
+
+			return getAuthor().compareTo(authorCount.getAuthor());
+
+		}
+
+	};
 }

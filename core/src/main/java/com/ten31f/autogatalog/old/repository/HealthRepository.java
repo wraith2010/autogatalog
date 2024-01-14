@@ -1,7 +1,9 @@
-package com.ten31f.autogatalog.repository;
+package com.ten31f.autogatalog.old.repository;
 
 import org.bson.Document;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoCollection;
 import com.ten31f.autogatalog.domain.Health;
 
@@ -13,9 +15,9 @@ public class HealthRepository extends AbstractMongoRepository {
 		super(databaseURL);
 	}
 
-	public void updateHealth(Health health) {
+	public void updateHealth(Health health) throws JsonProcessingException {
 		getCollection().deleteMany(new Document());
-		getCollection().insertOne(health.toDocument());
+		getCollection().insertOne(Document.parse(new ObjectMapper().writeValueAsString(health)));
 	}
 
 	private MongoCollection<Document> getCollection() {

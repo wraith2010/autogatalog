@@ -2,10 +2,10 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-	<meta charset="UTF-8">
-	<title th:text="${appName}" />
-	<link th:href="@{/css/common.css}" rel="stylesheet" />
-	<link th:href="@{/css/index.css}" rel="stylesheet" />
+<meta charset="UTF-8">
+<title th:text="${appName}" />
+<link th:href="@{/css/common.css}" rel="stylesheet" />
+<link th:href="@{/css/index.css}" rel="stylesheet" />
 </head>
 
 <body>
@@ -14,28 +14,7 @@
 		<h1 th:text="${appName}" />
 	</header>
 
-	<aside>
-		<a th:href="@{/}">
-			<img th:src="@{/img/logo.png}" alt="logo" />
-		</a>
-		<ul>
-			<a th:each="author: ${authors}" th:href="@{/author(author = ${author.author})}">
-				<li th:text="${author.author}"></li>
-			</a>
-		</ul>
-		<ul>
-			<a th:href="@{/image}">
-				<li>image upload</li>
-			</a>
-			<a th:href="@{/orphan}">
-				<li>orphans</li>
-			</a>
-			<a th:href="@{/watch}">
-				<li>Watch URL</li>
-			</a>
-		</ul>
-
-	</aside>
+	<aside th:fragment="aside"></aside>
 
 	<main>
 
@@ -43,31 +22,30 @@
 		<section th:each="author: ${pagenatedAuthors}">
 			<header>
 				<a th:href="@{/(author = ${author.author})}">
-					<h2 th:text="${author.author}"/><h2 th:if="${author.count > 4}" th:text="'(' + ${author.count} + ')'" />
+					<h2 th:text="${author.author}" />
+					<h2 th:if="${author.count > 4}"
+						th:text="'(' + ${author.count} + ')'" />
 				</a>
 			</header>
 
-			<article th:each="gat: ${gatMap[author.author]}" th:with="guid=${gat.guid}">
+			<article th:each="gat: ${gatMap[author.author]}"
+				th:with="guid=${gat.guid}">
 				<a th:href="@{'/gat/' + ${gat.guid}}">
 					<figure>
 						<img th:if="${imageStrings.containsKey(guid)}"
 							th:src="@{'data:image/jpeg;charset=utf-8;base64,'+ ${imageStrings.get(guid)}}"
 							th:id="${guid}" alt="preview">
-					</figure>
-					<header>
+					</figure> <header>
 						<h3 th:text="${gat.title}" />
 					</header>
 					<ul>
-						<li>
-							<a th:href="${gat.linkURL}">
-								<img alt="odysee logo" class="download" th:src="@{'/img/odysee.jpg'}" />
-							</a>
-						</li>
-						<li>
-							<a th:href="@{'/download/' + ${guid}}">
-								<img alt="download icon" class="download" th:src="@{'/img/download.png'}" />
-							</a>
-						</li>
+						<li><a th:href="${gat.linkURL}"> <img alt="odysee logo"
+								class="download" th:src="@{'/img/odysee.jpg'}" />
+						</a></li>
+						<li><a th:href="@{'/download/' + ${guid}}"> <img
+								alt="download icon" class="download"
+								th:src="@{'/img/download.png'}" />
+						</a></li>
 					</ul>
 				</a>
 			</article>

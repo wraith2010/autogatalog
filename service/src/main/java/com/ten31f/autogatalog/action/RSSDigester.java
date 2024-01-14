@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.sql.Date;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -29,6 +28,16 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class RSSDigester {
 
+	public static final String TITLE = "title";
+	public static final String GUID = "guid";
+	public static final String IMAGE = "image";
+	public static final String DESCRIPTION = "description";
+	public static final String AUTHOR = "author";
+	
+	public static final String ITEM = "item";
+	public static final String ENCLOSURE = "enclosure";
+	
+
 	private WatchURL watchURL = null;
 
 	public RSSDigester(WatchURL watchURL) {
@@ -51,7 +60,7 @@ public class RSSDigester {
 				XMLEvent event = eventReader.nextEvent();
 				if (event.isStartElement()) {
 					String localPart = event.asStartElement().getName().getLocalPart();
-					if (Gat.ITEM.equals(localPart)) {
+					if (ITEM.equals(localPart)) {
 						Gat gat = handleItem(eventReader);
 						if (gat != null) {
 							items.add(gat);
@@ -79,10 +88,10 @@ public class RSSDigester {
 			if (event.isStartElement()) {
 				String localPart = event.asStartElement().getName().getLocalPart();
 				switch (localPart) {
-				case Gat.MONGO_FIELD_TITLE:
+				case TITLE:
 					gat.setTitle(getCharacterData(event, eventReader));
 					break;
-				case Gat.MONGO_FIELD_GUID:
+				case GUID:
 					String data = getCharacterData(event, eventReader);
 					try {
 						gat.setLinkURL(URI.create(data).toURL());
@@ -91,20 +100,13 @@ public class RSSDigester {
 					}
 					gat.setGuid(data.substring(data.lastIndexOf(':') + 1));
 					break;
-				case Gat.MONGO_FIELD_PUBLISHED_DATE:
-					try {
-						gat.setPublishedDate(Date.valueOf(getCharacterData(event, eventReader)));
-					} catch (IllegalArgumentException e) {
-
-					}
-					break;
-				case Gat.MONGO_FIELD_DESCRIPTION:
+				case DESCRIPTION:
 					gat.setDescription(getCharacterData(event, eventReader));
 					break;
-				case Gat.MONGO_FIELD_AUTHOR:
+				case AUTHOR:
 					gat.setAuthor(getCharacterData(event, eventReader));
 					break;
-				case Gat.IMAGE:
+				case IMAGE:
 					Iterator<Attribute> attribue = event.asStartElement().getAttributes();
 					while (attribue.hasNext()) {
 						Attribute myAttribute = attribue.next();
@@ -113,7 +115,7 @@ public class RSSDigester {
 						}
 					}
 					break;
-				case Gat.ENCLOSURE:
+				case ENCLOSURE:
 					return null;
 				default:
 					break;
@@ -122,7 +124,7 @@ public class RSSDigester {
 
 			if (event.isEndElement()) {
 				String localPart = event.asEndElement().getName().getLocalPart();
-				if (Gat.ITEM.equals(localPart)) {
+				if (ITEM.equals(localPart)) {
 					return gat;
 				}
 			}

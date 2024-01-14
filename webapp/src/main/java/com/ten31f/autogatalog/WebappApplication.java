@@ -3,17 +3,16 @@ package com.ten31f.autogatalog;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 
-import com.ten31f.autogatalog.repository.FileRepository;
-import com.ten31f.autogatalog.repository.GatRepository;
-import com.ten31f.autogatalog.repository.WatchURLRepository;
+import com.ten31f.autogatalog.old.repository.FileRepository;
+import com.ten31f.autogatalog.old.repository.GatRepository;
+import com.ten31f.autogatalog.old.repository.WatchURLRepository;
 
 import lombok.Getter;
 
 @Getter
-@SpringBootApplication(exclude = MongoAutoConfiguration.class)
+@SpringBootApplication
 public class WebappApplication {
 
 	@Value("${autogatalog.databaseurl}")

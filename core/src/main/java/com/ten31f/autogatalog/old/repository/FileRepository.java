@@ -1,4 +1,4 @@
-package com.ten31f.autogatalog.repository;
+package com.ten31f.autogatalog.old.repository;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -43,7 +43,7 @@ public class FileRepository extends AbstractMongoRepository {
 			GridFSUploadOptions options = new GridFSUploadOptions().chunkSizeBytes(1048576)
 					.metadata(new Document("type", "zip archive"));
 			ObjectId fileId = getGridFSBucket().uploadFromStream(file.getName(), streamToUploadFrom, options);
-			log.atInfo().log(String.format("The file id of the uploaded file is: %s", fileId.toHexString()));
+			log.info(String.format("The file id of the uploaded file is: %s", fileId.toHexString()));
 			return fileId;
 		}
 
@@ -59,7 +59,7 @@ public class FileRepository extends AbstractMongoRepository {
 			}
 
 			ObjectId fileId = getGridFSBucket().uploadFromStream(name, inputStream, options);
-			log.atInfo().log(String.format("The file id of the uploaded file is: %s", fileId.toHexString()));
+			log.info(String.format("The file id of the uploaded file is: %s", fileId.toHexString()));
 			return fileId;
 		}
 
@@ -133,13 +133,13 @@ public class FileRepository extends AbstractMongoRepository {
 
 		long now = -System.currentTimeMillis();
 
-		log.atInfo().log("Starting stream");
+		log.info("Starting stream");
 
 		getGridFSBucket().downloadToStream(objectId, outputStream);
 
 		Duration duration = Duration.ofMillis(now + System.currentTimeMillis());
 
-		log.atInfo().log(String.format("Duration: %s seconds", duration.getSeconds()));
+		log.info(String.format("Duration: %s seconds", duration.getSeconds()));
 
 		outputStream.close();
 	}
