@@ -14,7 +14,27 @@
 		<h1 th:text="${appName}" />
 	</header>
 
-	<aside th:fragment="aside"></aside>
+	<aside>
+		<a th:href="@{/}"> <img th:src="@{/img/logo.png}" alt="logo" />
+		</a>
+		<ul>
+			<a th:each="author: ${authors}"
+				th:href="@{/author(author = ${author.key})}">
+				<li th:text="${author.key}"></li>
+			</a>
+		</ul>
+		<ul>
+			<a th:href="@{/image}">
+				<li>image upload</li>
+			</a>
+			<a th:href="@{/orphan}">
+				<li>orphans</li>
+			</a>
+			<a th:href="@{/watch}">
+				<li>Watch URL</li>
+			</a>
+		</ul>
+	</aside>
 
 	<main>
 

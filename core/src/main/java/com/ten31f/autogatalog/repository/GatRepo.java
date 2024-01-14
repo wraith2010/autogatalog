@@ -23,9 +23,6 @@ public interface GatRepo extends MongoRepository<Gat, String> {
 	List<Gat> findAllWithOutFile();
 
 	boolean existsGatByFileObjectID(String fileObjectID);
-	
+
 	boolean existsGatByImagefileObjectID(String imagefileObjectID);
-	
-	@Query("{},{author:1}")
-	List<String> listAllAuthors();
 }

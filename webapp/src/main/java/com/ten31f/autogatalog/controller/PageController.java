@@ -52,14 +52,12 @@ public class PageController {
 		if (page == null)
 			page = 1;
 
-		List<String> authors = getGatRepo().listAllAuthors();
+		List<Gat> gats = getGatRepo().findAll();
 
-		Map<String, Long> counted = authors.stream()
-				.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+		Map<String, Long> counted = gats.stream()
+				.collect(Collectors.groupingByConcurrent(Gat::getAuthor, Collectors.counting()));
 
 		model.addAttribute("authors", counted);
-
-		List<Gat> gats = getGatRepo().findAll();
 
 		Map<String, List<Gat>> gatMap = new HashMap<>();
 
