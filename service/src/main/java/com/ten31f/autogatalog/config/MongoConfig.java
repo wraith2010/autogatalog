@@ -14,7 +14,7 @@ import lombok.Setter;
 public class MongoConfig extends AbstractMongoClientConfiguration {
 
 	private static final String DATABASE_NAME = "gatalog";
-	
+
 	@Autowired
 	public MappingMongoConverter mongoConverter;
 
@@ -27,5 +27,4 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
 	protected String getDatabaseName() {
 		return DATABASE_NAME;
 	}
-
 }

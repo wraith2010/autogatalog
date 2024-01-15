@@ -18,12 +18,6 @@
 		<a th:href="@{/}"> <img th:src="@{/img/logo.png}" alt="logo" />
 		</a>
 		<ul>
-			<a th:each="author: ${authors}"
-				th:href="@{/author(author = ${author.key})}">
-				<li th:text="${author.key}"></li>
-			</a>
-		</ul>
-		<ul>
 			<a th:href="@{/image}">
 				<li>image upload</li>
 			</a>
@@ -34,28 +28,32 @@
 				<li>Watch URL</li>
 			</a>
 		</ul>
+		<ul>
+			<a th:each="author: ${authors}"
+				th:href="@{/author(author = ${author})}">
+				<li th:text="${author}"></li>
+			</a>
+		</ul>
 	</aside>
 
 	<main>
 
 
-		<section th:each="author: ${pagenatedAuthors}">
+		<section th:each="author: ${authors}">
 			<header>
-				<a th:href="@{/(author = ${author.author})}">
-					<h2 th:text="${author.author}" />
-					<h2 th:if="${author.count > 4}"
-						th:text="'(' + ${author.count} + ')'" />
+				<a th:href="@{/author(author = ${author})}">
+					<h2 th:text="${author}" />
 				</a>
 			</header>
 
-			<article th:each="gat: ${gatMap[author.author]}"
-				th:with="guid=${gat.guid}">
+			<article th:each="gat: ${gatMap.get(author)}" th:with="guid=${gat.guid}">
 				<a th:href="@{'/gat/' + ${gat.guid}}">
 					<figure>
 						<img th:if="${imageStrings.containsKey(guid)}"
 							th:src="@{'data:image/jpeg;charset=utf-8;base64,'+ ${imageStrings.get(guid)}}"
 							th:id="${guid}" alt="preview">
-					</figure> <header>
+					</figure> 
+					<header>
 						<h3 th:text="${gat.title}" />
 					</header>
 					<ul>

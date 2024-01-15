@@ -21,6 +21,7 @@ aside ul a {
 aside ul a li {
 	text-decoration: none;
 	color: #FFFFFF;
+	white-space: nowrap;
 }
 
 article {
@@ -37,8 +38,6 @@ article a header {
 article a {
 	text-decoration: none;
 }
-
-
 
 article a header h3 {
 	width: 100%;

@@ -2,11 +2,12 @@ package com.ten31f.autogatalog.controller;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,28 +55,21 @@ public class PageController {
 
 		List<Gat> gats = getGatRepo().findAll();
 
-		Map<String, Long> counted = gats.stream()
-				.collect(Collectors.groupingByConcurrent(Gat::getAuthor, Collectors.counting()));
+		List<String> authors = gats.stream().map(Gat::getAuthor).distinct().collect(Collectors.toList());
 
-		model.addAttribute("authors", counted);
+		Collections.sort(authors, new AuthorComparator());
 
 		Map<String, List<Gat>> gatMap = new HashMap<>();
-
 		gats.stream().forEach(gat -> mapGatAuthor(gatMap, gat));
 
-		List<Gat> filteredGats = new ArrayList<>();
-//		authorCounts.stream().map(AuthorCount::getAuthor).map(author -> gatMap.get(author))
-//				.forEach(filteredGats::addAll);
+		List<Gat> filtertedList = new ArrayList<>();
+		gatMap.entrySet().forEach(entry -> filtertedList.addAll(entry.getValue()));
 
-		filteredGats.stream().forEach(this::cleanDescription);
-
-		Map<String, String> imageStrings = filteredGats.stream().filter(gat -> gat.getImagefileObjectID() != null)
+		Map<String, String> imageStrings = filtertedList.stream().filter(gat -> gat.getImagefileObjectID() != null)
 				.collect(Collectors.toMap(Gat::getGuid, gat -> getFileRepository().getImageFileAsBase64String(gat)));
 
+		model.addAttribute("authors", authors);
 		model.addAttribute("imageStrings", imageStrings);
-
-//		model.addAttribute("pagenatedAuthors", authorCounts);
-		model.addAttribute("gats", filteredGats);
 		model.addAttribute("gatMap", gatMap);
 
 		return "index";
@@ -91,6 +85,8 @@ public class PageController {
 
 		if (gatMap.get(author).size() > 3)
 			return;
+
+		cleanDescription(gat);
 
 		gatMap.get(author).add(gat);
 	}
@@ -202,33 +198,35 @@ public class PageController {
 		gat.setDescription(gat.getDescription().substring(gat.getDescription().indexOf("</p>") + 4));
 	}
 
-	public class AuthorCount implements Comparable<AuthorCount> {
+	private class AuthorComparator implements Comparator<String> {
 
-		private String author = null;
-		private int count = 0;
-
-		public String getAuthor() {
-			return author;
-		}
-
-		public void setAuthor(String author) {
-			this.author = author;
-		}
-
-		public int getCount() {
-			return count;
-		}
-
-		public void setCount(int count) {
-			this.count = count;
-		}
+		private static final String AT = "@";
+		private static final String THE = "THE";
 
 		@Override
-		public int compareTo(AuthorCount authorCount) {
+		public int compare(String string1, String string2) {
 
-			return getAuthor().compareTo(authorCount.getAuthor());
+			String cleanString1 = cleanString(string1);
+			String cleanString2 = cleanString(string2);
 
+			return cleanString1.compareTo(cleanString2);
 		}
 
-	};
+		private String cleanString(String inital) {
+
+			String working = inital;
+
+			if (working.startsWith(AT)) {
+				working = working.substring(AT.length());
+			}
+
+			if (working.startsWith(THE)) {
+				working = working.substring(AT.length());
+			}
+
+			return working.trim();
+		}
+
+	}
+
 }

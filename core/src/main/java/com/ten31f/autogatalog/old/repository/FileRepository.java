@@ -94,6 +94,8 @@ public class FileRepository extends AbstractMongoRepository {
 		return getGridFSBucket().find(Filters.eq("_id", objectId)).first();
 	}
 
+	
+	
 	public void delete(ObjectId objectId) {
 
 		getGridFSBucket().delete(objectId);

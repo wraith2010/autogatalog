@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Bean;
 
 import com.ten31f.autogatalog.old.repository.FileRepository;
 import com.ten31f.autogatalog.old.repository.GatRepository;
-import com.ten31f.autogatalog.old.repository.WatchURLRepository;
 
 import lombok.Getter;
 
@@ -26,11 +25,6 @@ public class WebappApplication {
 	@Bean
 	public FileRepository fileRepository() {
 		return new FileRepository(getDatabaseURL());
-	}
-
-	@Bean
-	public WatchURLRepository watchURLRepository() {
-		return new WatchURLRepository(getDatabaseURL());
 	}
 
 	public static void main(String[] args) {
