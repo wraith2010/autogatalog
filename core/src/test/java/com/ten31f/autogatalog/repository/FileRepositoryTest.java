@@ -4,7 +4,6 @@ import org.junit.Before;
 
 import com.mongodb.client.gridfs.model.GridFSFile;
 import com.ten31f.autogatalog.old.repository.FileRepository;
-import com.ten31f.autogatalog.old.repository.GatRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,7 +14,7 @@ public class FileRepositoryTest {
 	private static final String KF5_GUID = "af5748883790aac0b097ffa25b2101faf3dd1640";
 
 	private FileRepository fileRepository;
-	private GatRepository gatRepository;
+
 
 	@Before
 	public void setup() {
@@ -26,8 +25,8 @@ public class FileRepositoryTest {
 		// Enable DB operation tracing
 		System.setProperty("DB.TRACE", "true");
 
-		setFileRepository(new FileRepository(MONGO_DB_URL));
-		setGatRepository(new GatRepository(MONGO_DB_URL));
+		setFileRepository(new FileRepository());
+
 
 	}
 
@@ -131,12 +130,6 @@ public class FileRepositoryTest {
 		this.fileRepository = fileRepository;
 	}
 
-	private GatRepository getGatRepository() {
-		return gatRepository;
-	}
 
-	private void setGatRepository(GatRepository gatRepository) {
-		this.gatRepository = gatRepository;
-	}
 
 }

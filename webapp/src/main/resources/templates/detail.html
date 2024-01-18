@@ -2,21 +2,20 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-	<meta charset="UTF-8">
-	<title th:text="${gat.title}" />
-	<link th:href="@{/css/common.css}" rel="stylesheet" />
-	<link th:href="@{/css/detail.css}" rel="stylesheet" />
+<meta charset="UTF-8">
+<title th:text="${gat.title}"></title>
+<link th:href="@{/css/common.css}" rel="stylesheet" />
+<link th:href="@{/css/detail.css}" rel="stylesheet" />
 </head>
 
 <body>
 
 	<header>
-		<h1 th:text="${appName}" />
+		<h1 th:text="${appName}"></h1>
 	</header>
 
 	<aside>
-		<a th:href="@{/}">
-			<img th:src="@{/img/logo.png}" alt="logo" />
+		<a th:href="@{/}"> <img th:src="@{/img/logo.png}" alt="logo" />
 		</a>
 	</aside>
 
@@ -24,26 +23,28 @@
 
 		<article>
 			<header>
-				<h2 th:text="${gat.title}" />
+				<h2 th:text="${gat.title}"></h2>
 			</header>
 			<figure>
-				<img th:src="@{'data:image/jpeg;charset=utf-8;base64,'+ ${imageString}}" alt="preview">
+				<img
+					th:src="@{'data:image/jpeg;charset=utf-8;base64,'+ ${imageString}}"
+					alt="preview">
 			</figure>
 			<p th:utext="${gat.description}"></p>
 			<ol>
 				<li th:each="tag: ${gat.tags}"><span th:text="${tag}"></span></li>
 			</ol>
 			<ul>
-				<li>
-					<a th:href="${gat.linkURL}">
-						<img alt="odysee logo" class="download" th:src="@{'/img/odysee.jpg'}" />
-					</a>
-				</li>
-				<li>
-					<a th:href="@{'/download/' + ${guid}}">
-						<img alt="download icon" class="download" th:src="@{'/img/download.png'}" />
-					</a>
-				</li>
+				<li><a th:href="${gat.linkURL}"> <img alt="odysee logo"
+						class="download" th:src="@{'/img/odysee.jpg'}" />
+				</a></li>
+				<li><a th:href="@{'/download/' + ${guid}}"> <img
+						alt="download icon" class="download"
+						th:src="@{'/img/download.png'}" />
+				</a></li>
+				<li><a th:href="@{'/edit/' + ${guid}}"> <img
+						alt="download icon " class="download" th:src="@{'/img/edit.png'}" />
+				</a></li>
 			</ul>
 		</article>
 

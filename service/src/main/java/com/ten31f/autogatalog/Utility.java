@@ -3,14 +3,14 @@ package com.ten31f.autogatalog;
 import java.util.Calendar;
 import java.util.List;
 
-import org.apache.logging.log4j.util.Strings;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.data.mongodb.gridfs.GridFsOperations;
 import org.springframework.data.mongodb.gridfs.GridFsResource;
+import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 
 import com.ten31f.autogatalog.domain.Gat;
 import com.ten31f.autogatalog.repository.GatRepo;
@@ -29,46 +29,31 @@ public class Utility {
 	private GatRepo gatRepo;
 
 	@Autowired
-	private GridFsOperations operations;
+	private GridFsTemplate gridFsTemplate;
 
 	@EventListener(ApplicationReadyEvent.class)
 	public void doSomethingAfterStartup() {
 
-		// log.info(String.format("utility launch at: %s",
-		// Calendar.getInstance().getTime()));
+		List<Gat> gats = getGatRepo().findAll().stream().filter(gat -> gat.getImagefileObjectID() == null).toList();
 
-		List<Gat> gats = getGatRepo().findAll();
+		log.info(String.format("utility launch at: %s", Calendar.getInstance().getTime()));
 
-		log.info(String.format("gats found %s", gats.size()));
+		log.info(String.format("gats found with out images %s", gats.size()));
 
-		int index = 0;
-		int found = 0;
 		for (Gat gat : gats) {
 
 			String imageURL = gat.getImageURL();
-
 			String[] parts = imageURL.split("/");
-
 			String filename = parts[parts.length - 1];
 
-			//log.info(String.format("gat(%s): %s", filename, gat));
+			GridFsResource gridFsResource = getGridFsTemplate().getResource(filename);
 
-			GridFsResource gridFsResource = getOperations().getResource("uvcDcyWa2CVqDgfPEoivoLUs.jpeg");
-
-			if (gridFsResource != null && gridFsResource.exists()) {
-				log.info(String.format("gat(%s): %s", gridFsResource.getFileId(), gat));
-				found++;
+			if (gridFsResource.exists()) {
+				gat.setImagefileObjectID(((ObjectId) gridFsResource.getFileId()).toHexString());
+				log.info(String.format("gat(%s): %s, %s", filename, gridFsResource.getFilename(), gat.getTitle()));
+				getGatRepo().save(gat);
 			}
-
-			// getGatRepo().save(gat);
-
-			index++;
-
-			// log.info(String.format("%s gats completed %s", index, gats.size()));
-
 		}
-
-		log.info(String.format("utility end (%s/%s) at: %s", found, index, Calendar.getInstance().getTime()));
 
 	}
 

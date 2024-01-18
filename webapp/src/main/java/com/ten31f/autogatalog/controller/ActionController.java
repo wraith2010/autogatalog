@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.mongodb.client.gridfs.GridFSDownloadStream;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import com.ten31f.autogatalog.domain.Gat;
 import com.ten31f.autogatalog.domain.WatchURL;
@@ -60,7 +59,7 @@ public class ActionController {
 
 		attributes.addFlashAttribute("message", String.format("Deleteing:\t%s orphans", orpahCount));
 
-		gridFSFiles.stream().forEach(gridFSFile -> getFileRepository().delete(gridFSFile.getObjectId()));
+		gridFSFiles.stream().forEach(gridFSFile -> getFileRepository().delete(gridFSFile.getObjectId().toHexString()));
 
 		return "redirect:/orphan";
 	}
@@ -70,7 +69,7 @@ public class ActionController {
 
 		ObjectId objectId = new ObjectId(id);
 
-		getFileRepository().delete(objectId);
+		getFileRepository().delete(objectId.toHexString());
 
 		attributes.addFlashAttribute("message", String.format("Deleteing:\t%s", objectId));
 
@@ -149,10 +148,7 @@ public class ActionController {
 
 		Gat gat = optionalGat.get();
 
-		GridFSDownloadStream gridFSDownloadStream = getFileRepository()
-				.getFileAsGridFSDownloadStream(new ObjectId(gat.getFileObjectID()));
-
-		GridFSFile gridFSFile = gridFSDownloadStream.getGridFSFile();
+		GridFSFile gridFSFile = getFileRepository().findGridFSFile(gat.getFileObjectID());
 
 		logFileInfo(gridFSFile);
 
@@ -163,8 +159,7 @@ public class ActionController {
 		header.set(HttpHeaders.CONTENT_DISPOSITION,
 				"attachment; filename=" + gridFSFile.getFilename().replace(" ", "_"));
 
-		getFileRepository().downloadToStream(new ObjectId(gat.getFileObjectID()),
-				httpServletResponse.getOutputStream());
+		getFileRepository().downloadToStream(gat.getFileObjectID(), httpServletResponse.getOutputStream());
 	}
 
 	@GetMapping(path = "/download/{guid}")
@@ -181,10 +176,7 @@ public class ActionController {
 		if (gat.getFileObjectID() == null)
 			return;
 
-		GridFSDownloadStream gridFSDownloadStream = getFileRepository()
-				.getFileAsGridFSDownloadStream(new ObjectId(gat.getFileObjectID()));
-
-		GridFSFile gridFSFile = gridFSDownloadStream.getGridFSFile();
+		GridFSFile gridFSFile = getFileRepository().findGridFSFile(gat.getFileObjectID());
 
 		logFileInfo(gridFSFile);
 
@@ -199,16 +191,7 @@ public class ActionController {
 
 		log.atInfo().log("Starting stream");
 
-		int data = gridFSDownloadStream.read();
-
-		while (data >= 0) {
-
-			httpServletResponse.getOutputStream().write((char) data);
-
-			data = gridFSDownloadStream.read();
-		}
-
-		gridFSDownloadStream.close();
+		getFileRepository().downloadToStream(gat.getFileObjectID(), httpServletResponse.getOutputStream());
 
 		Duration duration = Duration.ofMillis(now + System.currentTimeMillis());
 

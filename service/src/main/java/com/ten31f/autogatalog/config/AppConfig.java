@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 import com.ten31f.autogatalog.old.repository.FileRepository;
-import com.ten31f.autogatalog.old.repository.GatRepository;
 import com.ten31f.autogatalog.old.repository.HealthRepository;
 import com.ten31f.autogatalog.old.repository.LbryRepository;
 import com.ten31f.autogatalog.repository.GatRepo;
@@ -24,8 +23,11 @@ import lombok.Getter;
 @EnableMongoRepositories(basePackages = { "com.ten31f.autogatalog.repository", "com.ten31f.autogatalog.domain" })
 public class AppConfig {
 
-	@Value("${autogatalog.databaseurl}")
-	public String databaseURL;
+	@Value("${spring.data.mongodb.uri}")
+	private String uri;
+
+	@Value("${spring.data.mongodb.database}")
+	private String db;
 
 	@Value("${autogatalog.lbryurl}")
 	public String lbryURL;
@@ -36,13 +38,8 @@ public class AppConfig {
 	}
 
 	@Bean
-	public GatRepository gatRepository() {
-		return new GatRepository(getDatabaseURL());
-	}
-
-	@Bean
 	public FileRepository fileRepository() {
-		return new FileRepository(getDatabaseURL());
+		return new FileRepository();
 	}
 
 	@Bean
@@ -52,7 +49,7 @@ public class AppConfig {
 
 	@Bean
 	public HealthRepository healthRepository() {
-		return new HealthRepository(getDatabaseURL());
+		return new HealthRepository(getUri());
 	}
 
 	@Bean
@@ -75,5 +72,17 @@ public class AppConfig {
 	public HealthCheck healthCheck(FileRepository fileRepository, GatRepo gatRepo, HealthRepository healthRepository) {
 		return new HealthCheck(fileRepository, gatRepo, healthRepository);
 	}
+
+//
+//	@Override
+//	protected String getDatabaseName() {
+//		return DATABASE_NAME;
+//	}
+
+//	@Bean
+//	public MongoClientSettingsBuilderCustomizer customizer() {
+//		ConnectionString connection = new ConnectionString(getUri());
+//		return settings -> settings.applyConnectionString(connection);
+//	}
 
 }

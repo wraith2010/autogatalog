@@ -3,7 +3,7 @@
 
 <head>
 <meta charset="UTF-8">
-<title th:text="${appName}" />
+<title th:text="${appName}"></title>
 <link th:href="@{/css/common.css}" rel="stylesheet" />
 <link th:href="@{/css/index.css}" rel="stylesheet" />
 <link th:href="@{/css/search.css}" rel="stylesheet" />
@@ -12,7 +12,7 @@
 <body>
 
 	<header>
-		<h1 th:text="${appName}" />
+		<h1 th:text="${appName}"></h1>
 	</header>
 
 	<aside>
@@ -33,14 +33,50 @@
 
 	<main>
 
-		<form th:action="@{/search}" method="post" class="search">
-			<input type="text" id="formString" name="formString" th:value="${searchString}" />
-			<button type="submit">Search</button>
-		</form>
+
+		<section>
+			<ol id="taglist">
+				<li th:each="item : ${taglist}"><a
+					th:href="@{'/tag/' + ${item}}" th:text="${item}"></a></li>
+			</ol>
+		</section>
+
 
 		<section>
 
-			<article th:each="gat: ${gats}" th:with="guid=${gat.guid}">
+			<header>
+				<h2>Tagged</h2>
+			</header>
+
+			<article th:each="gat: ${taggedgats}" th:with="guid=${gat.guid}">
+				<a th:href="@{'/gat/' + ${gat.guid}}">
+					<figure>
+						<img th:if="${imageStrings.containsKey(guid)}"
+							th:src="@{'data:image/jpeg;charset=utf-8;base64,'+ ${imageStrings.get(guid)}}"
+							th:id="${guid}" alt="preview">
+					</figure> <header>
+						<h3 th:text="${gat.title}" />
+					</header>
+					<ul>
+						<li><a th:href="${gat.linkURL}"> <img alt="odysee logo"
+								class="download" th:src="@{'/img/odysee.jpg'}" />
+						</a></li>
+						<li><a th:href="@{'/download/' + ${guid}}"> <img
+								alt="download icon" class="download"
+								th:src="@{'/img/download.png'}" />
+						</a></li>
+					</ul>
+				</a>
+			</article>
+		</section>
+		
+		<section>
+
+			<header>
+				<h2>Potential Untagged</h2>
+			</header>
+
+			<article th:each="gat: ${searchedgats}" th:with="guid=${gat.guid}">
 				<a th:href="@{'/gat/' + ${gat.guid}}">
 					<figure>
 						<img th:if="${imageStrings.containsKey(guid)}"

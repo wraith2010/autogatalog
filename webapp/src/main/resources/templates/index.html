@@ -3,7 +3,7 @@
 
 <head>
 <meta charset="UTF-8">
-<title th:text="${appName}" />
+<title th:text="${appName}"></title>
 <link th:href="@{/css/common.css}" rel="stylesheet" />
 <link th:href="@{/css/index.css}" rel="stylesheet" />
 </head>
@@ -11,28 +11,22 @@
 <body>
 
 	<header>
-		<h1 th:text="${appName}" />
+		<h1 th:text="${appName}"></h1>
 	</header>
 
 	<aside>
 		<a th:href="@{/}"> <img th:src="@{/img/logo.png}" alt="logo" />
 		</a>
 		<ul>
-			<a th:href="@{/image}">
-				<li>image upload</li>
-			</a>
-			<a th:href="@{/orphan}">
-				<li>orphans</li>
-			</a>
-			<a th:href="@{/watch}">
-				<li>Watch URL</li>
-			</a>
+			<li><a th:href="@{/image}">image upload</a></li>
+			<li><a th:href="@{/orphan}">orphans</a></li>
+			<li><a th:href="@{/watch}">Watch URL</a></li>
+			<li><a th:href="@{/search}"> Search </a></li>
+			<li><a th:href="@{/tag}"> Tags </a></li>
 		</ul>
 		<ul>
-			<a th:each="author: ${authors}"
-				th:href="@{/author(author = ${author})}">
-				<li th:text="${author}"></li>
-			</a>
+			<li th:each="author: ${authors}"><a
+				th:href="@{'/author/' + ${author}}" th:text="${author}"></a></li>
 		</ul>
 	</aside>
 
@@ -42,28 +36,27 @@
 		<section th:each="author: ${authors}">
 			<header>
 				<a th:href="@{/author(author = ${author})}">
-					<h2 th:text="${author}" />
+					<h2 th:text="${author}"></h2>
 				</a>
 			</header>
 
-			<article th:each="gat: ${gatMap.get(author)}" th:with="guid=${gat.guid}">
+			<article th:each="gat: ${gatMap.get(author)}"
+				th:with="guid=${gat.guid}">
 				<a th:href="@{'/gat/' + ${gat.guid}}">
 					<figure>
 						<img th:if="${imageStrings.containsKey(guid)}"
 							th:src="@{'data:image/jpeg;charset=utf-8;base64,'+ ${imageStrings.get(guid)}}"
 							th:id="${guid}" alt="preview">
-					</figure> 
-					<header>
-						<h3 th:text="${gat.title}" />
+					</figure> <header>
+						<h3 th:text="${gat.title}"></h3>
 					</header>
 					<ul>
 						<li><a th:href="${gat.linkURL}"> <img alt="odysee logo"
 								class="download" th:src="@{'/img/odysee.jpg'}" />
 						</a></li>
-						<li><a th:href="@{'/download/' + ${guid}}"> <img
+						<li><a th:href="@{'/download/' + ${guid}}"><img
 								alt="download icon" class="download"
-								th:src="@{'/img/download.png'}" />
-						</a></li>
+								th:src="@{'/img/download.png'}" /> </a></li>
 					</ul>
 				</a>
 			</article>

@@ -42,8 +42,6 @@ public class HealthCheck implements Runnable {
 
 		health.setFileCount(gridFSFiles.size());
 
-//		gridFSFiles = gridFSFiles.stream().filter(gridFSFile -> ! getGatRepository().isPresent(gridFSFile.getObjectId()))
-//				.toList();
 
 		health.setOrphans(new ArrayList<>());
 		health.setImagelessGats(getGatRepo().findAllWithOutImage());
