@@ -32,6 +32,7 @@ public class IndexController extends PageController {
 
 	private static final String MODEL_ATTRIBUTE_GATMAP = "gatMap";
 	private static final String MODEL_ATTRIBUTE_IMAGESTRINGS = "imageStrings";
+	private static final String MODEL_ATTRIBUTE_COUNT = "count";
 
 	@GetMapping("/")
 	public String index(@RequestParam(value = "page", required = false) Integer page, Model model) {
@@ -69,8 +70,8 @@ public class IndexController extends PageController {
 		gatMap.get(author).add(gat);
 	}
 
-	@GetMapping("/author")
-	public String author(@RequestParam(value = "author") String author, Model model) {
+	@GetMapping("/author/{author}")
+	public String author(@PathVariable("author") String author, Model model) {
 
 		long start = System.currentTimeMillis();
 
@@ -102,7 +103,7 @@ public class IndexController extends PageController {
 		model.addAttribute("searchString", searchString);
 		model.addAttribute(MODEL_ATTRIBUTE_IMAGESTRINGS, retrieveImageStrings(gats));
 		model.addAttribute("gats", gats);
-		model.addAttribute("count", gats.size());
+		model.addAttribute(MODEL_ATTRIBUTE_COUNT, gats.size());
 		return "search";
 	}
 
@@ -123,8 +124,9 @@ public class IndexController extends PageController {
 		model.addAttribute("tag", tag);
 		model.addAttribute(MODEL_ATTRIBUTE_IMAGESTRINGS, retrieveImageStrings(totalGats));
 		model.addAttribute("taggedgats", taggedGats);
+		model.addAttribute("taggedcount", taggedGats.size());
 		model.addAttribute("searchedgats", searchedGats);
-		model.addAttribute("count", taggedGats.size());
+		model.addAttribute("searchcount", searchedGats.size());
 
 		return "tags";
 	}
@@ -136,8 +138,8 @@ public class IndexController extends PageController {
 
 		model.addAttribute("tag", "");
 		model.addAttribute(MODEL_ATTRIBUTE_IMAGESTRINGS, new HashMap<>());
-		model.addAttribute("gats", new ArrayList<>());
-		model.addAttribute("count", 0);
+		model.addAttribute("taggedcount", 0);
+		model.addAttribute("searchcount", 0);
 
 		return "tags";
 	}
@@ -148,7 +150,7 @@ public class IndexController extends PageController {
 		model.addAttribute("searchString", "");
 		model.addAttribute(MODEL_ATTRIBUTE_IMAGESTRINGS, new HashMap<>());
 		model.addAttribute("gats", new ArrayList<>());
-		model.addAttribute("count", 0);
+		model.addAttribute(MODEL_ATTRIBUTE_COUNT, 0);
 
 		return "search";
 	}
@@ -191,8 +193,6 @@ public class IndexController extends PageController {
 		common(model);
 
 		List<GridFSFile> gridFSFiles = getFileRepository().listAllFiles();
-
-		model.addAttribute("count", gridFSFiles.size());
 
 		gridFSFiles = gridFSFiles.stream()
 				.filter(gridFSFile -> !getGatRepo().existsGatByFileObjectID(gridFSFile.getObjectId().toHexString())

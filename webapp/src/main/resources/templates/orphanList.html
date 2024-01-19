@@ -1,30 +1,30 @@
+<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-<!DOCTYPE html>
 <head>
-	<meta charset="UTF-8">
-	<title th:text="${appName}" />
-	<link th:href="@{/css/common.css}" rel="stylesheet" />
+<meta charset="UTF-8">
+<title th:text="${appName}"></title>
+<link th:href="@{/css/common.css}" rel="stylesheet" />
 </head>
 
 <body>
 
 	<header>
-		<h1 th:text="${appName}" />
+		<h1 th:text="${appName}"></h1>
 	</header>
 
-	<aside>
-		<a th:href="@{/}">
-			<img th:src="@{/img/logo.png}" alt="logo" />
-		</a>
-	</aside>
-	
+	<aside th:replace="~{fragments/aside.html :: aside}"></aside>
+
 	<main>
-		<h1><span th:text="${orphanCount}"></span>/<span th:text="${count}"></span> Orphaned Files</h1>
+		<h1>
+			<span th:text="${orphanCount}"></span>/<span th:text="${count}"></span>
+			Orphaned Files
+		</h1>
 
 		<p th:text="${message}" th:if="${message ne null}"></p>
 
-		<form method="post" th:action="@{/orphan/deleteAll}" enctype="multipart/form-data">
+		<form method="post" th:action="@{/orphan/deleteAll}"
+			enctype="multipart/form-data">
 			<button type="submit" class="btn btn-primary">Delete All</button>
 		</form>
 
@@ -38,7 +38,8 @@
 					<li>Upload Date: <span th:text="${orphan.uploadDate}"></span></li>
 					<li>ID: <span th:text="${orphan.id}"></span></li>
 				</ul>
-				<form method="post" th:action="@{/orphan/delete}" enctype="multipart/form-data">
+				<form method="post" th:action="@{/orphan/delete}"
+					enctype="multipart/form-data">
 					<input type="hidden" th:value="${orphan.id.value}" name="id" />
 					<button type="submit" class="btn btn-primary">Delete</button>
 				</form>

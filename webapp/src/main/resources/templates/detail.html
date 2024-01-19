@@ -14,10 +14,7 @@
 		<h1 th:text="${appName}"></h1>
 	</header>
 
-	<aside>
-		<a th:href="@{/}"> <img th:src="@{/img/logo.png}" alt="logo" />
-		</a>
-	</aside>
+	<aside th:replace="~{fragments/aside.html :: aside}"></aside>
 
 	<main>
 
@@ -31,9 +28,7 @@
 					alt="preview">
 			</figure>
 			<p th:utext="${gat.description}"></p>
-			<ol>
-				<li th:each="tag: ${gat.tags}"><span th:text="${tag}"></span></li>
-			</ol>
+			<div th:insert="~{fragments/taglist.html :: ol}"></div>
 			<ul>
 				<li><a th:href="${gat.linkURL}"> <img alt="odysee logo"
 						class="download" th:src="@{'/img/odysee.jpg'}" />

@@ -33,10 +33,9 @@ public class RSSDigester {
 	public static final String IMAGE = "image";
 	public static final String DESCRIPTION = "description";
 	public static final String AUTHOR = "author";
-	
+
 	public static final String ITEM = "item";
 	public static final String ENCLOSURE = "enclosure";
-	
 
 	private WatchURL watchURL = null;
 
@@ -133,6 +132,8 @@ public class RSSDigester {
 
 		return gat;
 	}
+
+
 
 	private String getCharacterData(XMLEvent event, XMLEventReader eventReader) throws XMLStreamException {
 

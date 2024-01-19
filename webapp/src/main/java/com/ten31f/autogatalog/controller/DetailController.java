@@ -41,6 +41,8 @@ public class DetailController extends PageController {
 
 		addGat(model, gat);
 
+		model.addAttribute(MODEL_ATTRIBUTE_TAGSLIST, gat.getTags());
+
 		return "detail";
 	}
 
@@ -89,7 +91,7 @@ public class DetailController extends PageController {
 
 		getGatRepo().save(gat);
 
-		return new ModelAndView(String.format("redirect:/gat/%s", formGat.getGuid()));
+		return new ModelAndView(String.format("redirect:/gat/%s", gat.getGuid()));
 	}
 
 	private void addGat(Model model, Gat gat) {

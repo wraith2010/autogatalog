@@ -3,7 +3,7 @@
 
 <head>
 <meta charset="UTF-8">
-<title th:text="${appName}" />
+<title th:text="${appName}"></title>
 <link th:href="@{/css/common.css}" rel="stylesheet" />
 <link th:href="@{/css/index.css}" rel="stylesheet" />
 <link th:href="@{/css/search.css}" rel="stylesheet" />
@@ -12,29 +12,16 @@
 <body>
 
 	<header>
-		<h1 th:text="${appName}" />
+		<h1 th:text="${appName}"></h1>
 	</header>
 
-	<aside>
-		<a th:href="@{/}"> <img th:src="@{/img/logo.png}" alt="logo" />
-		</a>
-		<ul>
-			<a th:href="@{/image}">
-				<li>image upload</li>
-			</a>
-			<a th:href="@{/orphan}">
-				<li>orphans</li>
-			</a>
-			<a th:href="@{/watch}">
-				<li>Watch URL</li>
-			</a>
-		</ul>
-	</aside>
+	<aside th:replace="~{fragments/aside.html :: aside}"></aside>
 
 	<main>
 
 		<form th:action="@{/search}" method="post" class="search">
-			<input type="text" id="formString" name="formString" th:value="${searchString}" />
+			<input type="text" id="formString" name="formString"
+				th:value="${searchString}" />
 			<button type="submit">Search</button>
 		</form>
 

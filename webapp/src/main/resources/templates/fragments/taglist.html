@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+	<ol class="taglist">
+		<li th:each="tag: ${taglist}"><a th:href="@{'/tag/' + ${tag}}"
+			th:text="${tag}"></a></li>
+	</ol>
+
+</body>

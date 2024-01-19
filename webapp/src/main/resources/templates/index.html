@@ -14,24 +14,9 @@
 		<h1 th:text="${appName}"></h1>
 	</header>
 
-	<aside>
-		<a th:href="@{/}"> <img th:src="@{/img/logo.png}" alt="logo" />
-		</a>
-		<ul>
-			<li><a th:href="@{/image}">image upload</a></li>
-			<li><a th:href="@{/orphan}">orphans</a></li>
-			<li><a th:href="@{/watch}">Watch URL</a></li>
-			<li><a th:href="@{/search}"> Search </a></li>
-			<li><a th:href="@{/tag}"> Tags </a></li>
-		</ul>
-		<ul>
-			<li th:each="author: ${authors}"><a
-				th:href="@{'/author/' + ${author}}" th:text="${author}"></a></li>
-		</ul>
-	</aside>
+	<aside th:replace="~{fragments/aside.html :: aside}"></aside>
 
 	<main>
-
 
 		<section th:each="author: ${authors}">
 			<header>

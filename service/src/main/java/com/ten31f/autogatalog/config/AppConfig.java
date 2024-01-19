@@ -73,16 +73,4 @@ public class AppConfig {
 		return new HealthCheck(fileRepository, gatRepo, healthRepository);
 	}
 
-//
-//	@Override
-//	protected String getDatabaseName() {
-//		return DATABASE_NAME;
-//	}
-
-//	@Bean
-//	public MongoClientSettingsBuilderCustomizer customizer() {
-//		ConnectionString connection = new ConnectionString(getUri());
-//		return settings -> settings.applyConnectionString(connection);
-//	}
-
 }

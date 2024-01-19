@@ -36,6 +36,8 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 public class ActionController {
 
+	public static final String FLASH_ATTRIBUTE_MESSAGE = "message";
+	
 	@Autowired
 	private GatRepo gatRepo;
 
@@ -57,7 +59,7 @@ public class ActionController {
 
 		orpahCount = gridFSFiles.size();
 
-		attributes.addFlashAttribute("message", String.format("Deleteing:\t%s orphans", orpahCount));
+		attributes.addFlashAttribute(FLASH_ATTRIBUTE_MESSAGE, String.format("Deleteing:\t%s orphans", orpahCount));
 
 		gridFSFiles.stream().forEach(gridFSFile -> getFileRepository().delete(gridFSFile.getObjectId().toHexString()));
 
@@ -71,7 +73,7 @@ public class ActionController {
 
 		getFileRepository().delete(objectId.toHexString());
 
-		attributes.addFlashAttribute("message", String.format("Deleteing:\t%s", objectId));
+		attributes.addFlashAttribute(FLASH_ATTRIBUTE_MESSAGE, String.format("Deleteing:\t%s", objectId));
 
 		log.atInfo().log(String.format("Deleteing:\t%s", objectId));
 
@@ -84,7 +86,7 @@ public class ActionController {
 
 		// check if file is empty
 		if (file.isEmpty()) {
-			attributes.addFlashAttribute("message", "Please select a file to upload.");
+			attributes.addFlashAttribute(FLASH_ATTRIBUTE_MESSAGE, "Please select a file to upload.");
 			return "redirect:/";
 		}
 
@@ -96,7 +98,7 @@ public class ActionController {
 					fileName);
 			log.atInfo().log(String.format("You successfully uploaded %s(%s)!", fileName, objectId));
 			// return success response
-			attributes.addFlashAttribute("message",
+			attributes.addFlashAttribute(FLASH_ATTRIBUTE_MESSAGE,
 					String.format("You successfully uploaded %s(%s)!", fileName, objectId));
 
 			Optional<Gat> optionalGat = getGatRepo().findByGuid(guid);
@@ -109,7 +111,7 @@ public class ActionController {
 		} catch (IOException exception) {
 			log.error("Failed upload", exception);
 
-			attributes.addFlashAttribute("message", "You failed to uploaded " + fileName + '!');
+			attributes.addFlashAttribute(FLASH_ATTRIBUTE_MESSAGE, "You failed to uploaded " + fileName + '!');
 		}
 
 		return "redirect:/image";
@@ -127,12 +129,12 @@ public class ActionController {
 
 		} catch (MalformedURLException malformedURLException) {
 			log.error("malformed url excpetion", malformedURLException);
-			attributes.addFlashAttribute("message",
+			attributes.addFlashAttribute(FLASH_ATTRIBUTE_MESSAGE,
 					String.format("(%s) is a mallformed url: %s", rssURL, malformedURLException.getMessage()));
 			return "redirect:/watch";
 		}
 
-		attributes.addFlashAttribute("message", String.format("(%s) added", rssURL));
+		attributes.addFlashAttribute(FLASH_ATTRIBUTE_MESSAGE, String.format("(%s) added", rssURL));
 
 		return "redirect:/watch";
 
@@ -197,6 +199,23 @@ public class ActionController {
 
 		log.atInfo().log(String.format("Duration: %s seconds", duration.getSeconds()));
 
+	}
+
+	@GetMapping("/addTag/{guid}/{tag}")
+	public String addTag(@PathVariable("guid") String guid, @PathVariable("tag") String tag) {
+
+		Optional<Gat> optionalGat = getGatRepo().findByGuid(guid);
+		if (optionalGat.isEmpty()) {
+			return "404";
+		}
+
+		Gat gat = optionalGat.get();
+
+		gat.getTags().add(tag);
+
+		getGatRepo().save(gat);
+
+		return String.format("redirect:/tag/%s", tag);
 	}
 
 	private void logFileInfo(GridFSFile gridFSFile) {

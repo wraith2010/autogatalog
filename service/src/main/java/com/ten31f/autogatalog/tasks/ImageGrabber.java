@@ -33,9 +33,7 @@ public class ImageGrabber implements Runnable {
 	@Override
 	public void run() {
 
-		// TODO: do this filter in the query save space and time
-		List<Gat> gats = getGatRepo().findAll();
-		gats = gats.stream().filter(gat -> gat.getImagefileObjectID() == null).toList();
+		List<Gat> gats = getGatRepo().findAllWithOutImage();
 
 		if (gats.isEmpty()) {
 			log.info("no gats images left to download");

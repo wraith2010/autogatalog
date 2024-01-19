@@ -48,10 +48,7 @@
 		<h1 th:text="${appName}"></h1>
 	</header>
 
-	<aside>
-		<a th:href="@{/}"> <img th:src="@{/img/logo.png}" alt="logo" />
-		</a>
-	</aside>
+	<aside th:replace="~{fragments/aside.html :: aside}"></aside>
 
 	<main>
 

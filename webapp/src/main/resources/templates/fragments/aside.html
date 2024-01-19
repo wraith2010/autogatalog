@@ -1,28 +1,25 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Common Aside</title>
+</head>
 <body>
 
-	<aside th:fragment="aside">
+	<aside>
 		<a th:href="@{/}"> <img th:src="@{/img/logo.png}" alt="logo" />
 		</a>
 		<ul>
-			<a th:each="author: ${authors}"
-				th:href="@{/author(author = ${author.author})}">
-				<li th:text="${author.author}"></li>
-			</a>
+			<li><a th:href="@{/image}">Image Upload</a></li>
+			<li><a th:href="@{/orphan}">Orphans</a></li>
+			<li><a th:href="@{/watch}">Watch URL</a></li>
+			<li><a th:href="@{/search}">Search</a></li>
+			<li><a th:href="@{/tag}">Tags</a></li>
 		</ul>
 		<ul>
-			<a th:href="@{/image}">
-				<li>image upload</li>
-			</a>
-			<a th:href="@{/orphan}">
-				<li>orphans</li>
-			</a>
-			<a th:href="@{/watch}">
-				<li>Watch URL</li>
-			</a>
+			<li th:each="author: ${authors}"><a
+				th:href="@{'/author/' + ${author}}" th:text="${author}"></a></li>
 		</ul>
-
 	</aside>
+
 </body>
 </html>

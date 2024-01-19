@@ -2,31 +2,19 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-	<meta charset="UTF-8">
-	<title th:text="${appName}" />
-	<link th:href="@{/css/common.css}" rel="stylesheet" />
-	<link th:href="@{/css/index.css}" rel="stylesheet" />
+<meta charset="UTF-8">
+<title th:text="${appName}"></title>
+<link th:href="@{/css/common.css}" rel="stylesheet" />
+<link th:href="@{/css/index.css}" rel="stylesheet" />
 </head>
 
 <body>
 
 	<header>
-		<h1 th:text="${appName}" />
+		<h1 th:text="${appName}"></h1>
 	</header>
 
-	<aside>
-		<a th:href="@{/}">
-			<img th:src="@{/img/logo.png}" alt="logo" />
-		</a>
-		<ul>
-			<a th:href="@{/}">
-			<li>home</li>
-			</a>
-			<a th:href="@{/author(author = ${author})}">
-			<li th:text="${author}"/>
-			</a>
-		</ul>
-	</aside>
+	<aside th:replace="~{fragments/aside.html :: aside}"></aside>
 
 	<main>
 
@@ -41,23 +29,18 @@
 						<img th:if="${imageStrings.containsKey(guid)}"
 							th:src="@{'data:image/jpeg;charset=utf-8;base64,'+ ${imageStrings.get(guid)}}"
 							alt="preview">
-					</figure>
-
-					<header>
+					</figure> <header>
 						<h3 th:text="${gat.title}" />
 					</header>
 
 					<ul>
-						<li>
-							<a th:href="${gat.linkURL}">
-								<img alt="odysee logo" class="download" th:src="@{'/img/odysee.jpg'}" />
-							</a>
-						</li>
-						<li>
-							<a th:href="@{'/download/' + ${guid}}">
-								<img alt="download icon" class="download" th:src="@{'/img/download.png'}" />
-							</a>
-						</li>
+						<li><a th:href="${gat.linkURL}"> <img alt="odysee logo"
+								class="download" th:src="@{'/img/odysee.jpg'}" />
+						</a></li>
+						<li><a th:href="@{'/download/' + ${guid}}"> <img
+								alt="download icon" class="download"
+								th:src="@{'/img/download.png'}" />
+						</a></li>
 					</ul>
 
 				</a>

@@ -15,39 +15,14 @@
 		<h1 th:text="${appName}"></h1>
 	</header>
 
-	<aside>
-		<a th:href="@{/}"> <img th:src="@{/img/logo.png}" alt="logo" />
-		</a>
-		<ul>
-			<a th:href="@{/image}">
-				<li>image upload</li>
-			</a>
-			<a th:href="@{/orphan}">
-				<li>orphans</li>
-			</a>
-			<a th:href="@{/watch}">
-				<li>Watch URL</li>
-			</a>
-		</ul>
-	</aside>
+	<aside th:replace="~{fragments/aside.html :: aside}"></aside>
 
 	<main>
-
-
-		<section>
-			<ol id="taglist">
-				<li th:each="item : ${taglist}"><a
-					th:href="@{'/tag/' + ${item}}" th:text="${item}"></a></li>
-			</ol>
-		</section>
-
-
-		<section>
-
+		<section th:insert="~{fragments/taglist.html :: ol}"></section>
+		<section th:if="${taggedcount != 0}">
 			<header>
 				<h2>Tagged</h2>
 			</header>
-
 			<article th:each="gat: ${taggedgats}" th:with="guid=${gat.guid}">
 				<a th:href="@{'/gat/' + ${gat.guid}}">
 					<figure>
@@ -55,7 +30,7 @@
 							th:src="@{'data:image/jpeg;charset=utf-8;base64,'+ ${imageStrings.get(guid)}}"
 							th:id="${guid}" alt="preview">
 					</figure> <header>
-						<h3 th:text="${gat.title}" />
+						<h3 th:text="${gat.title}"></h3>
 					</header>
 					<ul>
 						<li><a th:href="${gat.linkURL}"> <img alt="odysee logo"
@@ -69,8 +44,8 @@
 				</a>
 			</article>
 		</section>
-		
-		<section>
+
+		<section th:if="${searchcount != 0}">
 
 			<header>
 				<h2>Potential Untagged</h2>
@@ -92,6 +67,10 @@
 						<li><a th:href="@{'/download/' + ${guid}}"> <img
 								alt="download icon" class="download"
 								th:src="@{'/img/download.png'}" />
+						</a></li>
+						<li><a th:href="@{'/addTag/' + ${guid} + '/' + ${tag}}">
+								<img alt="download icon" class="download"
+								th:src="@{'/img/tag.png'}" />
 						</a></li>
 					</ul>
 				</a>

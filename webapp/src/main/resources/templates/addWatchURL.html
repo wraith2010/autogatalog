@@ -2,23 +2,18 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-	<meta charset="UTF-8">
-	<title>Add new WatchURL</title>
-	<link th:href="@{/css/common.css}" rel="stylesheet" />
+<meta charset="UTF-8">
+<title>Add new WatchURL</title>
+<link th:href="@{/css/common.css}" rel="stylesheet" />
 </head>
 
 <body>
 
 	<header>
-		<h1 th:text="${appName}" />
+		<h1 th:text="${appName}"></h1>
 	</header>
 
-	<aside>
-		<a th:href="@{/}">
-			<img th:src="@{/img/logo.png}" alt="logo" />
-		</a>
-	</aside>
-
+	<aside th:replace="~{fragments/aside.html :: aside}"></aside>
 
 	<main>
 		<section>
@@ -26,8 +21,10 @@
 				<header>
 					<h2>New Watch URL</h2>
 				</header>
-				<p th:text="${message}" th:if="${message ne null}" class="alert alert-primary"></p>
-				<form method="post" th:action="@{/watch/add}" enctype="multipart/form-data">
+				<p th:text="${message}" th:if="${message ne null}"
+					class="alert alert-primary"></p>
+				<form method="post" th:action="@{/watch/add}"
+					enctype="multipart/form-data">
 					<div class="form-group">
 						<input class="form-control" type="text" name="rssURL" id="rssURL" />
 					</div>

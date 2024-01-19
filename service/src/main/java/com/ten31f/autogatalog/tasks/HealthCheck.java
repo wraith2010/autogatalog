@@ -42,7 +42,6 @@ public class HealthCheck implements Runnable {
 
 		health.setFileCount(gridFSFiles.size());
 
-
 		health.setOrphans(new ArrayList<>());
 		health.setImagelessGats(getGatRepo().findAllWithOutImage());
 		health.setPendingDownload(getGatRepo().findAllWithOutFile());
@@ -51,9 +50,8 @@ public class HealthCheck implements Runnable {
 		try {
 			log.debug(String.format("Health info:\t%s", new ObjectMapper().writeValueAsString(health)));
 			getHealthRepository().updateHealth(health);
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (JsonProcessingException jsonProcessingException) {
+			log.error("Error parsing result of system health check", jsonProcessingException);
 		}
 
 	}
