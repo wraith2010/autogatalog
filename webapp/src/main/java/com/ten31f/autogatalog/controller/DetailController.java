@@ -20,9 +20,16 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 public class DetailController extends PageController {
 
+	private static String PAGE_NAME = "detail";
+	
 	public static final String MODEL_ATTRIBUTE_IMAGESTRING = "imageString";
 	public static final String MODEL_ATTRIBUTE_GAT = "gat";
 
+	@Override
+	String getPageName() {
+		return PAGE_NAME;
+	}
+	
 	@GetMapping("/gat/{guid}")
 	public String detailPage(@PathVariable("guid") String guid, Model model) {
 

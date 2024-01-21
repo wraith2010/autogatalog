@@ -4,25 +4,22 @@
 <head>
 <meta charset="UTF-8">
 <title th:text="${appName}"></title>
+
 <link th:href="@{/css/common.css}" rel="stylesheet" />
 <link th:href="@{/css/index.css}" rel="stylesheet" />
+<link th:href="@{/css/index-grid.css}" rel="stylesheet" />
+<link th:href="@{/css/nav.css}" rel="stylesheet" />
 </head>
 
 <body>
 
-	<aside th:replace="~{fragments/aside.html :: aside}"></aside>
+	<nav th:replace="~{fragments/nav.html :: nav}"></nav>
+
+	<header class="main-title">
+		<h1 th:text="${appName}"></h1>
+	</header>
 
 	<main>
-
-		<section>
-			<header th:replace="~{fragments/header.html :: header}"></header>
-		</section>
-		<section>
-			<header>
-				<h2 th:text="${author}" />
-			</header>
-		</section>
-
 		<section class="indexGrid">
 			<article th:each="gat: ${gats}" th:with="guid=${gat.guid}">
 				<ul>

@@ -6,19 +6,26 @@
 <body>
 
 	<aside>
-		<a th:href="@{/}"> <img th:src="@{/img/logo.png}" alt="logo" />
-		</a>
-		<ul>
-			<li><a th:href="@{/image}">Image Upload</a></li>
-			<li><a th:href="@{/orphan}">Orphans</a></li>
-			<li><a th:href="@{/watch}">Watch URL</a></li>
-			<li><a th:href="@{/search}">Search</a></li>
-			<li><a th:href="@{/tag}">Tags</a></li>
-		</ul>
-		<ul>
-			<li th:each="author: ${authors}"><a
-				th:href="@{'/author/' + ${author}}" th:text="${author}"></a></li>
-		</ul>
+		<section class="asideLogo">
+			<a th:href="@{/}"><img th:src="@{/img/logo.png}" alt="logo" /></a>
+		</section>
+		<section>
+			<ul>
+				<li><a th:href="@{/image}">Image Upload</a></li>
+				<li><a th:href="@{/orphan}">Orphans</a></li>
+				<li><a th:href="@{/watch}">Watch URL</a></li>
+				<li><a th:href="@{/search}">Search</a></li>
+				<li><a th:href="@{/tag}">Tags</a></li>
+			</ul>
+		</section>
+		<section>
+			<h3 th:if="${authorcount != null}"
+				th:text="'Authors(' + ${authorcount} +')'"></h3>
+			<ul>
+				<li th:each="author: ${authors}"><a
+					th:href="@{'/author/' + ${author}}" th:text="${author}"></a></li>
+			</ul>
+		</section>
 	</aside>
 
 </body>

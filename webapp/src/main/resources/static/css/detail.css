@@ -1,26 +1,44 @@
 article {
 	width: 80%;
-	margin-left: auto;
-	margin-right: auto;
+	margin: 0px auto;
+	background-color: #333333;
+	border-radius: 25px;
+	padding: 25px;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 20px;
 }
 
 article header {
+	grid-column: 1/3;
 	width: 100%;
+	text-align: center;
+}
+
+article header h2 {
+	font-size: 4em;
+	margin: 0px;
 }
 
 article figure {
-	width: 30%;
-	float: left
+	width: 100%;
+	margin: 0px;
+}
+
+article div {
+	width: 40%;
+	padding: 15px;
+	margin: 0px;
 }
 
 article figure img {
 	width: 100%;
-	border-radius: 25px;
+	border-radius: 50px 10px;
 }
 
 article p {
 	color: #FFFFFF;
-	font-size: 1rem;
+	font-size: 2em;
 }
 
 article header input {
@@ -28,17 +46,37 @@ article header input {
 	border-radius: 15px;
 	padding: 15px;
 	font-size: 2em;
-	margin: 30px 50px;
 }
 
 article textarea {
-	width: 50%;
+	width: 100%;
 	border-radius: 15px;
-	padding: 15px;
 	font-size: 1em;
 }
 
-article ol {
-	width: 80%;
-	column-count: 4;
+article ul {
+	grid-column: 1/3;
+	display: inline-grid;
+	padding: 0px;
+	grid-template-columns: repeat(4, 1fr);
+}
+
+article ul li {
+	list-style-type: none;
+}
+
+article ul li label {
+	color: orangered;
+	font-size: 1.5rem;
+}
+
+.taglist li a {
+	color: orangered;
+	font-size: 1.5em;
+	text-decoration: none;
+}
+
+article ul li a img {
+	margin: 5px;
+	width: 50px;
 }

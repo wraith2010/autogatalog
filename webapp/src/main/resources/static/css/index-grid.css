@@ -1,0 +1,75 @@
+.indexGrid {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 10px;
+	grid-auto-rows: minmax(100px, auto);
+}
+
+.indexGrid header {
+	grid-column: 1/5;
+}
+
+.indexGrid article {
+	text-align: center;
+}
+
+.indexGrid article header, .indexGrid article div {
+	width: 100%;
+	text-align: left;
+	margin: 5px 0px;
+}
+
+.indexGrid article {
+	text-decoration: none;
+}
+
+.indexGrid article header a h3, .indexGrid article div a h3 {
+	margin: 0px;
+	font-size: 1em;
+	font-family: Inter;
+	display: inline;
+}
+
+.indexGrid article div a h3 {
+	margin-top: auto;
+	margin-bottom: auto;
+}
+
+.indexGrid article figure {
+	width: 100%;
+	margin: -50px 0px 0px 0px;
+	position: relative;
+	min-height: 180px;
+}
+
+.indexGrid article figure a img {
+	position: relative;
+	margin: -50px 0px 0px 0px;
+	width: 100%;
+	border-radius: 10px;
+	min-height: 100px;
+	max-height: 280px
+}
+
+.indexGrid article ul {
+	list-style: none;
+	float: inline-end;
+	position: relative;
+	z-index: 2;
+}
+
+.indexGrid article ul li {
+	display: inline-block;
+}
+
+.indexGrid article a img {
+	width: 30px;
+	border-radius: 5px;
+}
+
+.authoricon {
+	background-color: #FFFFFF;
+	border-radius: 50%;
+	padding: 5px;
+	margin: 0px 5px;
+}

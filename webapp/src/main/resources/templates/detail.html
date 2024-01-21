@@ -2,22 +2,22 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-<meta charset="UTF-8">
+
+<meta charset="UTF-8" />
+
 <title th:text="${gat.title}"></title>
+
 <link th:href="@{/css/common.css}" rel="stylesheet" />
 <link th:href="@{/css/detail.css}" rel="stylesheet" />
+<link th:href="@{/css/nav.css}" rel="stylesheet" />
+
 </head>
 
 <body>
 
-	<header>
-		<h1 th:text="${appName}"></h1>
-	</header>
-
-	<aside th:replace="~{fragments/aside.html :: aside}"></aside>
+	<nav th:replace="~{fragments/nav.html :: nav}"></nav>
 
 	<main>
-
 		<article>
 			<header>
 				<h2 th:text="${gat.title}"></h2>
@@ -28,7 +28,7 @@
 					alt="preview">
 			</figure>
 			<p th:utext="${gat.description}"></p>
-			<div th:insert="~{fragments/taglist.html :: ol}"></div>
+			<ul th:replace="~{fragments/taglist.html :: ul}"></ul>
 			<ul>
 				<li><a th:href="${gat.linkURL}"> <img alt="odysee logo"
 						class="download" th:src="@{'/img/odysee.jpg'}" />

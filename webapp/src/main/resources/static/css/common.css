@@ -1,86 +1,56 @@
 body {
-	background-color: #000000;
+	background-color: #1F2122;
+	margin: 0px;
+	min-height: 1vh;
+	width: 100%;
 }
 
 h1 {
-	color: #FFFFFF;
+	color: #e75e8d;
 	text-align: center;
 	text-transform: uppercase;
 	font-size: 5em;
 }
 
 h2 {
-	color: #FFFFFF;
+	color: #e75e8d;
 	width: 100%;
-	text-align: center;
 	font-size: 3em;
 }
 
 h3 {
-	color: #FFFFFF;
-	width: 100%;
-	text-align: center;
-	font-size: 3vh;
-}
-
-main {
-	margin-left: auto;
-	margin-right: auto;
-	width: 80%;
-	float: right;
-}
-
-header {
-	margin-left: auto;
-	margin-right: auto;
-	width: 80%;
-	float: right;
+	color: #e75e8d;
+	font-size: 1em;
 }
 
 aside {
-	float: left;
-	width: 18%;
+	background-color: #333333;
+	margin: 0px;
+	min-height: 100vh;
+	display: block;
 }
 
-aside a img {
-	width: 100%;
+main {
+	background-color: #27292a;
+	margin: 20px auto;
+	width: 80%;
+	border-radius: 50px;
+	padding: 50px;
 }
 
 section {
+	background-color: #1F2122;
 	width: 100%;
-	display: flex;
-	flex-wrap: wrap;
 }
 
 section header {
 	width: 100%;
 	text-align: center;
+	margin: 50px 0px;
 }
 
-section header h2 {
-	color: #FFFFFF;
-	width: 100%;
+.center {
 	text-align: center;
-	font-size: 5vh;
-	font-size: 5vh;
-	text-transform: uppercase;
-	margin: 0px;
-}
-
-article ul {
-	width: 100%;
-	list-style: none;
-	margin: 0px;
-}
-
-article ul li {
-	display: inline-block;
-	color: #FFFFFF;
-}
-
-article ul li a img {
-	width: 30px;
-	border-radius: 5px;
 }
 
 .alert {
@@ -115,6 +85,20 @@ ol li label {
 	text-decoration: none;
 }
 
+.asideLogo {
+	text-align: center;
+}
+
+aside a img {
+	margin: 10px auto;
+	width: 80%;
+}
+
+aside a div {
+	width: 100%;
+	text-align: center;
+}
+
 aside ul {
 	list-style: none;
 	color: #FFFFFF;
@@ -127,8 +111,11 @@ aside ul a {
 	text-decoration: none;
 }
 
+aside ul li {
+	margin: 5px 0px;
+}
+
 aside ul li a {
 	text-decoration: none;
 	color: #FFFFFF;
-	white-space: nowrap;
 }

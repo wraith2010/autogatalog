@@ -1,6 +1,7 @@
 package com.ten31f.autogatalog;
 
 import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -44,10 +45,10 @@ public class App {
 
 		log.info(String.format("Damon launch at: %s", Calendar.getInstance().getTime()));
 
-//		getTrackingScheduledExecutorService().scheduleAtFixedRate(scan, 0, 4, TimeUnit.MINUTES);
-//		getTrackingScheduledExecutorService().scheduleAtFixedRate(downloadrequestor, 0, 4, TimeUnit.MINUTES);
-//		getTrackingScheduledExecutorService().scheduleAtFixedRate(imageGrabber, 6, 10, TimeUnit.MINUTES);
-//		getTrackingScheduledExecutorService().scheduleAtFixedRate(healthCheck, 0, 5, TimeUnit.MINUTES);
+		getTrackingScheduledExecutorService().scheduleAtFixedRate(scan, 0, 4, TimeUnit.MINUTES);
+		getTrackingScheduledExecutorService().scheduleAtFixedRate(downloadrequestor, 0, 4, TimeUnit.MINUTES);
+		getTrackingScheduledExecutorService().scheduleAtFixedRate(imageGrabber, 6, 10, TimeUnit.MINUTES);
+		getTrackingScheduledExecutorService().scheduleAtFixedRate(healthCheck, 0, 5, TimeUnit.MINUTES);
 
 		log.info(String.format("Executors loaded at: %s", Calendar.getInstance().getTime()));
 

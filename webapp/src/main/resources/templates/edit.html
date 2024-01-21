@@ -44,11 +44,7 @@
 
 <body>
 
-	<header>
-		<h1 th:text="${appName}"></h1>
-	</header>
-
-	<aside th:replace="~{fragments/aside.html :: aside}"></aside>
+	<nav th:replace="~{fragments/nav.html :: nav}"></nav>
 
 	<main>
 
@@ -68,11 +64,11 @@
 				<textarea id="description" rows="20" name="description"
 					placeholder="Description" th:field="*{description}"></textarea>
 
-				<ol id="taglist">
+				<ul>
 					<li th:each="item : ${taglist}"><input type="checkbox"
 						th:field="*{tags}" th:value="${item}" /> <label th:text="${item}"></label>
 					</li>
-				</ol>
+				</ul>
 
 				<input type="text" id="newtag">
 				<button type="button" onclick="addTag()" value="add">Add</button>

@@ -20,6 +20,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Gat {
 
+	public static final String TAG_NFPM = "NFPM";
+
 	@Id
 	private String id;
 	private String description;
@@ -36,4 +38,14 @@ public class Gat {
 		return imagefileObjectID != null;
 	}
 
+	public boolean isTagged(String tag) {
+		
+		if (getTags() == null)
+			return false;
+		
+		return getTags().contains(tag);
+	}
+
+	
+	
 }

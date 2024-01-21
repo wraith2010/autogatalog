@@ -3,10 +3,8 @@ package com.ten31f.autogatalog.controller;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Controller;
@@ -19,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.mongodb.client.gridfs.model.GridFSFile;
+import com.ten31f.autogatalog.controller.util.AuthorComparator;
 import com.ten31f.autogatalog.domain.Gat;
-import com.ten31f.autogatalog.util.AuthorNormalizer;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -30,44 +28,68 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 public class IndexController extends PageController {
 
-	private static final String MODEL_ATTRIBUTE_GATMAP = "gatMap";
+	private static final String MODEL_ATTRIBUTE_GATS = "gats";
 	private static final String MODEL_ATTRIBUTE_IMAGESTRINGS = "imageStrings";
 	private static final String MODEL_ATTRIBUTE_COUNT = "count";
+	private static final String MODEL_ATTRIBUTE_AUTHORCOUNT = "authorcount";
+	private static final String MODEL_ATTRIBUTE_PAGE = "page";
+	private static final String MODEL_ATTRIBUTE_PAGE_MAX = "pageMax";
 
-	@GetMapping("/")
+	private static final int PAGE_SIZE = 100;
+
+	private static String PAGE_NAME = "index";
+
+	@Override
+	String getPageName() {
+		return PAGE_NAME;
+	}
+
+	@GetMapping("/index")
 	public String index(@RequestParam(value = "page", required = false) Integer page, Model model) {
 
 		common(model);
 
-		List<Gat> gats = getGatRepo().findAll();
+		if (page == null)
+			page = 1;
+
+		long now = -System.currentTimeMillis();
+
+		log.info("Starting index loading");
+
+		List<Gat> gats = getGatRepo().findAll().stream().filter(gat -> !gat.isTagged(Gat.TAG_NFPM)).toList();
+
+		logDuration(now, "Retreive data");
 
 		List<String> authors = gats.stream().map(Gat::getAuthor).distinct().collect(Collectors.toList());
 
 		Collections.sort(authors, new AuthorComparator());
 
-		Map<String, List<Gat>> gatMap = new HashMap<>();
-		gats.stream().forEach(gat -> mapGatAuthor(gatMap, gat));
+		logDuration(now, "Map Authors");
 
-		List<Gat> filtertedList = new ArrayList<>();
-		gatMap.entrySet().forEach(entry -> filtertedList.addAll(entry.getValue()));
+		int start = (page - 1) * PAGE_SIZE;
+		int end = (page * PAGE_SIZE > gats.size()) ? gats.size() : page * PAGE_SIZE;
+
+		List<Gat> filtertedList = gats.subList(start, end);
+
+		logDuration(now, "Filter data");
+
+		int pageMax = (gats.size() / PAGE_SIZE);
+		if (gats.size() % PAGE_SIZE != 0) {
+			pageMax++;
+		}
 
 		model.addAttribute("authors", authors);
+		model.addAttribute(MODEL_ATTRIBUTE_AUTHORCOUNT, authors.size());
 		model.addAttribute(MODEL_ATTRIBUTE_IMAGESTRINGS, retrieveImageStrings(filtertedList));
-		model.addAttribute(MODEL_ATTRIBUTE_GATMAP, gatMap);
+		model.addAttribute(MODEL_ATTRIBUTE_GATS, filtertedList);
+		model.addAttribute(MODEL_ATTRIBUTE_PAGE, page);
+		model.addAttribute(MODEL_ATTRIBUTE_PAGE_MAX, pageMax);
+
+		logDuration(now, "Retrieve images");
+
+		log.info(String.format("images retrieved %s", filtertedList.size()));
 
 		return "index";
-	}
-
-	private void mapGatAuthor(Map<String, List<Gat>> gatMap, Gat gat) {
-
-		String author = AuthorNormalizer.cleanAuthor(gat.getAuthor());
-
-		gatMap.computeIfAbsent(author, t -> new ArrayList<>());
-
-		if (gatMap.get(author).size() > 3)
-			return;
-
-		gatMap.get(author).add(gat);
 	}
 
 	@GetMapping("/author/{author}")
@@ -95,8 +117,23 @@ public class IndexController extends PageController {
 		return "author";
 	}
 
+	@GetMapping("/search")
+	public String searchPage(Model model) {
+
+		common(model);
+
+		model.addAttribute("searchString", "");
+		model.addAttribute(MODEL_ATTRIBUTE_IMAGESTRINGS, new HashMap<>());
+		model.addAttribute("gats", new ArrayList<>());
+		model.addAttribute(MODEL_ATTRIBUTE_COUNT, 0);
+
+		return "search";
+	}
+
 	@GetMapping("/search/{searchString}")
 	public String searchPage(@PathVariable("searchString") String searchString, Model model) {
+
+		common(model);
 
 		List<Gat> gats = getGatRepo().search(searchString);
 
@@ -109,6 +146,8 @@ public class IndexController extends PageController {
 
 	@GetMapping("/tag/{tag}")
 	public String tag(@PathVariable("tag") String tag, Model model) {
+
+		common(model);
 
 		addTagsList(model);
 
@@ -134,6 +173,8 @@ public class IndexController extends PageController {
 	@GetMapping("/tag")
 	public String tag(Model model) {
 
+		common(model);
+
 		addTagsList(model);
 
 		model.addAttribute("tag", "");
@@ -144,29 +185,12 @@ public class IndexController extends PageController {
 		return "tags";
 	}
 
-	@GetMapping("/search")
-	public String searchPage(Model model) {
-
-		model.addAttribute("searchString", "");
-		model.addAttribute(MODEL_ATTRIBUTE_IMAGESTRINGS, new HashMap<>());
-		model.addAttribute("gats", new ArrayList<>());
-		model.addAttribute(MODEL_ATTRIBUTE_COUNT, 0);
-
-		return "search";
-	}
-
 	@PostMapping("/search")
 	public ModelAndView searchPagePost(@ModelAttribute("formString") String formString) {
 
 		log.info(String.format("search from page: %s", formString));
 
 		return new ModelAndView(String.format("redirect:/search/%s", formString));
-	}
-
-	private Map<String, String> retrieveImageStrings(List<Gat> gats) {
-
-		return gats.stream().filter(gat -> gat.getImagefileObjectID() != null)
-				.collect(Collectors.toMap(Gat::getGuid, gat -> getFileRepository().getImageFileAsBase64String(gat)));
 	}
 
 	@GetMapping("/image")
@@ -203,37 +227,6 @@ public class IndexController extends PageController {
 		model.addAttribute("orphanCount", gridFSFiles.size());
 
 		return "orphanList";
-	}
-
-	private class AuthorComparator implements Comparator<String> {
-
-		private static final String AT = "@";
-		private static final String THE = "THE";
-
-		@Override
-		public int compare(String string1, String string2) {
-
-			String cleanString1 = cleanString(string1);
-			String cleanString2 = cleanString(string2);
-
-			return cleanString1.compareTo(cleanString2);
-		}
-
-		private String cleanString(String inital) {
-
-			String working = inital;
-
-			if (working.startsWith(AT)) {
-				working = working.substring(AT.length());
-			}
-
-			if (working.startsWith(THE)) {
-				working = working.substring(AT.length());
-			}
-
-			return working.trim();
-		}
-
 	}
 
 }

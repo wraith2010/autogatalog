@@ -5,47 +5,45 @@
 <meta charset="UTF-8">
 <title th:text="${appName}"></title>
 <link th:href="@{/css/common.css}" rel="stylesheet" />
-<link th:href="@{/css/index.css}" rel="stylesheet" />
+<link th:href="@{/css/index-grid.css}" rel="stylesheet" />
+<link th:href="@{/css/nav.css}" rel="stylesheet" />
 <link th:href="@{/css/search.css}" rel="stylesheet" />
 </head>
 
 <body>
 
-	<header>
-		<h1 th:text="${appName}"></h1>
-	</header>
+	<nav th:replace="~{fragments/nav.html :: nav}"></nav>
 
-	<aside th:replace="~{fragments/aside.html :: aside}"></aside>
 
 	<main>
-
-		<form th:action="@{/search}" method="post" class="search">
-			<input type="text" id="formString" name="formString"
-				th:value="${searchString}" />
-			<button type="submit">Search</button>
-		</form>
-
-		<section>
-
+		<section class="indexGrid">
 			<article th:each="gat: ${gats}" th:with="guid=${gat.guid}">
-				<a th:href="@{'/gat/' + ${gat.guid}}">
-					<figure>
-						<img th:if="${imageStrings.containsKey(guid)}"
-							th:src="@{'data:image/jpeg;charset=utf-8;base64,'+ ${imageStrings.get(guid)}}"
-							th:id="${guid}" alt="preview">
-					</figure> <header>
-						<h3 th:text="${gat.title}" />
-					</header>
-					<ul>
-						<li><a th:href="${gat.linkURL}"> <img alt="odysee logo"
-								class="download" th:src="@{'/img/odysee.jpg'}" />
-						</a></li>
-						<li><a th:href="@{'/download/' + ${guid}}"> <img
-								alt="download icon" class="download"
-								th:src="@{'/img/download.png'}" />
-						</a></li>
-					</ul>
-				</a>
+				<ul>
+					<li><a th:href="${gat.linkURL}"> <img alt="odysee logo"
+							class="download" th:src="@{'/img/odysee.jpg'}" />
+					</a></li>
+					<li><a th:href="@{'/download/' + ${guid}}"><img
+							alt="download icon" class="download"
+							th:src="@{'/img/download.png'}" /> </a></li>
+				</ul>
+				<figure>
+					<a th:href="@{'/gat/' + ${gat.guid}}"> <img
+						th:if="${imageStrings.containsKey(guid)}"
+						th:src="@{'data:image/jpeg;charset=utf-8;base64,'+ ${imageStrings.get(guid)}}"
+						th:id="${guid}" alt="preview" />
+					</a>
+				</figure>
+				<header>
+					<a th:href="@{'/gat/' + ${gat.guid}}">
+						<h3 th:text="${gat.title}"></h3>
+					</a>
+				</header>
+				<div>
+					<a th:href="@{'/author/' + ${gat.author}}"> <img
+						class="authoricon" alt="Author" th:src="@{'/img/writer.png'}">
+						<h3 th:text="${gat.author}"></h3>
+					</a>
+				</div>
 			</article>
 		</section>
 	</main>

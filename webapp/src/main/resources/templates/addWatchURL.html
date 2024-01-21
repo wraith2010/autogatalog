@@ -9,13 +9,14 @@
 
 <body>
 
-	<header>
-		<h1 th:text="${appName}"></h1>
-	</header>
-
 	<aside th:replace="~{fragments/aside.html :: aside}"></aside>
 
 	<main>
+
+		<section>
+			<header th:replace="~{fragments/header.html :: header}"></header>
+		</section>
+
 		<section>
 			<article>
 				<header>
