@@ -1,16 +1,24 @@
 .indexGrid {
 	display: grid;
-	grid-template-columns: repeat(4, 1fr);
+	grid-template-columns: repeat(5, 1fr);
 	gap: 10px;
 	grid-auto-rows: minmax(100px, auto);
 }
 
 .indexGrid header {
-	grid-column: 1/5;
+	grid-column: 1/6;
+}
+
+.indexGrid header h2 {
+	margin: 0px;
 }
 
 .indexGrid article {
 	text-align: center;
+	background-color: #27292a;
+	padding: 30px 15px;
+	border-radius: 23px;
+	margin-bottom: 30px;
 }
 
 .indexGrid article header, .indexGrid article div {
@@ -65,6 +73,23 @@
 .indexGrid article a img {
 	width: 30px;
 	border-radius: 5px;
+}
+
+.pagenumbers {
+	grid-column: 1/6;
+}
+
+.pagenumbers ul {
+	list-style: none;
+	width: 80%; width : 90%;
+	display: inline-flex;
+	justify-content: space-around;
+	width: 90%;
+}
+
+.pagenumbers ul li a {
+	font-size: 2em;
+	color: #666666;
 }
 
 .authoricon {

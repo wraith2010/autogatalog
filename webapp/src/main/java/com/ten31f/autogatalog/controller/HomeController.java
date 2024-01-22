@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 public class HomeController extends PageController {
 
-	private static String PAGE_NAME = "home";
+	private static final String PAGE_NAME = "home";
 
 	private static final String MODEL_ATTRIBUTE_GATS = "gats";
 	private static final String MODEL_ATTRIBUTE_IMAGESTRINGS = "imageStrings";
@@ -28,7 +29,7 @@ public class HomeController extends PageController {
 	private static final String MODEL_ATTRIBUTE_PAGE = "page";
 	private static final String MODEL_ATTRIBUTE_PAGE_MAX = "pageMax";
 
-	private static final int PAGE_SIZE = 100;
+	private static final int PAGE_SIZE = 10;
 
 	@Override
 	String getPageName() {
@@ -47,7 +48,7 @@ public class HomeController extends PageController {
 
 		log.info("Starting index loading");
 
-		List<Gat> gats = getGatRepo().findAll().stream().filter(gat -> !gat.isTagged(Gat.TAG_NFPM)).toList();
+		List<Gat> gats = getGatRepo().findForFontPage(PageRequest.of(0, PAGE_SIZE));
 
 		logDuration(now, "Retreive data");
 

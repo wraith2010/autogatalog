@@ -5,6 +5,7 @@ import com.ten31f.autogatalog.domain.Gat;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
@@ -35,5 +36,8 @@ public interface GatRepo extends MongoRepository<Gat, String> {
 
 	@Query("{'tags': ?0 }")
 	List<Gat> findByTag(String tag);
+
+	@Query("{'tags':{$nin:['NFPM']}}")
+	List<Gat> findForFontPage(Pageable pageable);
 
 }

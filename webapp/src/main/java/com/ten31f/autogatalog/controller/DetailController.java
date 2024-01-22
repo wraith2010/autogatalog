@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 public class DetailController extends PageController {
 
-	private static String PAGE_NAME = "detail";
+	private static final String PAGE_NAME = "detail";
 	
 	public static final String MODEL_ATTRIBUTE_IMAGESTRING = "imageString";
 	public static final String MODEL_ATTRIBUTE_GAT = "gat";
@@ -50,7 +50,7 @@ public class DetailController extends PageController {
 
 		model.addAttribute(MODEL_ATTRIBUTE_TAGSLIST, gat.getTags());
 
-		return "detail";
+		return PAGE_NAME;
 	}
 
 	@GetMapping("/edit/{guid}")

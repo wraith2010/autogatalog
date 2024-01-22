@@ -201,23 +201,6 @@ public class ActionController {
 
 	}
 
-	@GetMapping("/addTag/{guid}/{tag}")
-	public String addTag(@PathVariable("guid") String guid, @PathVariable("tag") String tag) {
-
-		Optional<Gat> optionalGat = getGatRepo().findByGuid(guid);
-		if (optionalGat.isEmpty()) {
-			return "404";
-		}
-
-		Gat gat = optionalGat.get();
-
-		gat.getTags().add(tag);
-
-		getGatRepo().save(gat);
-
-		return String.format("redirect:/tag/%s", tag);
-	}
-
 	private void logFileInfo(GridFSFile gridFSFile) {
 
 		if (log.isInfoEnabled()) {

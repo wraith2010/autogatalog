@@ -24,7 +24,8 @@ public abstract class PageController {
 
 	public static final String MODEL_ATTRIBUTE_APPNAME = "appName";
 	public static final String MODEL_ATTRIBUTE_TAGSLIST = "taglist";
-
+	public static final String MODEL_ATTRIBUTE_IMAGESTRINGS = "imageStrings";
+	
 	@Autowired
 	private GatRepo gatRepo;
 
