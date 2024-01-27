@@ -40,4 +40,5 @@ public interface GatRepo extends MongoRepository<Gat, String> {
 	@Query("{'tags':{$nin:['NFPM']}}")
 	List<Gat> findForFontPage(Pageable pageable);
 
+	List<Gat> findByOrderByViewsDesc();
 }

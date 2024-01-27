@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title th:text="${appName}"></title>
+
+<link th:href="@{/css/common.css}" rel="stylesheet" />
+<link th:href="@{/css/home.css}" rel="stylesheet" />
+<link th:href="@{/css/index-grid.css}" rel="stylesheet" />
+<link th:href="@{/css/nav.css}" rel="stylesheet" />
+</head>
+
+<body>
+
+	<article th:fragment="indexGrid(gats)" th:each="gat: ${gats}"
+		th:with="guid=${gat.guid}">
+		<ul class="quickActions">
+			<li><a th:href="${gat.linkURL}"> <img alt="odysee logo"
+					class="download" th:src="@{'/img/odysee.jpg'}" />
+			</a></li>
+			<li><a th:href="@{'/download/' + ${guid}}"><img
+					alt="download icon" class="download"
+					th:src="@{'/img/download.png'}" /> </a></li>
+		</ul>
+		<figure>
+			<a th:href="@{'/gat/' + ${gat.guid}}"> <img
+				th:if="${imageStrings.containsKey(guid)}"
+				th:src="@{'data:image/jpeg;charset=utf-8;base64,'+ ${imageStrings.get(guid)}}"
+				th:id="${guid}" alt="preview" />
+			</a>
+		</figure>
+		<header>
+			<a th:href="@{'/gat/' + ${gat.guid}}">
+				<h3 th:text="${gat.title}"></h3>
+			</a>
+		</header>
+
+		<ul class="details">
+			<li><a th:href="@{'/author/' + ${gat.author}}"> <img
+					class="authoricon" alt="Author"
+					th:src="@{'/img/multiple-users-silhouette.png'}">
+					<h3 th:text="${gat.author}"></h3>
+			</a></li>
+			<li th:if="${gat.views} != null"><img class="authoricon"
+				alt="Author" th:src="@{'/img/visibility.png'}">
+				<h3 th:text="${gat.views}"></h3></li>
+			<li th:if="${gat.downloads} != null"><img class="authoricon"
+				alt="Author" th:src="@{'/img/detail-download.png'}">
+				<h3 th:text="${gat.downloads}"></h3></li>
+		</ul>
+
+
+		<form method="post" th:action="@{'/image/upload/' + ${gat.guid}}"
+			enctype="multipart/form-data" th:if="${page} == 'image'">
+			<div class="form-group">
+				<input type="file" name="file" class="form-control-file">
+			</div>
+			<button type="submit" class="btn btn-primary">Upload File</button>
+		</form>
+
+	</article>
+</body>
+</html>

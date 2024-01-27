@@ -2,11 +2,15 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-<meta charset="UTF-8">
+
+<meta charset="UTF-8" />
+
 <title th:text="${appName}"></title>
+
 <link th:href="@{/css/common.css}" rel="stylesheet" />
-<link th:href="@{/css/index-grid.css}" rel="stylesheet" />
 <link th:href="@{/css/nav.css}" rel="stylesheet" />
+<link th:href="@{/css/index-grid.css}" rel="stylesheet" />
+
 </head>
 
 <body>
@@ -15,15 +19,23 @@
 
 	<main>
 		<section class="indexGrid">
+
 			<header>
-				<h2 th:text="${author}"></h2>
+				<h2>Admin</h2>
 			</header>
-			<article
-				th:replace="~{fragments/indexGridArticle.html :: indexGrid(${gats})}">
+
+			<article>
+				<a th:href="@{/image}"><h3>Image Maintenance</h3></a>
 			</article>
+			<article>
+				<a th:href="@{/orphan}"><h3>File Orphans</h3></a>
+			</article>
+			<article>
+				<a th:href="@{/watch}"><h3>Watch URL Maintenance</h3></a>
+			</article>
+			
 		</section>
 	</main>
 
 </body>
-
 </html>

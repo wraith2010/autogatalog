@@ -2,55 +2,30 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
+
 <meta charset="UTF-8">
+
 <title th:text="${appName}"></title>
+
 <link th:href="@{/css/common.css}" rel="stylesheet" />
 <link th:href="@{/css/image-upload.css}" rel="stylesheet" />
+<link th:href="@{/css/nav.css}" rel="stylesheet" />
+<link th:href="@{/css/index-grid.css}" rel="stylesheet" />
 </head>
 
 <body>
 
-	<aside th:replace="~{fragments/aside.html :: aside}"></aside>
+	<nav th:replace="~{fragments/nav.html :: nav}"></nav>
 
 	<main>
-
-			<section>
-			<header th:replace="~{fragments/header.html :: header}"></header>
-		</section>
 
 		<p th:text="${message}" th:if="${message ne null}"
 			class="alert alert-primary"></p>
 
-		<section class="my-5">
+		<section class="indexGrid">
 
-			<article th:each="gat: ${gats}" th:with="guid=${gat.guid}">
-
-
-				<header>
-					<h3 th:text="${gat.title}" />
-				</header>
-
-				<ul>
-					<li><a th:href="${gat.linkURL}"> <img alt="odysee logo"
-							class="download" th:src="@{'/img/odysee.jpg'}" />
-					</a></li>
-					<li><a th:href="@{'/download/' + ${guid}}"
-						th:if="${gat.fileObjectID ne null}"> <img alt="download icon"
-							class="download" th:src="@{'/img/download.png'}" />
-					</a></li>
-				</ul>
-
-				<a th:href="@{'/gat/' + ${gat.guid}}" th:text="${gat.guid}"></a>
-
-				<form method="post" th:action="@{'/image/upload/' + ${gat.guid}}"
-					enctype="multipart/form-data">
-					<div class="form-group">
-						<input type="file" name="file" class="form-control-file">
-					</div>
-					<button type="submit" class="btn btn-primary">Upload File</button>
-				</form>
-
-
+			<article
+				th:replace="~{fragments/indexGridArticle.html :: indexGrid(${gats})}">
 			</article>
 
 		</section>

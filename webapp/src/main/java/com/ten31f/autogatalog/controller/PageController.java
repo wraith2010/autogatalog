@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,10 @@ public abstract class PageController {
 	public static final String MODEL_ATTRIBUTE_APPNAME = "appName";
 	public static final String MODEL_ATTRIBUTE_TAGSLIST = "taglist";
 	public static final String MODEL_ATTRIBUTE_IMAGESTRINGS = "imageStrings";
-	
+	public static final String MODEL_ATTRIBUTE_PAGE = "page";
+
+	public static final String FLASH_ATTRIBUTE_MESSAGE = "message";
+
 	@Autowired
 	private GatRepo gatRepo;
 
@@ -42,6 +46,7 @@ public abstract class PageController {
 
 	protected void common(Model model) {
 		model.addAttribute(MODEL_ATTRIBUTE_APPNAME, getAppName());
+		model.addAttribute(MODEL_ATTRIBUTE_PAGE, getPageName());
 	}
 
 	protected void addTagsList(Model model) {
@@ -60,6 +65,12 @@ public abstract class PageController {
 	}
 
 	public Map<String, String> retrieveImageStrings(List<Gat> gats) {
+
+		return gats.stream().filter(gat -> gat.getImagefileObjectID() != null)
+				.collect(Collectors.toMap(Gat::getGuid, gat -> getFileRepository().getImageFileAsBase64String(gat)));
+	}
+
+	public Map<String, String> retrieveImageStrings(Set<Gat> gats) {
 
 		return gats.stream().filter(gat -> gat.getImagefileObjectID() != null)
 				.collect(Collectors.toMap(Gat::getGuid, gat -> getFileRepository().getImageFileAsBase64String(gat)));

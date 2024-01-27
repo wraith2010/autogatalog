@@ -2,34 +2,33 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
+
 <meta charset="UTF-8">
+
 <title th:text="${appName}"></title>
+
 <link th:href="@{/css/common.css}" rel="stylesheet" />
+<link th:href="@{/css/nav.css}" rel="stylesheet" />
+<link th:href="@{/css/orphan.css}" rel="stylesheet" />
+
 </head>
 
 <body>
 
-	<aside th:replace="~{fragments/aside.html :: aside}"></aside>
+	<nav th:replace="~{fragments/nav.html :: nav}"></nav>
 
 	<main>
-	
+
 		<section>
-			<header th:replace="~{fragments/header.html :: header}"></header>
-		</section>
 
-		<h1>
-			<span th:text="${orphanCount}"></span>/<span th:text="${count}"></span>
-			Orphaned Files
-		</h1>
+			<h1 th:text="${orphanCount} +'/' + ${count}"></h1>
 
-		<p th:text="${message}" th:if="${message ne null}"></p>
+			<p th:text="${message}" th:if="${message ne null}"></p>
 
-		<form method="post" th:action="@{/orphan/deleteAll}"
-			enctype="multipart/form-data">
-			<button type="submit" class="btn btn-primary">Delete All</button>
-		</form>
-
-		<section style="display: flex; flex-wrap: wrap;">
+			<form method="post" th:action="@{/orphan/deleteAll}"
+				enctype="multipart/form-data">
+				<button type="submit" class="btn btn-primary">Delete All</button>
+			</form>
 
 			<article th:each="orphan: ${orphanFiles}">
 				<ul>

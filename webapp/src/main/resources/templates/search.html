@@ -14,41 +14,12 @@
 
 	<nav th:replace="~{fragments/nav.html :: nav}"></nav>
 
-
 	<main>
 		<section class="indexGrid">
-			<article th:each="gat: ${gats}" th:with="guid=${gat.guid}">
-				<ul>
-					<li><a th:href="${gat.linkURL}"> <img alt="odysee logo"
-							class="download" th:src="@{'/img/odysee.jpg'}" />
-					</a></li>
-					<li><a th:href="@{'/download/' + ${guid}}"><img
-							alt="download icon" class="download"
-							th:src="@{'/img/download.png'}" /> </a></li>
-				</ul>
-				<figure>
-					<a th:href="@{'/gat/' + ${gat.guid}}"> <img
-						th:if="${imageStrings.containsKey(guid)}"
-						th:src="@{'data:image/jpeg;charset=utf-8;base64,'+ ${imageStrings.get(guid)}}"
-						th:id="${guid}" alt="preview" />
-					</a>
-				</figure>
-				<header>
-					<a th:href="@{'/gat/' + ${gat.guid}}">
-						<h3 th:text="${gat.title}"></h3>
-					</a>
-				</header>
-				<div>
-					<a th:href="@{'/author/' + ${gat.author}}"> <img
-						class="authoricon" alt="Author" th:src="@{'/img/writer.png'}">
-						<h3 th:text="${gat.author}"></h3>
-					</a>
-				</div>
+			<article
+				th:replace="~{fragments/indexGridArticle.html :: indexGrid(${gats})}">
 			</article>
 		</section>
 	</main>
-
-
-
 
 </body>

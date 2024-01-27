@@ -8,7 +8,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.mongodb.client.gridfs.model.GridFSFile;
 import com.ten31f.autogatalog.domain.Gat;
 
 import lombok.Getter;
@@ -67,41 +66,4 @@ public class IndexController extends PageController {
 
 		return PAGE_NAME;
 	}
-
-	@GetMapping("/image")
-	public String imageUploadPage(Model model) {
-
-		common(model);
-
-		model.addAttribute("gats", getGatRepo().findAllWithOutImage());
-
-		return "imageUpload";
-	}
-
-	@GetMapping("/watch")
-	public String wathcURLAdd(Model model) {
-
-		common(model);
-
-		return "addWatchURL";
-	}
-
-	@GetMapping("/orphan")
-	public String orphan(Model model) {
-
-		common(model);
-
-		List<GridFSFile> gridFSFiles = getFileRepository().listAllFiles();
-
-		gridFSFiles = gridFSFiles.stream()
-				.filter(gridFSFile -> !getGatRepo().existsGatByFileObjectID(gridFSFile.getObjectId().toHexString())
-						&& !getGatRepo().existsGatByImagefileObjectID(gridFSFile.getObjectId().toHexString()))
-				.toList();
-
-		model.addAttribute("orphanFiles", gridFSFiles);
-		model.addAttribute("orphanCount", gridFSFiles.size());
-
-		return "orphanList";
-	}
-
 }

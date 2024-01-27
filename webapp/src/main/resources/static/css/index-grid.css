@@ -38,11 +38,6 @@
 	display: inline;
 }
 
-.indexGrid article div a h3 {
-	margin-top: auto;
-	margin-bottom: auto;
-}
-
 .indexGrid article figure {
 	width: 100%;
 	margin: -50px 0px 0px 0px;
@@ -59,20 +54,46 @@
 	max-height: 280px
 }
 
-.indexGrid article ul {
+.quickActions {
 	list-style: none;
 	float: inline-end;
 	position: relative;
 	z-index: 2;
 }
 
-.indexGrid article ul li {
+.quickActions li {
 	display: inline-block;
 }
 
-.indexGrid article a img {
+.quickActions a img {
 	width: 30px;
 	border-radius: 5px;
+}
+
+.details {
+	list-style: none;
+	display: grid;
+	padding: 0px;
+	text-align: left;
+	grid-template-columns: repeat(2, 1fr);
+}
+
+.details li:first-of-type {
+	grid-column: 1/3;
+}
+
+.details li, .details li a, .details li h3 {
+	display: inline-flex;
+}
+
+.details li img, .details a img {
+	width: 30px;
+	height: 30px;
+	padding: 5px;
+	background-color: #ffffff;
+	border-radius: 50%;
+	margin: auto 5px;
+	margin-right: 10px;
 }
 
 .pagenumbers {
@@ -81,7 +102,8 @@
 
 .pagenumbers ul {
 	list-style: none;
-	width: 80%; width : 90%;
+	width: 80%;
+	width: 90%;
 	display: inline-flex;
 	justify-content: space-around;
 	width: 90%;
@@ -90,11 +112,4 @@
 .pagenumbers ul li a {
 	font-size: 2em;
 	color: #666666;
-}
-
-.authoricon {
-	background-color: #FFFFFF;
-	border-radius: 50%;
-	padding: 5px;
-	margin: 0px 5px;
 }

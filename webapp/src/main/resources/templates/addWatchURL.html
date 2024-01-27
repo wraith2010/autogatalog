@@ -5,25 +5,25 @@
 <meta charset="UTF-8">
 <title>Add new WatchURL</title>
 <link th:href="@{/css/common.css}" rel="stylesheet" />
+<link th:href="@{/css/nav.css}" rel="stylesheet" />
+<link th:href="@{/css/watchURL.css}" rel="stylesheet" />
 </head>
 
 <body>
 
-	<aside th:replace="~{fragments/aside.html :: aside}"></aside>
-
+	<nav th:replace="~{fragments/nav.html :: nav}"></nav>
 	<main>
 
-		<section>
-			<header th:replace="~{fragments/header.html :: header}"></header>
-		</section>
+		<p th:text="${message}" th:if="${message ne null}"
+			class="alert alert-primary"></p>
+
 
 		<section>
 			<article>
 				<header>
-					<h2>New Watch URL</h2>
+					<h2>Watch URLs</h2>
 				</header>
-				<p th:text="${message}" th:if="${message ne null}"
-					class="alert alert-primary"></p>
+
 				<form method="post" th:action="@{/watch/add}"
 					enctype="multipart/form-data">
 					<div class="form-group">
@@ -31,6 +31,21 @@
 					</div>
 					<button type="submit" class="btn btn-primary">Submit</button>
 				</form>
+
+				<table>
+					<tr>
+						<th>ID</th>
+						<th>RSS URL</th>
+						<th>Last Checked Date</th>
+					</tr>
+					<tr th:each="watchURL: ${watchURLs}">
+						<td th:text="${watchURL.id}"></td>
+						<td th:text="${watchURL.rssURL}"></td>
+						<td th:text="${watchURL.lastCheck}"></td>
+						<td><a th:href="@{'/watch/delete/' + ${watchURL.id}}">Delete</a></td>
+					</tr>
+				</table>
+
 			</article>
 
 		</section>

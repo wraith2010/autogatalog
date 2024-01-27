@@ -33,19 +33,35 @@ public class Gat {
 	private String fileObjectID;
 	private String imagefileObjectID;
 	private List<String> tags;
+	private Long downloads;
+	private Long views;
 
 	public boolean hasImage() {
 		return imagefileObjectID != null;
 	}
 
 	public boolean isTagged(String tag) {
-		
+
 		if (getTags() == null)
 			return false;
-		
+
 		return getTags().contains(tag);
 	}
 
-	
-	
+	public void incrementDownloadCount() {
+		if (getDownloads() == null) {
+			setDownloads(1l);
+		} else {
+			setDownloads(getDownloads() + 1);
+		}
+	}
+
+	public void incrementViewCount() {
+		if (getViews() == null) {
+			setViews(1l);
+		} else {
+			setViews(getViews() + 1);
+		}
+	}
+
 }
