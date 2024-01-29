@@ -5,9 +5,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Controller;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.mongodb.client.gridfs.model.GridFSFile;
 import com.ten31f.autogatalog.domain.Gat;
 
 import lombok.Getter;
@@ -43,6 +46,18 @@ public class ImageMaintenanceController extends PageController {
 
 		common(model);
 
+		Set<String> objectIDs = new HashSet<>();
+
+		getGatRepo().findAll().stream().forEach(gat -> collectIDS(gat, objectIDs));
+
+		List<GridFSFile> gridFSFiles = getFileRepository().listAllFiles();
+
+		gridFSFiles = gridFSFiles.stream().filter(gridFSFile -> !gridFSFile.getFilename().endsWith(".zip"))
+				.filter(gridFSFile -> !objectIDs.contains(gridFSFile.getObjectId().toHexString())).toList();
+
+		model.addAttribute("orphanFiles", gridFSFiles);
+		model.addAttribute("orphanCount", gridFSFiles.size());
+
 		List<Gat> gats = getGatRepo().findAllWithOutImage();
 
 		InputStream inputStream = ImageMaintenanceController.class.getResourceAsStream(QUESTIONMARK_IMAGE);
@@ -62,15 +77,26 @@ public class ImageMaintenanceController extends PageController {
 		return "imageUpload";
 	}
 
-	@PostMapping("/image/upload/{guid}")
-	public String uploadFile(@RequestParam("file") MultipartFile file, @PathVariable("guid") String guid,
-			RedirectAttributes attributes) {
+	private void updateViaSelection(String guid, String fileID, RedirectAttributes attributes) {
 
-		// check if file is empty
-		if (file.isEmpty()) {
-			attributes.addFlashAttribute(FLASH_ATTRIBUTE_MESSAGE, "Please select a file to upload.");
-			return "redirect:/";
+		String objectID = fileID.substring(fileID.indexOf('=') + 1, fileID.length() - 1);
+
+		log.info(String.format("objectid: %s", objectID));
+
+		Optional<Gat> optionalGat = getGatRepo().findByGuid(guid);
+		if (!optionalGat.isEmpty()) {
+			Gat gat = optionalGat.get();
+			gat.setImagefileObjectID(objectID);
+			getGatRepo().save(gat);
 		}
+
+		log.info(String.format("successfully linked (%s)!", objectID));
+		// return success response
+		attributes.addFlashAttribute(FLASH_ATTRIBUTE_MESSAGE, String.format("successfully linked (%s)!", objectID));
+
+	}
+
+	public void updateViaUpload(String guid, MultipartFile file, RedirectAttributes attributes) {
 
 		// normalize the file path
 		String fileName = file.getOriginalFilename();
@@ -78,13 +104,13 @@ public class ImageMaintenanceController extends PageController {
 		try {
 			ObjectId objectId = getFileRepository().uploadFile(new BufferedInputStream(file.getInputStream()),
 					fileName);
-			log.atInfo().log(String.format("You successfully uploaded %s(%s)!", fileName, objectId));
+			log.info(String.format("successfully uploaded %s(%s)!", fileName, objectId));
 			// return success response
 			attributes.addFlashAttribute(FLASH_ATTRIBUTE_MESSAGE,
-					String.format("You successfully uploaded %s(%s)!", fileName, objectId));
+					String.format("successfully uploaded %s(%s)!", fileName, objectId));
 
 			Optional<Gat> optionalGat = getGatRepo().findByGuid(guid);
-			if (optionalGat.isPresent()) {
+			if (!optionalGat.isEmpty()) {
 				Gat gat = optionalGat.get();
 				gat.setImagefileObjectID(objectId.toString());
 				getGatRepo().save(gat);
@@ -93,7 +119,28 @@ public class ImageMaintenanceController extends PageController {
 		} catch (IOException exception) {
 			log.error("Failed upload", exception);
 
-			attributes.addFlashAttribute(FLASH_ATTRIBUTE_MESSAGE, "You failed to uploaded " + fileName + '!');
+			attributes.addFlashAttribute(FLASH_ATTRIBUTE_MESSAGE, "Upload failed " + fileName + '!');
+		}
+
+	}
+
+	@PostMapping("/image/upload/{guid}")
+	public String uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("orphans") String fileID,
+			@PathVariable("guid") String guid, RedirectAttributes attributes) {
+
+		log.info(String.format("Orphan vlaue: %s", fileID));
+
+		// check if file is empty
+		if (file.isEmpty() && fileID.isBlank()) {
+			attributes.addFlashAttribute(FLASH_ATTRIBUTE_MESSAGE,
+					"Please select a file to upload or one from the orphan list.");
+			return "redirect:/image";
+		}
+
+		if (!fileID.isBlank()) {
+			updateViaSelection(guid, fileID, attributes);
+		} else {
+			updateViaUpload(guid, file, attributes);
 		}
 
 		return "redirect:/image";

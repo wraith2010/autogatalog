@@ -1,4 +1,7 @@
-figure {
-	width: 90%;
-	height: 100px;
+.indexGrid {
+	grid-template-columns: repeat(3, 1fr);
+}
+
+form {
+	color: #666666;
 }

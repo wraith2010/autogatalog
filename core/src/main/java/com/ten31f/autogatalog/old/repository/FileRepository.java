@@ -87,7 +87,7 @@ public class FileRepository {
 
 	public GridFSFile findGridFSFile(String objectId) {
 
-		return getGridFsTemplate().findOne(new Query(Criteria.where("_id").is(objectId)));
+		return getGridFsTemplate().findOne(new Query(Criteria.where("_id").is(new ObjectId(objectId))));
 
 	}
 
@@ -100,6 +100,11 @@ public class FileRepository {
 	public String getFileAsBase64String(String objectId) {
 
 		GridFSFile gridFSFile = findGridFSFile(objectId);
+
+		if (gridFSFile == null) {
+			log.error(String.format("File ID (%s) not found", objectId));
+			return null;
+		}
 
 		GridFsResource gridFsResource = getGridFsTemplate().getResource(gridFSFile.getFilename());
 
@@ -120,6 +125,19 @@ public class FileRepository {
 
 		return getFileAsBase64String(gat.getImagefileObjectID());
 
+	}
+
+	public String getImageFileAsBase64String(GridFSFile gridFSFile) {
+		GridFsResource gridFsResource = getGridFsTemplate().getResource(gridFSFile.getFilename());
+
+		if (!gridFsResource.exists())
+			return null;
+
+		try (InputStream inputStream = getFileAsGridFStream(gridFsResource.getFileId().toString())) {
+			return Base64.getEncoder().encodeToString(inputStream.readAllBytes());
+		} catch (IOException | MongoGridFSException exception) {
+			return null;
+		}
 	}
 
 	public InputStream getFileAsGridFStream(String objectId) throws IllegalStateException, IOException {

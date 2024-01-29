@@ -10,8 +10,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import com.ten31f.autogatalog.domain.Health;
 import com.ten31f.autogatalog.old.repository.FileRepository;
-import com.ten31f.autogatalog.old.repository.HealthRepository;
 import com.ten31f.autogatalog.repository.GatRepo;
+import com.ten31f.autogatalog.repository.HealthRepo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,7 +31,7 @@ public class HealthCheck implements Runnable {
 
 	private FileRepository fileRepository;
 	private GatRepo gatRepo;
-	private HealthRepository healthRepository;
+	private HealthRepo healthRepo;
 
 	@Override
 	public void run() {
@@ -49,7 +49,7 @@ public class HealthCheck implements Runnable {
 
 		try {
 			log.debug(String.format("Health info:\t%s", new ObjectMapper().writeValueAsString(health)));
-			getHealthRepository().updateHealth(health);
+			getHealthRepo().save(health);
 		} catch (JsonProcessingException jsonProcessingException) {
 			log.error("Error parsing result of system health check", jsonProcessingException);
 		}

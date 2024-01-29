@@ -67,7 +67,7 @@ public class DownloadMonitor implements Runnable, GatBased {
 		}
 
 		try {
-			log.info(String.format("Downloading complete for (%s) uploading", getGat().getTitle()));
+			log.info(String.format("Downloading complete for (%s) downloading", getGat().getTitle()));
 
 			ObjectId fileObjectID = getFileRepository().uploadFile(getFile());
 			getGat().setFileObjectID(fileObjectID.toString());

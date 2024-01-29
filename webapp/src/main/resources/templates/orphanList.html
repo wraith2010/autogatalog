@@ -30,13 +30,21 @@
 				<button type="submit" class="btn btn-primary">Delete All</button>
 			</form>
 
-			<article th:each="orphan: ${orphanFiles}">
+			<article th:each="orphan: ${orphanFiles}"
+				th:with="fileID=${orphan.id}">
+				<figure>
+
+					<img th:if="${imageStrings.containsKey(fileID)}"
+						th:src="@{'data:image/jpeg;charset=utf-8;base64,'+ ${imageStrings.get(fileID)}}"
+						th:id="${orphanID}" alt="preview" />
+
+				</figure>
 				<ul>
-					<li>File Name: <span th:text="${orphan.filename}"></span></li>
-					<li>Metadata: <span th:text="${orphan.metadata}"></span></li>
-					<li>ObjectID: <span th:text="${orphan.objectId}"></span></li>
-					<li>Upload Date: <span th:text="${orphan.uploadDate}"></span></li>
-					<li>ID: <span th:text="${orphan.id}"></span></li>
+					<li th:text="'File Name: ' + ${orphan.filename}"></li>
+					<li th:text="'Metadata: ' + ${orphan.metadata}"></li>
+					<li th:text="'ObjectID: ' + ${orphan.objectId}"></li>
+					<li th:text="'Upload Date: ' + ${orphan.uploadDate}"></li>
+					<li th:text="'ID: ' + ${orphan.id}"></li>
 				</ul>
 				<form method="post" th:action="@{/orphan/delete}"
 					enctype="multipart/form-data">

@@ -24,8 +24,12 @@ import org.bson.BsonValue;
 
 import com.ten31f.autogatalog.domain.Gat;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
+@Getter
+@Setter
 @Slf4j
 public class LbryRepository {
 
@@ -245,14 +249,6 @@ public class LbryRepository {
 
 	private HttpPost getHttpPost() {
 		return new HttpPost(getLbryNodeAddress());
-	}
-
-	private String getLbryNodeAddress() {
-		return lbryNodeAddress;
-	}
-
-	private void setLbryNodeAddress(String lbryNodeAddress) {
-		this.lbryNodeAddress = lbryNodeAddress;
 	}
 
 }

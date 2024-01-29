@@ -3,12 +3,11 @@ package com.ten31f.autogatalog.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 import com.ten31f.autogatalog.old.repository.FileRepository;
-import com.ten31f.autogatalog.old.repository.HealthRepository;
 import com.ten31f.autogatalog.old.repository.LbryRepository;
 import com.ten31f.autogatalog.repository.GatRepo;
+import com.ten31f.autogatalog.repository.HealthRepo;
 import com.ten31f.autogatalog.repository.WatchURLRepo;
 import com.ten31f.autogatalog.schedule.TrackingScheduledExecutorService;
 import com.ten31f.autogatalog.tasks.Downloadrequestor;
@@ -20,14 +19,10 @@ import lombok.Getter;
 
 @Getter
 @Configuration
-@EnableMongoRepositories(basePackages = { "com.ten31f.autogatalog.repository", "com.ten31f.autogatalog.domain" })
 public class AppConfig {
 
-	@Value("${spring.data.mongodb.uri}")
-	private String uri;
-
-	@Value("${spring.data.mongodb.database}")
-	private String db;
+	@Value("${autogatalog.databaseurl}")
+	private String databaseURL;
 
 	@Value("${autogatalog.lbryurl}")
 	public String lbryURL;
@@ -48,11 +43,6 @@ public class AppConfig {
 	}
 
 	@Bean
-	public HealthRepository healthRepository() {
-		return new HealthRepository(getUri());
-	}
-
-	@Bean
 	public Scan scan(WatchURLRepo watchURLRepo, GatRepo gatRepo) {
 		return new Scan(watchURLRepo, gatRepo);
 	}
@@ -65,12 +55,12 @@ public class AppConfig {
 
 	@Bean
 	public ImageGrabber imageGrabber(GatRepo gatRepo, FileRepository fileRepository) {
-		return new ImageGrabber(gatRepo, fileRepository, 20);
+		return new ImageGrabber(gatRepo, fileRepository, 10);
 	}
 
 	@Bean
-	public HealthCheck healthCheck(FileRepository fileRepository, GatRepo gatRepo, HealthRepository healthRepository) {
-		return new HealthCheck(fileRepository, gatRepo, healthRepository);
+	public HealthCheck healthCheck(FileRepository fileRepository, GatRepo gatRepo, HealthRepo healthRepo) {
+		return new HealthCheck(fileRepository, gatRepo, healthRepo);
 	}
 
 }

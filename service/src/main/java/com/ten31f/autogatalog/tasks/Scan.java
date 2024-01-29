@@ -3,8 +3,10 @@ package com.ten31f.autogatalog.tasks;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 
 import com.ten31f.autogatalog.action.RSSDigester;
+import com.ten31f.autogatalog.domain.Gat;
 import com.ten31f.autogatalog.domain.WatchURL;
 import com.ten31f.autogatalog.repository.GatRepo;
 import com.ten31f.autogatalog.repository.WatchURLRepo;
@@ -55,15 +57,25 @@ public class Scan implements Runnable {
 
 		try {
 
-			rssDigester.readFeed().stream().forEach(stl -> getGatRepo().save(stl));
+			rssDigester.readFeed().stream().forEach(this::saveGat);
 
-			getWatchURLRepo().insert(rssDigester.getWatchURL());
+			getWatchURLRepo().save(rssDigester.getWatchURL());
 
 		} catch (Exception exception) {
 			log.error("error reading rss feed", exception);
 		}
 
 		log.info(String.format("Scan complete for(%s)", rssDigester.getWatchURL().getRssURL()));
+
+	}
+
+	private void saveGat(Gat gat) {
+
+		Optional<Gat> optionalGat = getGatRepo().findByGuid(gat.getGuid());
+
+		if (optionalGat.isEmpty()) {
+			getGatRepo().save(gat);
+		}
 
 	}
 

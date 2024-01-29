@@ -47,8 +47,7 @@ public class App {
 
 		getTrackingScheduledExecutorService().scheduleAtFixedRate(scan, 0, 4, TimeUnit.MINUTES);
 		getTrackingScheduledExecutorService().scheduleAtFixedRate(downloadrequestor, 0, 4, TimeUnit.MINUTES);
-		getTrackingScheduledExecutorService().scheduleAtFixedRate(imageGrabber, 6, 10, TimeUnit.MINUTES);
-		getTrackingScheduledExecutorService().scheduleAtFixedRate(healthCheck, 0, 5, TimeUnit.MINUTES);
+		getTrackingScheduledExecutorService().scheduleAtFixedRate(imageGrabber, 0, 2, TimeUnit.MINUTES);
 
 		log.info(String.format("Executors loaded at: %s", Calendar.getInstance().getTime()));
 

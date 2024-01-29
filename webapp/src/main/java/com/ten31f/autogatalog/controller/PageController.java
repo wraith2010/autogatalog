@@ -2,16 +2,19 @@ package com.ten31f.autogatalog.controller;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.bson.BsonValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.ui.Model;
 
+import com.mongodb.client.gridfs.model.GridFSFile;
 import com.ten31f.autogatalog.domain.Gat;
 import com.ten31f.autogatalog.old.repository.FileRepository;
 import com.ten31f.autogatalog.repository.GatRepo;
@@ -66,14 +69,71 @@ public abstract class PageController {
 
 	public Map<String, String> retrieveImageStrings(List<Gat> gats) {
 
-		return gats.stream().filter(gat -> gat.getImagefileObjectID() != null)
-				.collect(Collectors.toMap(Gat::getGuid, gat -> getFileRepository().getImageFileAsBase64String(gat)));
+		Map<String, String> imageStrings = new HashMap<>();
+
+		for (Gat gat : gats) {
+
+			if (gat.getImagefileObjectID() == null)
+				continue;
+
+			if (getFileRepository().findGridFSFile(gat.getImagefileObjectID()) != null) {
+
+				imageStrings.put(gat.getGuid(), getFileRepository().getImageFileAsBase64String(gat));
+
+			} else {
+				log.error(String.format("Missaing image for %s", gat));
+			}
+
+		}
+
+		return imageStrings;
+		
+//		return gats.stream().filter(gat -> gat.getImagefileObjectID() != null)
+//				.collect(Collectors.toMap(Gat::getGuid, gat -> getFileRepository().getImageFileAsBase64String(gat)));
 	}
 
 	public Map<String, String> retrieveImageStrings(Set<Gat> gats) {
 
-		return gats.stream().filter(gat -> gat.getImagefileObjectID() != null)
-				.collect(Collectors.toMap(Gat::getGuid, gat -> getFileRepository().getImageFileAsBase64String(gat)));
+		Map<String, String> imageStrings = new HashMap<>();
+
+		for (Gat gat : gats) {
+
+			if (gat.getImagefileObjectID() == null)
+				continue;
+
+			if (getFileRepository().findGridFSFile(gat.getImagefileObjectID()) != null) {
+
+				imageStrings.put(gat.getGuid(), getFileRepository().getImageFileAsBase64String(gat));
+
+			} else {
+				log.error(String.format("Missaing image for %s", gat));
+			}
+
+		}
+
+		return imageStrings;
+
+//		return gats.stream().filter(gat -> gat.getImagefileObjectID() != null)
+		// .collect(Collectors.toMap(Gat::getGuid, gat ->
+		// getFileRepository().getImageFileAsBase64String(gat)));
+	}
+
+	public Map<BsonValue, String> retrieveImageStringsFromGridFSFile(List<GridFSFile> imageGridFiles) {
+
+		return imageGridFiles.stream().collect(Collectors.toMap(gridFSFile -> gridFSFile.getId(),
+				gridFSFile -> getFileRepository().getImageFileAsBase64String(gridFSFile)));
+	}
+
+	public void collectIDS(Gat gat, Set<String> objectIDs) {
+
+		if (gat.getImagefileObjectID() != null) {
+			objectIDs.add(gat.getImagefileObjectID());
+		}
+
+		if (gat.getFileObjectID() != null) {
+			objectIDs.add(gat.getFileObjectID());
+		}
+
 	}
 
 }

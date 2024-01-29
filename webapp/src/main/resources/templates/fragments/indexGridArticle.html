@@ -37,8 +37,9 @@
 		</header>
 
 		<ul class="details">
-			<li><a th:href="@{'/author/' + ${gat.author}}"> <img
-					class="authoricon" alt="Author"
+			<li><a
+				th:href="@{/author/{author}(author=${#uris.escapePathSegment(gat.author, 'UTF-8')})}">
+					<img class="authoricon" alt="Author"
 					th:src="@{'/img/multiple-users-silhouette.png'}">
 					<h3 th:text="${gat.author}"></h3>
 			</a></li>
@@ -50,14 +51,23 @@
 				<h3 th:text="${gat.downloads}"></h3></li>
 		</ul>
 
+		<div>
+			<form method="post" th:action="@{'/image/upload/' + ${gat.guid}}"
+				enctype="multipart/form-data" th:if="${page} == 'image'">
+				<label for="orphans">Orphans:</label> <select name="orphans"
+					id="orphans">
+					<option th:value="null"></option>
+					<option th:each="orphan: ${orphanFiles}" th:value="${orphan.id}"
+						th:text="${orphan.filename}"></option>
 
-		<form method="post" th:action="@{'/image/upload/' + ${gat.guid}}"
-			enctype="multipart/form-data" th:if="${page} == 'image'">
-			<div class="form-group">
-				<input type="file" name="file" class="form-control-file">
-			</div>
-			<button type="submit" class="btn btn-primary">Upload File</button>
-		</form>
+				</select>
+
+				<div class="form-group">
+					<input type="file" name="file" class="form-control-file">
+				</div>
+				<button type="submit" class="btn btn-primary">Upload File</button>
+			</form>
+		</div>
 
 	</article>
 </body>

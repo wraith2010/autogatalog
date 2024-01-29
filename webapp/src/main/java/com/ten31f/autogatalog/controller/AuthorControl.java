@@ -1,5 +1,7 @@
 package com.ten31f.autogatalog.controller;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.time.Duration;
 import java.util.List;
 
@@ -27,6 +29,12 @@ public class AuthorControl extends PageController {
 
 	@GetMapping("/author/{author}")
 	public String author(@PathVariable("author") String author, Model model) {
+
+		try {
+			author = URLDecoder.decode(author, "UTF-8");
+		} catch (UnsupportedEncodingException unsupportedEncodingException) {
+			log.error("Error decoding author from URL", unsupportedEncodingException);
+		}
 
 		long start = System.currentTimeMillis();
 
