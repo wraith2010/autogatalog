@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.gridfs.GridFsResource;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -66,8 +65,8 @@ public class HealthCheckController extends PageController {
 			} else {
 				cadMissingImage.add(gat);
 			}
-			
-			if(gat.getFileObjectID() == null) {
+
+			if (gat.getFileObjectID() == null) {
 				cadPendingDownload.add(gat);
 			}
 		}
@@ -79,10 +78,9 @@ public class HealthCheckController extends PageController {
 		model.addAttribute(MODEL_ATTRIBUTE_IMAGELESS, cadMissingImage);
 		model.addAttribute(MODEL_ATTRIBUTE_IMAGELESS_COUNT, cadMissingImage.size());
 		model.addAttribute(MODEL_ATTRIBUTE_IMAGESTRINGS, new HashMap<>());
-		
-		model.addAttribute(MODEL_ATTRIBUTE_PENDING_DOWNLOAD,cadPendingDownload);
-		model.addAttribute(MODEL_ATTRIBUTE_PENDING_DOWNLOAD_COUNT,cadPendingDownload.size());
 
+		model.addAttribute(MODEL_ATTRIBUTE_PENDING_DOWNLOAD, cadPendingDownload);
+		model.addAttribute(MODEL_ATTRIBUTE_PENDING_DOWNLOAD_COUNT, cadPendingDownload.size());
 
 		return "health";
 	}
@@ -91,8 +89,6 @@ public class HealthCheckController extends PageController {
 	public ResponseEntity<?> handleForm() {
 		log.info("Post called");
 
-		List<Gat> gats = getGatRepo().findAll();
-
 		List<Gat> deadRefs = getGatRepo().findAll().stream().filter(gat -> gat.getImagefileObjectID() != null)
 				.filter(gat -> !testReference(gat)).toList();
 
@@ -100,7 +96,7 @@ public class HealthCheckController extends PageController {
 
 		getGatRepo().saveAll(deadRefs);
 
-		return ResponseEntity.ok().body("test");
+		return ResponseEntity.ok().build();
 	}
 
 	private boolean testReference(Gat gat) {
@@ -110,23 +106,6 @@ public class HealthCheckController extends PageController {
 
 		return getFileRepository().findGridFSFile(gat.getImagefileObjectID()) != null;
 
-	}
-
-	private boolean reunite(Gat gat) {
-		log.info(String.format("Attempting reuniting gat(%s)", gat.getImageURL()));
-
-		if (gat.getImageURL() == null) {
-			log.error("no image url !");
-			return false;
-		}
-
-		String imageURL = gat.getImageURL();
-		String[] parts = imageURL.split("/");
-		String filename = parts[parts.length - 1];
-
-		GridFsResource gridFsResource = getGridFsTemplate().getResource(filename);
-
-		return gridFsResource.exists();
 	}
 
 }

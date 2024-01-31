@@ -33,7 +33,7 @@ public class ImageGrabber implements Runnable {
 	@Override
 	public void run() {
 
-		List<Gat> gats = getGatRepo().findAllWithOutImage();
+		List<Gat> gats = getGatRepo().finalAllPendingImageDownload();
 
 		if (gats.isEmpty()) {
 			log.info("no gats images left to download");

@@ -3,6 +3,10 @@ package com.ten31f.autogatalog.tasks;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import com.ten31f.autogatalog.domain.Gat;
@@ -13,14 +17,12 @@ import com.ten31f.autogatalog.schedule.TrackingScheduledExecutorService;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
 @Slf4j
 public class Downloadrequestor implements Runnable {
 
@@ -33,6 +35,8 @@ public class Downloadrequestor implements Runnable {
 
 	@Override
 	public void run() {
+
+		monitorstatuses();
 
 		List<Gat> gats = getGatRepo().findAllWithOutFile();
 
@@ -73,6 +77,18 @@ public class Downloadrequestor implements Runnable {
 			}
 
 		}
+	}
+
+	private void monitorstatuses() {
+
+		Map<String, ScheduledFuture<?>> futuresMap = getTrackingScheduledExecutorService().getFutures();
+
+		Set<Entry<String, ScheduledFuture<?>>> futuresSet = futuresMap.entrySet();
+
+		for (Entry<String, ScheduledFuture<?>> entry : futuresSet) {
+			log.info(String.format("Key: %s Future: %s", entry.getKey(), entry.getValue()));
+		}
+
 	}
 
 }

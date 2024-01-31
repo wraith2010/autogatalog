@@ -9,10 +9,10 @@ import java.util.Map;
 import org.apache.http.ParseException;
 import org.bson.types.ObjectId;
 
+import com.ten31f.autogatalog.domain.DownloadStatus;
 import com.ten31f.autogatalog.domain.Gat;
 import com.ten31f.autogatalog.old.repository.FileRepository;
 import com.ten31f.autogatalog.old.repository.LbryRepository;
-import com.ten31f.autogatalog.old.repository.LbryRepository.DownloadStatus;
 import com.ten31f.autogatalog.repository.GatRepo;
 import com.ten31f.autogatalog.schedule.TrackingScheduledExecutorService;
 import com.ten31f.autogatalog.taskinterface.GatBased;
@@ -70,8 +70,10 @@ public class DownloadMonitor implements Runnable, GatBased {
 			log.info(String.format("Downloading complete for (%s) downloading", getGat().getTitle()));
 
 			ObjectId fileObjectID = getFileRepository().uploadFile(getFile());
-			getGat().setFileObjectID(fileObjectID.toString());
+			getGat().setFileObjectID(fileObjectID.toHexString());
 			getGatRepo().save(getGat());
+			
+			log.info(String.format("%s associated with %s", fileObjectID.toHexString(), gat.getTitle()));
 
 			getTrackingScheduledExecutorService().cancel(getGat());
 

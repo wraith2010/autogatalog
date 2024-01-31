@@ -1,16 +1,21 @@
 package com.ten31f.autogatalog.controller;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.UriUtils;
 
 import com.ten31f.autogatalog.domain.Gat;
 
@@ -32,29 +37,27 @@ public class SearchControl extends PageController {
 	}
 
 	@GetMapping("/search")
-	public String searchPage(Model model) {
+	public String searchPage(
+			@RequestParam(value = "searchString", required = false) Optional<String> optionSearchString, Model model) {
 
 		common(model);
 
-		model.addAttribute("searchString", "");
-		model.addAttribute(MODEL_ATTRIBUTE_IMAGESTRINGS, new HashMap<>());
-		model.addAttribute("gats", new ArrayList<>());
-		model.addAttribute(MODEL_ATTRIBUTE_COUNT, 0);
+		if (optionSearchString.isEmpty()) {
+			model.addAttribute("searchString", "");
+			model.addAttribute(MODEL_ATTRIBUTE_IMAGESTRINGS, new HashMap<>());
+			model.addAttribute("gats", new ArrayList<>());
+			model.addAttribute(MODEL_ATTRIBUTE_COUNT, 0);
+		} else {
+			model.addAttribute("searchString", optionSearchString.get());
 
-		return "search";
-	}
+			List<Gat> gats = getGatRepo().search(optionSearchString.get());
 
-	@GetMapping("/search/{searchString}")
-	public String searchPage(@PathVariable("searchString") String searchString, Model model) {
+			model.addAttribute("searchString", optionSearchString.get());
+			model.addAttribute(MODEL_ATTRIBUTE_IMAGESTRINGS, retrieveImageStrings(gats));
+			model.addAttribute("gats", gats);
+			model.addAttribute(MODEL_ATTRIBUTE_COUNT, gats.size());
+		}
 
-		common(model);
-
-		List<Gat> gats = getGatRepo().search(searchString);
-
-		model.addAttribute("searchString", searchString);
-		model.addAttribute(MODEL_ATTRIBUTE_IMAGESTRINGS, retrieveImageStrings(gats));
-		model.addAttribute("gats", gats);
-		model.addAttribute(MODEL_ATTRIBUTE_COUNT, gats.size());
 		return "search";
 	}
 
@@ -63,7 +66,17 @@ public class SearchControl extends PageController {
 
 		log.info(String.format("search from page: %s", formString));
 
-		return new ModelAndView(String.format("redirect:/search/%s", formString));
+		String encodedFormString = "";
+		try {
+			encodedFormString = URLEncoder.encode(formString, StandardCharsets.UTF_8.toString());
+			UriUtils.encodePath(formString, "UTF-8");
+		} catch (UnsupportedEncodingException unsupportedEncodingException) {
+			log.error("Error encoding form String", unsupportedEncodingException);
+		}
+		
+		
+
+		return new ModelAndView(String.format("redirect:/search?searchString=%s", encodedFormString));
 	}
 
 }

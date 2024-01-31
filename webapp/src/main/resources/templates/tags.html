@@ -7,6 +7,9 @@
 <link th:href="@{/css/common.css}" rel="stylesheet" />
 <link th:href="@{/css/index-grid.css}" rel="stylesheet" />
 <link th:href="@{/css/nav.css}" rel="stylesheet" />
+
+<script th:replace="~{fragments/indexGridArticle.html :: script}"></script>
+
 </head>
 
 <body>
@@ -17,7 +20,7 @@
 
 		<section th:insert="~{fragments/taglist.html :: ul}"></section>
 
-		<section class="indexGrid" th:if="${taggedcount != 0}">
+		<section class="indexGrid" th:if="${taggedcount != 0}" id="taggedSection">
 			<header>
 				<h2>Tagged</h2>
 			</header>

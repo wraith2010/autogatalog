@@ -8,7 +8,6 @@ import java.util.Map;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
@@ -22,6 +21,7 @@ import org.bson.BsonInt32;
 import org.bson.BsonString;
 import org.bson.BsonValue;
 
+import com.ten31f.autogatalog.domain.DownloadStatus;
 import com.ten31f.autogatalog.domain.Gat;
 
 import lombok.Getter;
@@ -42,6 +42,7 @@ public class LbryRepository {
 	private static final String FIELD_PARAMS = "params";
 	private static final String FIELD_METHOD = "method";
 	private static final String FIELD_RESULT = "result";
+	private static final String FIELD_TOTAL_PAGES = "total_pages";
 
 	private String lbryNodeAddress = null;
 
@@ -49,34 +50,7 @@ public class LbryRepository {
 		setLbryNodeAddress(lbryNodeAddress);
 	}
 
-	public class DownloadStatus {
-		private boolean complete = false;
-		private int percentage = 0;
-
-		public DownloadStatus(boolean complete, int percentage) {
-			setComplete(complete);
-			setPercentage(percentage);
-		}
-
-		public boolean isComplete() {
-			return complete;
-		}
-
-		public void setComplete(boolean complete) {
-			this.complete = complete;
-		}
-
-		public int getPercentage() {
-			return percentage;
-		}
-
-		public void setPercentage(int percentage) {
-			this.percentage = percentage;
-		}
-
-	}
-
-	public Map<String, DownloadStatus> getDownloadStatus() throws ClientProtocolException, IOException {
+	public Map<String, DownloadStatus> getDownloadStatus() throws IOException {
 
 		Map<String, DownloadStatus> statuses = new HashMap<>();
 
@@ -84,7 +58,7 @@ public class LbryRepository {
 
 		BsonDocument resultDocument = (BsonDocument) bsonDocument.get(FIELD_RESULT);
 
-		int totalPages = resultDocument.getInt32("total_pages").getValue();
+		int totalPages = resultDocument.getInt32(FIELD_TOTAL_PAGES).getValue();
 
 		log.info(String.format("Retrieveing %s pages of files info", totalPages));
 
@@ -127,7 +101,7 @@ public class LbryRepository {
 		return statuses;
 	}
 
-	private BsonDocument getFilePage(int page) throws ClientProtocolException, IOException {
+	private BsonDocument getFilePage(int page) throws IOException {
 
 		BsonDocument bsonDocument = new BsonDocument();
 		bsonDocument.append(FIELD_METHOD, new BsonString(METHOD_FILE_LIST));
@@ -226,7 +200,7 @@ public class LbryRepository {
 		return null;
 	}
 
-	private HttpResponse httpRequest(StringEntity requestEntity) throws ClientProtocolException, IOException {
+	private HttpResponse httpRequest(StringEntity requestEntity) throws IOException {
 
 		HttpPost httpPost = getHttpPost();
 		httpPost.setEntity(requestEntity);

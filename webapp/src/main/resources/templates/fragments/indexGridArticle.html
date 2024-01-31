@@ -9,12 +9,29 @@
 <link th:href="@{/css/home.css}" rel="stylesheet" />
 <link th:href="@{/css/index-grid.css}" rel="stylesheet" />
 <link th:href="@{/css/nav.css}" rel="stylesheet" />
+
+<script type="text/javascript">
+	function addTag(guid, tag) {
+		const elem = document.getElementById(guid);
+		const taggedSection = document.getElementById('taggedSection');
+
+		elem.parentElement.removeChild(elem);
+		taggedSection.appendChild(elem);
+
+		var url = '/addTag/' + guid + '/' + tag;
+
+		var xmlHttpRequest = new XMLHttpRequest();
+		xmlHttpRequest.open('POST', url);
+		xmlHttpRequest.send();
+	}
+</script>
+
 </head>
 
 <body>
 
 	<article th:fragment="indexGrid(gats)" th:each="gat: ${gats}"
-		th:with="guid=${gat.guid}">
+		th:id="${guid}" th:with="guid=${gat.guid}">
 		<ul class="quickActions">
 			<li><a th:href="${gat.linkURL}"> <img alt="odysee logo"
 					class="download" th:src="@{'/img/odysee.jpg'}" />
@@ -22,6 +39,12 @@
 			<li><a th:href="@{'/download/' + ${guid}}"><img
 					alt="download icon" class="download"
 					th:src="@{'/img/download.png'}" /> </a></li>
+			<li
+				th:if="${page == 'tag' and (gat.tags == null or !#arrays.contains(gat.tags, tag ))}"><a
+				th:data-guid="${guid}" th:data-tag="${tag}"
+				th:onclick="addTag(this.getAttribute('data-guid'),this.getAttribute('data-tag'));">
+					<img alt="tag icon" class="download" th:src="@{'/img/tag.png'}" />
+			</a></li>
 		</ul>
 		<figure>
 			<a th:href="@{'/gat/' + ${gat.guid}}"> <img

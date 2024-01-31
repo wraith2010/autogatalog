@@ -50,10 +50,13 @@ public class FileRepository {
 				metaData.put("type", "zip archive");
 			}
 
-			ObjectId fileId = getGridFsTemplate().store(streamToUploadFrom, metaData);
+			ObjectId fileId = getGridFsTemplate().store(streamToUploadFrom, file.getName() ,metaData);
 
 			log.info(String.format("The file id of the uploaded file is: %s", fileId));
 			return fileId;
+		} catch (IOException ioException) {
+			log.error(String.format("Issue uploading file(%s)", file), ioException);
+			throw ioException;
 		}
 
 	}

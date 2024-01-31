@@ -1,6 +1,7 @@
 package com.ten31f.autogatalog.domain;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
@@ -62,6 +63,14 @@ public class Gat {
 		} else {
 			setViews(getViews() + 1);
 		}
+	}
+
+	public void addTag(String tag) {
+		if (getTags() == null)
+			setTags(new ArrayList<>());
+
+		getTags().add(tag);
+
 	}
 
 }

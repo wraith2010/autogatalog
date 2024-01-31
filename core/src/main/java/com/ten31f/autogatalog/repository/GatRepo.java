@@ -18,6 +18,9 @@ public interface GatRepo extends MongoRepository<Gat, String> {
 	@Query("{guid : ?0}")
 	Optional<Gat> findByGuid(String guid);
 
+	@Query("{ imageURL: { $exists: true }, imagefileObjectID: { $exists: false }  }")
+	List<Gat> finalAllPendingImageDownload();
+	
 	@Query("{ imagefileObjectID: { $exists: false } }")
 	List<Gat> findAllWithOutImage();
 

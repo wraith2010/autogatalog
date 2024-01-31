@@ -55,7 +55,7 @@ public class AppConfig {
 
 	@Bean
 	public ImageGrabber imageGrabber(GatRepo gatRepo, FileRepository fileRepository) {
-		return new ImageGrabber(gatRepo, fileRepository, 10);
+		return new ImageGrabber(gatRepo, fileRepository, 25);
 	}
 
 	@Bean

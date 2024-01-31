@@ -65,7 +65,7 @@
 				<textarea id="description" rows="20" name="description"
 					placeholder="Description" th:field="*{description}"></textarea>
 
-				<ul>
+				<ul id="taglist">
 					<li th:each="item : ${taglist}"><input type="checkbox"
 						th:field="*{tags}" th:value="${item}" /> <label th:text="${item}"></label>
 					</li>
