@@ -115,9 +115,7 @@ public class LbryRepository {
 
 		HttpResponse response = httpRequest(requestEntity);
 
-		BsonDocument responseBsonDocument = BsonDocument.parse(EntityUtils.toString(response.getEntity()));
-
-		return responseBsonDocument;
+		return BsonDocument.parse(EntityUtils.toString(response.getEntity()));
 	}
 
 	public File get(Gat gat) throws IOException {

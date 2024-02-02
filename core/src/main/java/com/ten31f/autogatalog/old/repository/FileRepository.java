@@ -2,7 +2,6 @@ package com.ten31f.autogatalog.old.repository;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -41,7 +40,7 @@ public class FileRepository {
 	@Autowired
 	private GridFsOperations gridFsOperations;
 
-	public ObjectId uploadFile(File file) throws FileNotFoundException, IOException {
+	public ObjectId uploadFile(File file) throws IOException {
 
 		try (InputStream streamToUploadFrom = new FileInputStream(file)) {
 
@@ -50,7 +49,7 @@ public class FileRepository {
 				metaData.put("type", "zip archive");
 			}
 
-			ObjectId fileId = getGridFsTemplate().store(streamToUploadFrom, file.getName() ,metaData);
+			ObjectId fileId = getGridFsTemplate().store(streamToUploadFrom, file.getName(), metaData);
 
 			log.info(String.format("The file id of the uploaded file is: %s", fileId));
 			return fileId;
@@ -61,7 +60,7 @@ public class FileRepository {
 
 	}
 
-	public ObjectId uploadFile(InputStream inputStream, String name) throws FileNotFoundException, IOException {
+	public ObjectId uploadFile(InputStream inputStream, String name) throws IOException {
 
 		try (inputStream) {
 			BasicDBObject metaData = new BasicDBObject();
