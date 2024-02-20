@@ -31,10 +31,13 @@ public class Scan implements Runnable {
 	public void run() {
 		List<WatchURL> watchURLs = getWatchURLRepo().findAll();
 
+		int watchURLSCount = watchURLs.size();
 		log.info(String.format("Scanning %s urls", watchURLs.size()));
 
 		watchURLs = watchURLs.stream().filter(watchURL -> watchURL.getLastCheck() == null
-				|| watchURL.getLastCheck().isBefore(Instant.now().minus(4, ChronoUnit.HOURS))).toList();
+				|| watchURL.getLastCheck().isBefore(Instant.now().minus(10, ChronoUnit.HOURS))).toList();
+
+		log.info(String.format("%s of %s are uptodate", watchURLSCount - watchURLs.size(), watchURLs.size()));
 
 		if (watchURLs == null || watchURLs.isEmpty()) {
 			log.info("All watch urls have been checked with in the last 4 hours");
@@ -46,7 +49,8 @@ public class Scan implements Runnable {
 			log.info("Checking the first 10 urls;");
 		}
 
-		List<RSSDigester> rssDigesters = watchURLs.parallelStream().map(RSSDigester::new).toList();
+		List<RSSDigester> rssDigesters =
+		watchURLs.parallelStream().map(RSSDigester::new).toList();
 
 		rssDigesters.stream().forEach(this::read);
 
