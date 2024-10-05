@@ -116,6 +116,11 @@
 				<artifactId>core</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>com.ten31f.autogatalog</groupId>
+				<artifactId>service</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -179,6 +184,8 @@
 		<module>core</module>
 		<module>service</module>
 		<module>webapp</module>
+		<module>airflow</module>
+		<module>standalone</module>
 	</modules>
 
 	<repositories>

@@ -1,0 +1,17 @@
+/service/*.classpath
+/service/*.project
+/service/.settings
+/standalone/.settings
+/standalone/*.classpath
+/standalone/*.project
+/webapp/.classpath
+/webapp/.project
+/webapp/.settings
+/core/.classpath
+/core/.project
+/core/.settings
+/airflow/.project
+/airflow/.settings
+/.project
+/airflow/.classpath
+/.settings
