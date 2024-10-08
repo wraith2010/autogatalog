@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 @Setter
 @Slf4j
-public class DownloadMonitor implements Runnable, GatBased {
+public class DownloadMonitor extends Thread implements Runnable, GatBased {
 
 	private static Instant checkTime = null;
 	private static Map<String, DownloadStatus> status;
@@ -48,9 +48,7 @@ public class DownloadMonitor implements Runnable, GatBased {
 		setTrackingScheduledExecutorService(trackingScheduledExecutorService);
 	}
 
-	@Override
-	public void run() {
-
+	public void action() {
 		checkStatuses();
 
 		DownloadStatus downloadStatus = getStatus().get(getGat().getGuid());
@@ -72,15 +70,17 @@ public class DownloadMonitor implements Runnable, GatBased {
 			ObjectId fileObjectID = getFileRepository().uploadFile(getFile());
 			getGat().setFileObjectID(fileObjectID.toHexString());
 			getGatRepo().save(getGat());
-			
-			log.info(String.format("%s associated with %s", fileObjectID.toHexString(), gat.getTitle()));
 
-			getTrackingScheduledExecutorService().cancel(getGat());
+			log.info(String.format("%s associated with %s", fileObjectID.toHexString(), gat.getTitle()));
 
 		} catch (IOException | ParseException exception) {
 			log.error("Error monitor download", exception);
 		}
+	}
 
+	@Override
+	public void run() {
+		action();
 	}
 
 	private synchronized void checkStatuses() {

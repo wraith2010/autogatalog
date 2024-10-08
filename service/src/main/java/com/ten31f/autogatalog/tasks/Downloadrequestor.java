@@ -2,12 +2,12 @@ package com.ten31f.autogatalog.tasks;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 import com.ten31f.autogatalog.domain.Gat;
 import com.ten31f.autogatalog.old.repository.FileRepository;
@@ -47,7 +47,10 @@ public class Downloadrequestor implements Runnable {
 
 		log.info(String.format("(%s) gats pending download", gats.size()));
 
+		List<Thread> threads = new ArrayList<>();
+
 		int index = 0;
+
 		for (Gat gat : gats) {
 			index++;
 			if (index > getDownloadBatchLimit()) {
@@ -65,11 +68,13 @@ public class Downloadrequestor implements Runnable {
 
 					if (file != null) {
 
-						DownloadMonitor downloadMonitor = new DownloadMonitor(gat, file, getLbryRepository(),
-								getFileRepository(), getGatRepo(), getTrackingScheduledExecutorService());
+						DownloadMonitor thread = new DownloadMonitor(gat, file, getLbryRepository(), getFileRepository(),
+								getGatRepo(), getTrackingScheduledExecutorService());
 
-						getTrackingScheduledExecutorService().scheduleAtFixedRate(downloadMonitor, 1, 2,
-								TimeUnit.MINUTES);
+						thread.start();
+						
+						threads.add(thread);
+
 					}
 				}
 			} catch (IOException ioException) {
@@ -77,6 +82,17 @@ public class Downloadrequestor implements Runnable {
 			}
 
 		}
+
+		for (Thread thread : threads) {
+			if (thread.isAlive())
+				try {
+					thread.join();
+				} catch (InterruptedException e) {
+					log.error("download montior thread interrupted", e);
+				}
+		}
+		
+		log.info("download requestor finished");
 	}
 
 	private void monitorstatuses() {
