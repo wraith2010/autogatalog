@@ -13,6 +13,7 @@ import com.ten31f.autogatalog.schedule.TrackingScheduledExecutorService;
 import com.ten31f.autogatalog.tasks.Downloadrequestor;
 import com.ten31f.autogatalog.tasks.HealthCheck;
 import com.ten31f.autogatalog.tasks.ImageGrabber;
+import com.ten31f.autogatalog.tasks.PendingDownloadTask;
 import com.ten31f.autogatalog.tasks.Scan;
 
 import lombok.Getter;
@@ -61,6 +62,11 @@ public class AppConfig {
 	@Bean
 	public HealthCheck healthCheck(FileRepository fileRepository, GatRepo gatRepo, HealthRepo healthRepo) {
 		return new HealthCheck(fileRepository, gatRepo, healthRepo);
+	}
+
+	@Bean
+	public PendingDownloadTask pendingDownloadTask(GatRepo gatRepo) {
+		return new PendingDownloadTask(gatRepo);
 	}
 
 }

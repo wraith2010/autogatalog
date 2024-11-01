@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import com.ten31f.autogatalog.tasks.Downloadrequestor;
 import com.ten31f.autogatalog.tasks.HealthCheck;
 import com.ten31f.autogatalog.tasks.ImageGrabber;
+import com.ten31f.autogatalog.tasks.PendingDownloadTask;
 import com.ten31f.autogatalog.tasks.Scan;
 
 import lombok.AllArgsConstructor;
@@ -26,11 +27,10 @@ public class DAG implements CommandLineRunner {
 	public Downloadrequestor downloadrequestor;
 	public ImageGrabber imageGrabber;
 	public HealthCheck healthCheck;
+	public PendingDownloadTask pendingDownloadTask;
 
 	public static void main(String[] args) {
-
 		SpringApplication.run(DAG.class, args).close();
-
 	}
 
 	@Override
@@ -46,16 +46,19 @@ public class DAG implements CommandLineRunner {
 		switch (Action.findByString(args[0])) {
 		case DOWNLOAD:
 			getDownloadrequestor().run();
-			break;
+			return;
 		case HEALTH:
 			getHealthCheck().run();
-			break;
+			return;
 		case IMAGE:
 			getImageGrabber().run();
-			break;
+			return;
 		case SCAN:
 			getScan().run();
-			break;
+			return;
+		case PENDING_DOWNLOAD:
+			getPendingDownloadTask().run();
+			return;
 		default:
 			log.error(String.format("\"%s\" does not match any know operation %s", args[0],
 					String.join(",", Stream.of(Action.values()).map(Action::getCliString).toList())));
