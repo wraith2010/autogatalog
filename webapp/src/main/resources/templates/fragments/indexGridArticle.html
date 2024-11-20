@@ -48,9 +48,7 @@
 		</ul>
 		<figure>
 			<a th:href="@{'/gat/' + ${gat.id}}"> <img
-				th:if="${imageStrings.containsKey(guid)}"
-				th:src="@{'data:image/jpeg;charset=utf-8;base64,'+ ${imageStrings.get(guid)}}"
-				th:id="${guid}" alt="preview" />
+				th:src="${gat.s3URLImage}" th:id="${guid}" alt="preview" />
 			</a>
 		</figure>
 		<header>

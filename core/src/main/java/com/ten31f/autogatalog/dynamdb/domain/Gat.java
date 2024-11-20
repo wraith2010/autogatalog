@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.Setter;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
-import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortKey;
 
 @Getter
 @Setter
@@ -22,7 +21,7 @@ public class Gat {
 	private String author;
 	private String imageURL;
 	private String s3URLFile;
-	private String imagefileObjectID;
+	private String s3URLImage;
 	private List<String> tags;
 	private Long downloads;
 	private Long views;

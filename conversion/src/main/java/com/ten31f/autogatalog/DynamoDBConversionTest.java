@@ -33,7 +33,8 @@ public class DynamoDBConversionTest implements CommandLineRunner {
 	private FileRepository fileRepository;
 	private S3Repo s3Repo;
 
-	private static final String BUCKET_NAME = "autogatalog-bucket";
+	private static final String FILE_BUCKET_NAME = "autogatalog-files-bucket";
+	private static final String IMAGE_BUCKET_NAME = "autogatalog-image-bucket";
 
 	public static void main(String[] args) {
 		SpringApplication.run(DynamoDBConversionTest.class, args).close();
@@ -48,8 +49,6 @@ public class DynamoDBConversionTest implements CommandLineRunner {
 
 			Gat gat = new Gat();
 
-			// private String imagefileObjectID;
-
 			gat.setId(UUID.randomUUID().toString());
 			gat.setDescription(viewedGat.getDescription());
 			gat.setLinkURL(viewedGat.getLinkURL());
@@ -63,9 +62,17 @@ public class DynamoDBConversionTest implements CommandLineRunner {
 			GridFSFile gridFSFile = getFileRepository().findGridFSFile(viewedGat.getFileObjectID());
 
 			InputStream inputStream = getFileRepository().getFileAsGridFStream(gridFSFile);
-			String url = getS3Repo().putFileS3(BUCKET_NAME, gridFSFile.getFilename(), inputStream);
+			String url = getS3Repo().putFileS3(FILE_BUCKET_NAME, gridFSFile.getFilename(), inputStream);
 			if (url != null) {
 				gat.setS3URLFile(url);
+			}
+			
+			gridFSFile = getFileRepository().findGridFSFile(viewedGat.getImagefileObjectID());
+
+			inputStream = getFileRepository().getFileAsGridFStream(gridFSFile);
+			url = getS3Repo().putFileS3(IMAGE_BUCKET_NAME, gridFSFile.getFilename(), inputStream);
+			if (url != null) {
+				gat.setS3URLImage(url);
 			}
 
 			getGatRepo().put(gat);			
