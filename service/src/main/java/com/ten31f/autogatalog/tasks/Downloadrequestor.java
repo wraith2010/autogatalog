@@ -12,7 +12,7 @@ import java.util.concurrent.ScheduledFuture;
 import com.ten31f.autogatalog.domain.Gat;
 import com.ten31f.autogatalog.old.repository.FileRepository;
 import com.ten31f.autogatalog.old.repository.LbryRepository;
-import com.ten31f.autogatalog.repository.GatRepo;
+import com.ten31f.autogatalog.repository.IGatRepo;
 import com.ten31f.autogatalog.schedule.TrackingScheduledExecutorService;
 
 import lombok.AllArgsConstructor;
@@ -28,7 +28,7 @@ public class Downloadrequestor implements Runnable {
 
 	private LbryRepository lbryRepository = null;
 	private FileRepository fileRepository = null;
-	private GatRepo gatRepo = null;
+	private IGatRepo gatRepo = null;
 	private int downloadBatchLimit = 5;
 
 	private TrackingScheduledExecutorService trackingScheduledExecutorService = null;

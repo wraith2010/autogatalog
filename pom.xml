@@ -21,10 +21,29 @@
 		<mongo.version>4.11.1</mongo.version>
 		<lombok.version>1.18.30</lombok.version>
 		<spring.version>3.2.1</spring.version>
+		<aws.version>2.29.3</aws.version>
 	</properties>
 
 	<dependencyManagement>
+
 		<dependencies>
+			<dependency>
+				<groupId>software.amazon.awssdk</groupId>
+				<artifactId>bom</artifactId>
+				<version>${aws.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>software.amazon.awssdk</groupId>
+				<artifactId>s3</artifactId>
+				<version>${aws.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>software.amazon.awssdk</groupId>
+				<artifactId>apache-client</artifactId>
+				<version>${aws.version}</version>
+			</dependency>			
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
@@ -192,6 +211,7 @@
 		<module>webapp</module>
 		<module>airflow</module>
 		<module>standalone</module>
+		<module>conversion</module>
 	</modules>
 
 	<repositories>

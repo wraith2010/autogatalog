@@ -155,6 +155,17 @@ public class FileRepository {
 
 	}
 
+	public InputStream getFileAsGridFStream(GridFSFile gridFSFile) throws IllegalStateException, IOException {
+
+		GridFsResource gridFsResource = getGridFsTemplate().getResource(gridFSFile.getFilename());
+
+		if (!gridFsResource.exists())
+			return null;
+
+		return gridFsResource.getInputStream();
+
+	}
+
 	public void downloadToStream(String objectId, OutputStream outputStream) throws IOException {
 
 		long now = -System.currentTimeMillis();

@@ -5,7 +5,7 @@ import java.util.List;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ten31f.autogatalog.domain.Gat;
-import com.ten31f.autogatalog.repository.GatRepo;
+import com.ten31f.autogatalog.repository.IGatRepo;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PendingDownloadTask implements Runnable {
 
-	private GatRepo gatRepo = null;
+	private IGatRepo gatRepo = null;
 
 	@Override
 	public void run() {

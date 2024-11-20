@@ -5,9 +5,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import com.ten31f.autogatalog.aws.repository.GatRepo;
+import com.ten31f.autogatalog.aws.repository.S3Repo;
 import com.ten31f.autogatalog.old.repository.FileRepository;
 
 import lombok.Getter;
@@ -23,6 +24,16 @@ public class WebConfig implements WebMvcConfigurer {
 	@Bean
 	public FileRepository fileRepository() {
 		return new FileRepository();
+	}
+
+	@Bean
+	public GatRepo gatRepo() {
+		return new GatRepo();
+	}
+
+	@Bean
+	public S3Repo s3Repo() {
+		return new S3Repo();
 	}
 
 	@Override
