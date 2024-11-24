@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<title th:text="${appName}"></title>
+
+<link th:href="@{/css/common.css}" rel="stylesheet" />
+<link th:href="@{/css/nav.css}" rel="stylesheet" />
+<link th:href="@{/css/index-grid.css}" rel="stylesheet" />
+
+<script type="text/javascript">
+	function clearDeadRefs() {
+		var xmlHttpRequest = new XMLHttpRequest();
+		xmlHttpRequest.open('POST', '/systyemHealth/clearDeadRef');
+		xmlHttpRequest.send();
+	}
+</script>
+
+</head>
+
+<body>
+
+	<nav th:replace="~{fragments/nav.html :: nav}"></nav>
+
+	<header class="main-title">
+		<h1 th:text="${appName}"></h1>
+	</header>
+
+	<main>
+
+		<h1>System Health</h1>
+
+		<h3 th:text="'Tracked CadFiles Count: ' + ${cadCount}"></h3>
+
+		<button th:onclick="'clearDeadRefs()'">test</button>
+
+		<section class="indexGrid">
+			<header>
+				<h2 th:text="'Dead References: ' + ${deadReferencesCount}"></h2>
+			</header>
+
+			<article
+				th:replace="~{fragments/indexGridArticle.html :: indexGrid(${deadReferences})}">
+			</article>
+		</section>
+
+		<section class="indexGrid">
+			<header>
+				<h2 th:text="'Missing Images: ' + ${imagelessCount}"></h2>
+			</header>
+			<article
+				th:replace="~{fragments/indexGridArticle.html :: indexGrid(${imageless})}">
+			</article>
+		</section>
+
+		<section class="indexGrid">
+			<header>
+				<h2 th:text="'Pending Download: ' + ${pendingDownloadCount}"></h2>
+			</header>
+			<article
+				th:replace="~{fragments/indexGridArticle.html :: indexGrid(${pendingDownload})}">
+			</article>
+		</section>
+
+
+	</main>
+</body>
+
+</html>

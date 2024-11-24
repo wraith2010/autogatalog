@@ -1,0 +1,7 @@
+.indexGrid {
+	grid-template-columns: repeat(3, 1fr);
+}
+
+form {
+	color: #666666;
+}

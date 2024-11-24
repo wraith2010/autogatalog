@@ -18,15 +18,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
-	<dependencies>
-		<dependency>
-			<groupId>software.amazon.awssdk</groupId>
-			<artifactId>s3</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>software.amazon.awssdk</groupId>
-			<artifactId>dynamodb-enhanced</artifactId>
-		</dependency>
+	<dependencies>		
 		<dependency>
 			<groupId>software.amazon.awssdk</groupId>
 			<artifactId>apache-client</artifactId>
@@ -41,7 +33,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.ten31f.autogatalog</groupId>
-			<artifactId>core</artifactId>
+			<artifactId>core-aws</artifactId>
 		</dependency>
 	</dependencies>
 

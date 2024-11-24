@@ -56,8 +56,8 @@ public class DynamoDBConversionTest implements CommandLineRunner {
 			gat.setAuthor(viewedGat.getAuthor());
 			gat.setImageURL(viewedGat.getImageURL());
 			gat.setTags(viewedGat.getTags());
-			gat.setDownloads(viewedGat.getDownloads());
-			gat.setViews(viewedGat.getViews());
+			gat.setDownloads(viewedGat.getDownloads().intValue());
+			gat.setViews(viewedGat.getViews().intValue());
 
 			GridFSFile gridFSFile = getFileRepository().findGridFSFile(viewedGat.getFileObjectID());
 

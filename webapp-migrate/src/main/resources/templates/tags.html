@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<title th:text="${appName}"></title>
+<link th:href="@{/css/common.css}" rel="stylesheet" />
+<link th:href="@{/css/index-grid.css}" rel="stylesheet" />
+<link th:href="@{/css/nav.css}" rel="stylesheet" />
+
+<script th:replace="~{fragments/indexGridArticle.html :: script}"></script>
+
+</head>
+
+<body>
+
+	<nav th:replace="~{fragments/nav.html :: nav}"></nav>
+
+	<main>
+
+		<section th:insert="~{fragments/taglist.html :: ul}"></section>
+
+		<section class="indexGrid" th:if="${taggedcount != 0}" id="taggedSection">
+			<header>
+				<h2>Tagged</h2>
+			</header>
+
+			<article
+				th:replace="~{fragments/indexGridArticle.html :: indexGrid(${taggedgats})}">
+			</article>
+
+		</section>
+
+		<section class="indexGrid" th:if="${searchcount != 0}">
+			<header>
+				<h2>Potential Untagged</h2>
+			</header>
+
+			<article
+				th:replace="~{fragments/indexGridArticle.html :: indexGrid(${searchedgats})}">
+			</article>
+
+		</section>
+	</main>
+
+
+
+
+</body>

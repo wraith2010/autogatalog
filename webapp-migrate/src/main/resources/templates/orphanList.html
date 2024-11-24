@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+<meta charset="UTF-8">
+
+<title th:text="${appName}"></title>
+
+<link th:href="@{/css/common.css}" rel="stylesheet" />
+<link th:href="@{/css/nav.css}" rel="stylesheet" />
+<link th:href="@{/css/orphan.css}" rel="stylesheet" />
+
+</head>
+
+<body>
+
+	<nav th:replace="~{fragments/nav.html :: nav}"></nav>
+
+	<main>
+
+		<section>
+
+			<h1 th:text="${orphanCount} +'/' + ${count}"></h1>
+
+			<p th:text="${message}" th:if="${message ne null}"></p>
+
+			<form method="post" th:action="@{/orphan/deleteAll}"
+				enctype="multipart/form-data">
+				<button type="submit" class="btn btn-primary">Delete All</button>
+			</form>
+
+			<article th:each="orphan: ${orphanFiles}"
+				th:with="fileID=${orphan.id}">
+				<figure>
+
+					<img th:if="${imageStrings.containsKey(fileID)}"
+						th:src="@{'data:image/jpeg;charset=utf-8;base64,'+ ${imageStrings.get(fileID)}}"
+						th:id="${orphanID}" alt="preview" />
+
+				</figure>
+				<ul>
+					<li th:text="'File Name: ' + ${orphan.filename}"></li>
+					<li th:text="'Metadata: ' + ${orphan.metadata}"></li>
+					<li th:text="'ObjectID: ' + ${orphan.objectId}"></li>
+					<li th:text="'Upload Date: ' + ${orphan.uploadDate}"></li>
+					<li th:text="'ID: ' + ${orphan.id}"></li>
+				</ul>
+				<form method="post" th:action="@{/orphan/delete}"
+					enctype="multipart/form-data">
+					<input type="hidden" th:value="${orphan.id.value}" name="id" />
+					<button type="submit" class="btn btn-primary">Delete</button>
+				</form>
+			</article>
+
+		</section>
+
+	</main>
+
+</body>
+
+</html>

@@ -29,7 +29,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.ten31f.autogatalog</groupId>
-			<artifactId>core</artifactId>
+			<artifactId>core-local</artifactId>
 		</dependency>
 	</dependencies>
 

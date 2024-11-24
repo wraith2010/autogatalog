@@ -1,0 +1,7 @@
+section header h2 {
+	display: inline;
+}
+
+section header a {
+	text-decoration: none;
+}

@@ -1,0 +1,13 @@
+.main-title {
+	margin: 25px auto;
+	width: 80%;
+	background-image: linear-gradient(to bottom right, #52343e, #403255);
+	width: 80%;
+	padding: 50px;
+	border-radius: 50px;
+}
+
+.main-title h1 {
+	font-size: 7em;
+	margin: 0px auto;
+}

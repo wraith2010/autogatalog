@@ -1,0 +1,118 @@
+body {
+	background-color: #1F2122;
+	margin: 0px;
+	min-height: 100vh;
+	width: 100%;
+}
+
+h1 {
+	color: #e75e8d;
+	text-align: center;
+	text-transform: uppercase;
+	font-size: 5em;
+	margin: 0px;
+}
+
+h2 {
+	color: #e75e8d;
+	width: 100%;
+	font-size: 3em;
+}
+
+h3 {
+	color: #e75e8d;
+	font-size: 1em;
+}
+
+aside {
+	background-color: #333333;
+	margin: 0px;
+	min-height: 100vh;
+	display: block;
+}
+
+main {
+	background-color: #27292a;
+	margin: 20px auto;
+	width: 80%;
+	border-radius: 50px;
+	padding: 50px;
+}
+
+section {
+	background-color: #1F2122;
+	padding: 20px;
+	border-radius: 30px;
+	margin: 20px 0px;
+}
+
+.center {
+	text-align: center;
+}
+
+.alert {
+	color: orangered;
+	font-size: 1rem;
+}
+
+ol li {
+	list-style: none;
+}
+
+ol li label {
+	color: orangered;
+	font-size: 1em;
+	text-decoration: none;
+}
+
+.taglist {
+	width: 80%;
+	column-count: 4
+}
+
+.taglist li label {
+	color: orangered;
+	font-size: 1em;
+	text-decoration: none;
+}
+
+.taglist li a {
+	color: orangered;
+	font-size: 1em;
+	text-decoration: none;
+}
+
+.asideLogo {
+	text-align: center;
+}
+
+aside a img {
+	margin: 10px auto;
+	width: 80%;
+}
+
+aside a div {
+	width: 100%;
+	text-align: center;
+}
+
+aside ul {
+	list-style: none;
+	color: #FFFFFF;
+	font-weight: bold;
+	font-size: 1rem;
+	text-transform: uppercase
+}
+
+aside ul a {
+	text-decoration: none;
+}
+
+aside ul li {
+	margin: 5px 0px;
+}
+
+aside ul li a {
+	text-decoration: none;
+	color: #FFFFFF;
+}
