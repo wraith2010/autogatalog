@@ -23,9 +23,7 @@
 				<h2 th:text="${gat.title}"></h2>
 			</header>
 			<figure>
-				<img
-					th:src="@{'data:image/jpeg;charset=utf-8;base64,'+ ${imageString}}"
-					alt="preview">
+				<img th:src="${gat.s3URLImage}" th:id="${guid}" alt="preview"/>
 			</figure>
 			<p th:utext="${gat.description}"></p>
 			<ul th:replace="~{fragments/taglist.html :: ul}"></ul>

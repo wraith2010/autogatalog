@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.ten31f.autogatalog.aws.repository.GatRepo;
 import com.ten31f.autogatalog.aws.repository.S3Repo;
-import com.ten31f.autogatalog.dynamdb.domain.Gat;
+import com.ten31f.autogatalog.aws.service.GatService;
+import com.ten31f.autogatalog.rds.domain.Gat;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
@@ -28,7 +28,7 @@ public class ActionController {
 	public static final String FLASH_ATTRIBUTE_MESSAGE = "message";
 
 	@Autowired
-	private GatRepo gatRepo;
+	private GatService gatService;
 
 	@Autowired
 	private S3Repo s3Repo;
@@ -70,16 +70,16 @@ public class ActionController {
 	public void download(@PathVariable("guid") String guid, HttpServletResponse httpServletResponse)
 			throws IOException {
 
-		Gat gat = getGatRepo().get(guid);
+		Gat gat = getGatService().findByGuid(guid);
 
 		if (gat == null)
 			return;
 
 		try {
 			getS3Repo().downloadToStream(gat.getS3URLFile(), httpServletResponse);
-		} catch (IOException|URISyntaxException exception) {
+		} catch (IOException | URISyntaxException exception) {
 			log.error(String.format("couldn't download gat(%s)", gat.getTitle()), exception);
 		}
-	}	
+	}
 
 }

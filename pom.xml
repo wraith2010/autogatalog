@@ -45,6 +45,16 @@
 				<version>${aws.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>software.amazon.awssdk</groupId>
+				<artifactId>rds</artifactId>
+				<version>${aws.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.amazonaws.secretsmanager</groupId>
+				<artifactId>aws-secretsmanager-jdbc</artifactId>
+				<version>1.0.12</version>
+			</dependency>
+			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
 				<version>4.12</version>
@@ -66,7 +76,7 @@
 						<artifactId>commons-logging</artifactId>
 					</exclusion>
 				</exclusions>
-			</dependency>			
+			</dependency>
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-starter-parent</artifactId>
@@ -96,6 +106,16 @@
 				<version>${spring.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>org.springframework.data</groupId>
+				<artifactId>spring-data-elasticsearch</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-aws-jdbc</artifactId>
+				<version>2.2.6.RELEASE</version>
+			</dependency>
+			<dependency>
 				<groupId>org.apache.logging.log4j</groupId>
 				<artifactId>log4j-core</artifactId>
 				<version>2.20.0</version>
@@ -106,8 +126,18 @@
 				<version>4.11.1</version>
 			</dependency>
 			<dependency>
+				<groupId>com.google.code.gson</groupId>
+				<artifactId>gson</artifactId>
+				<version>2.11.0</version>
+			</dependency>
+			<dependency>
 				<groupId>com.ten31f.autogatalog</groupId>
-				<artifactId>core-aws</artifactId>
+				<artifactId>core-aws-dynamo</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.ten31f.autogatalog</groupId>
+				<artifactId>core-aws-rds</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -181,7 +211,8 @@
 	</build>
 
 	<modules>
-		<module>core-aws</module>
+		<module>core-aws-dynamo</module>
+		<module>core-aws-rds</module>
 		<module>core-local</module>
 		<module>service</module>
 		<module>airflow</module>

@@ -10,7 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import com.ten31f.autogatalog.dynamdb.domain.Gat;
+import com.ten31f.autogatalog.rds.domain.Gat;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +40,7 @@ public class AuthorControl extends PageController {
 
 		common(model);
 
-		List<Gat> gats = getGatRepo().findAllByAuthor(author);
+		List<Gat> gats = getGatService().findByAuthor(author);
 
 		Duration duration = Duration.ofMillis(System.currentTimeMillis() - start);
 

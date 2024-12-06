@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.ten31f.autogatalog.dynamdb.domain.Gat;
+import com.ten31f.autogatalog.rds.domain.Gat;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -33,15 +33,15 @@ public class DetailController extends PageController {
 
 		common(model);
 
-		Gat gat = getGatRepo().get(guid);
+		Gat gat = getGatService().findByGuid(guid);
 
 		if (gat == null) {
 			log.error(String.format("No record found for guid(%s)", guid));
 			return "404";
 		}
 
-		gat.incrementViewCount();
-		getGatRepo().update(gat);
+		gat.setViews(gat.getViews() + 1);
+		gat = getGatService().save(gat);
 
 		cleanDescription(gat);
 
@@ -59,7 +59,7 @@ public class DetailController extends PageController {
 
 		addTagsList(model);
 
-		Gat gat = getGatRepo().get(guid);
+		Gat gat = getGatService().findByGuid(guid);
 
 		if (gat == null) {
 			log.error(String.format("No record found for guid(%s)", guid));
@@ -76,7 +76,7 @@ public class DetailController extends PageController {
 
 		log.info(String.format("gat info: %s", formGat));
 
-		Gat gat = getGatRepo().get(formGat.getId());
+		Gat gat = getGatService().findByGuid(formGat.getGuid());
 
 		if (gat == null) {
 
@@ -91,14 +91,14 @@ public class DetailController extends PageController {
 
 		log.info(String.format("final Gat info: %s", gat));
 
-		getGatRepo().update(gat);
+		gat = getGatService().save(gat);
 
-		return new ModelAndView(String.format("redirect:/gat/%s", gat.getId()));
+		return new ModelAndView(String.format("redirect:/gat/%s", gat.getGuid()));
 	}
 
 	private void addGat(Model model, Gat gat) {
 
-		model.addAttribute(MODEL_ATTRIBUTE_GAT, gat);		
+		model.addAttribute(MODEL_ATTRIBUTE_GAT, gat);
 
 	}
 

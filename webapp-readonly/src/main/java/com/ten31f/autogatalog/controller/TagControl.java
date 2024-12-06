@@ -3,7 +3,6 @@ package com.ten31f.autogatalog.controller;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -13,7 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.ten31f.autogatalog.dynamdb.domain.Gat;
+import com.ten31f.autogatalog.rds.domain.Gat;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -37,9 +36,11 @@ public class TagControl extends PageController {
 
 		addTagsList(model);
 
-		List<Gat> taggedGats = getGatRepo().findByTag(tag);
-
-		List<Gat> searchedGats = getGatRepo().search(tag);
+		List<Gat> taggedGats = new ArrayList<>();
+		List<Gat> searchedGats = new ArrayList<>();
+//		List<Gat> taggedGats = getGatRepo().findByTag(tag);
+//
+//		List<Gat> searchedGats = getGatRepo().search(tag);
 		searchedGats = searchedGats.stream().filter(gat -> !taggedGats.contains(gat)).toList();
 
 		model.addAttribute("tag", tag);
@@ -69,7 +70,7 @@ public class TagControl extends PageController {
 	@RequestMapping(value = "/addTag/{guid}/{tag}", method = RequestMethod.POST)
 	public ResponseEntity<?> addTag(@PathVariable("guid") String guid, @PathVariable("tag") String tag) {
 
-		Gat gat = getGatRepo().get(guid);
+		Gat gat = getGatService().findByGuid(guid);
 		if (gat == null) {
 			return ResponseEntity.notFound().build();
 		}
@@ -79,7 +80,7 @@ public class TagControl extends PageController {
 
 		gat.addTag(tag);
 
-		getGatRepo().update(gat);
+		gat = getGatService().save(gat);
 
 		log.info(String.format("%s tag added to %s", tag, gat.getTitle()));
 

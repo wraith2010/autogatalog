@@ -55,7 +55,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.ten31f.autogatalog</groupId>
-			<artifactId>core-aws</artifactId>
+			<artifactId>core-aws-dynamo</artifactId>
 		</dependency>
 	</dependencies>
 

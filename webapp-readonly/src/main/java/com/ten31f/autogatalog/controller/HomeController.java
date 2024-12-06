@@ -27,16 +27,8 @@ public class HomeController extends PageController {
 
 		common(model);
 
-		long now = -System.currentTimeMillis();
-
-		log.info("Starting index loading");
-
-		model.addAttribute(MODEL_ATTRIBUTE_VIEWED_GATS, getGatRepo().mostViewed());
-		model.addAttribute(MODEL_ATTRIBUTE_DOWNLOADED_GATS, getGatRepo().mostDownloaded());
-
-		logDuration(now, "Retrieve images");
-
-		// log.info(String.format("images retrieved %s", allGats.size()));
+		model.addAttribute(MODEL_ATTRIBUTE_VIEWED_GATS, getGatService().mostViews());
+		model.addAttribute(MODEL_ATTRIBUTE_DOWNLOADED_GATS, getGatService().mostDownloaded());
 
 		return "home";
 	}

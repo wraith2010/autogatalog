@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UriUtils;
 
-import com.ten31f.autogatalog.dynamdb.domain.Gat;
+import com.ten31f.autogatalog.rds.domain.Gat;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -50,10 +50,10 @@ public class SearchControl extends PageController {
 		} else {
 			model.addAttribute("searchString", optionSearchString.get());
 
-			List<Gat> gats = getGatRepo().search(optionSearchString.get());
+			List<Gat> gats = getGatService().findAll();
 
 			model.addAttribute("searchString", optionSearchString.get());
-			model.addAttribute(MODEL_ATTRIBUTE_IMAGESTRINGS, retrieveImageStrings(gats));
+			
 			model.addAttribute("gats", gats);
 			model.addAttribute(MODEL_ATTRIBUTE_COUNT, gats.size());
 		}

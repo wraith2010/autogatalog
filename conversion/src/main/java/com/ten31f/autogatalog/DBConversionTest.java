@@ -2,7 +2,6 @@ package com.ten31f.autogatalog;
 
 import java.io.InputStream;
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -11,10 +10,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
 import com.mongodb.client.gridfs.model.GridFSFile;
-import com.ten31f.autogatalog.aws.repository.GatRepo;
 import com.ten31f.autogatalog.aws.repository.S3Repo;
-import com.ten31f.autogatalog.dynamdb.domain.Gat;
+import com.ten31f.autogatalog.aws.service.GatService;
 import com.ten31f.autogatalog.old.repository.FileRepository;
+import com.ten31f.autogatalog.rds.domain.Gat;
+import com.ten31f.autogatalog.repository.IGatRepo;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,10 +26,10 @@ import lombok.extern.slf4j.Slf4j;
 @Setter
 @Slf4j
 @SpringBootApplication
-public class DynamoDBConversionTest implements CommandLineRunner {
+public class DBConversionTest implements CommandLineRunner {
 
-	private com.ten31f.autogatalog.repository.IGatRepo gatRepo2;
-	private GatRepo gatRepo;
+	private IGatRepo gatRepoLocal;
+	private GatService gatService;
 	private FileRepository fileRepository;
 	private S3Repo s3Repo;
 
@@ -37,26 +37,29 @@ public class DynamoDBConversionTest implements CommandLineRunner {
 	private static final String IMAGE_BUCKET_NAME = "autogatalog-image-bucket";
 
 	public static void main(String[] args) {
-		SpringApplication.run(DynamoDBConversionTest.class, args).close();
+		SpringApplication.run(DBConversionTest.class, args).close();
 	}
 
 	@Override
 	public void run(String... args) throws Exception {
 
-		List<com.ten31f.autogatalog.domain.Gat> viewedGats = getGatRepo2().findForFontPage(PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "views")));
+		List<com.ten31f.autogatalog.domain.Gat> viewedGats = getGatRepoLocal()
+				.findForFontPage(PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "views")));
 
 		for (com.ten31f.autogatalog.domain.Gat viewedGat : viewedGats) {
 
 			Gat gat = new Gat();
 
-			gat.setId(UUID.randomUUID().toString());
+			gat.setGuid(viewedGat.getGuid());
 			gat.setDescription(viewedGat.getDescription());
 			gat.setLinkURL(viewedGat.getLinkURL());
 			gat.setTitle(viewedGat.getTitle());
 			gat.setAuthor(viewedGat.getAuthor());
 			gat.setImageURL(viewedGat.getImageURL());
 			gat.setTags(viewedGat.getTags());
-			gat.setDownloads(viewedGat.getDownloads().intValue());
+			if (viewedGat.getDownloads() != null) {
+				gat.setDownloads(viewedGat.getDownloads().intValue());
+			}
 			gat.setViews(viewedGat.getViews().intValue());
 
 			GridFSFile gridFSFile = getFileRepository().findGridFSFile(viewedGat.getFileObjectID());
@@ -66,7 +69,7 @@ public class DynamoDBConversionTest implements CommandLineRunner {
 			if (url != null) {
 				gat.setS3URLFile(url);
 			}
-			
+
 			gridFSFile = getFileRepository().findGridFSFile(viewedGat.getImagefileObjectID());
 
 			inputStream = getFileRepository().getFileAsGridFStream(gridFSFile);
@@ -75,9 +78,9 @@ public class DynamoDBConversionTest implements CommandLineRunner {
 				gat.setS3URLImage(url);
 			}
 
-			getGatRepo().put(gat);			
+			getGatService().save(gat);
 		}
 
 	}
-	
+
 }
