@@ -1,7 +1,7 @@
 package com.ten31f.autogatalog.controller;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.ten31f.autogatalog.rds.domain.Gat;
+import com.ten31f.autogatalog.rds.domain.Tag;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -30,22 +31,23 @@ public class TagControl extends PageController {
 	}
 
 	@GetMapping("/tag/{tag}")
-	public String tag(@PathVariable("tag") String tag, Model model) {
+	public String tag(@PathVariable("tag") String tagID, Model model) {
 
 		common(model);
 
 		addTagsList(model);
 
-		List<Gat> taggedGats = new ArrayList<>();
+		Tag tag = getGatService().findTagByID(tagID, true);
+
 		List<Gat> searchedGats = new ArrayList<>();
-//		List<Gat> taggedGats = getGatRepo().findByTag(tag);
-//
+
 //		List<Gat> searchedGats = getGatRepo().search(tag);
-		searchedGats = searchedGats.stream().filter(gat -> !taggedGats.contains(gat)).toList();
+		// searchedGats = searchedGats.stream().filter(gat ->
+		// !taggedGats.contains(gat)).toList();
 
 		model.addAttribute("tag", tag);
-		model.addAttribute("taggedgats", taggedGats);
-		model.addAttribute("taggedcount", taggedGats.size());
+		model.addAttribute("taggedgats", tag.getGats());
+		model.addAttribute("taggedcount", tag.getGats().size());
 		model.addAttribute("searchedgats", searchedGats);
 		model.addAttribute("searchcount", searchedGats.size());
 
@@ -60,7 +62,7 @@ public class TagControl extends PageController {
 		addTagsList(model);
 
 		model.addAttribute("tag", "");
-		model.addAttribute(MODEL_ATTRIBUTE_IMAGESTRINGS, new HashMap<>());
+
 		model.addAttribute("taggedcount", 0);
 		model.addAttribute("searchcount", 0);
 
@@ -76,9 +78,9 @@ public class TagControl extends PageController {
 		}
 
 		if (gat.getTags() == null)
-			gat.setTags(new ArrayList<>());
+			gat.setTags(new HashSet<>());
 
-		gat.addTag(tag);
+		gat.addTag(new Tag(tag));
 
 		gat = getGatService().save(gat);
 

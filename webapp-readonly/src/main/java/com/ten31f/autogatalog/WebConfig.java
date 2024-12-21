@@ -12,10 +12,9 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.ten31f.autogatalog.aws.repository.IGatRepositroy;
+import com.ten31f.autogatalog.aws.repository.ITagRepositroy;
 import com.ten31f.autogatalog.aws.repository.S3Repo;
 import com.ten31f.autogatalog.aws.service.GatService;
 import com.ten31f.autogatalog.old.repository.FileRepository;
@@ -32,8 +31,8 @@ import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRespon
 @EnableWebMvc
 @Configuration
 @Slf4j
-public class WebConfig implements WebMvcConfigurer {
-
+public class WebConfig implements WebMvcConfigurer {	
+	
 	@Value("${spring.datasource.url}")
 	private String databaseURL;
 
@@ -43,8 +42,8 @@ public class WebConfig implements WebMvcConfigurer {
 	}
 
 	@Bean
-	GatService gatService(IGatRepositroy gatRepositroy) {
-		return new GatService(gatRepositroy);
+	public GatService gatService(IGatRepositroy gatRepositroy, ITagRepositroy tagRepositroy) {
+		return new GatService(gatRepositroy, tagRepositroy);
 	}
 
 	@Bean

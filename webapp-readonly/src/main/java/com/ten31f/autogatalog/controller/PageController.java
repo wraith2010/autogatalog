@@ -1,7 +1,6 @@
 package com.ten31f.autogatalog.controller;
 
 import java.time.Duration;
-import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,7 +12,6 @@ import com.ten31f.autogatalog.aws.service.GatService;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-
 
 @Slf4j
 @Getter
@@ -46,19 +44,13 @@ public abstract class PageController {
 	}
 
 	protected void addTagsList(Model model) {
-
-		model.addAttribute(MODEL_ATTRIBUTE_TAGSLIST, new ArrayList<>());
-		//model.addAttribute(MODEL_ATTRIBUTE_TAGSLIST, getGatRepo().collectTags());
+		model.addAttribute(MODEL_ATTRIBUTE_TAGSLIST, getGatService().findAllTags());
 	}
 
 	public void logDuration(long now, String message) {
 		Duration duration = Duration.ofMillis(now + System.currentTimeMillis());
 
 		log.info(String.format(message + ": %s seconds", duration.getSeconds()));
-
 	}
-
-
-
 
 }
