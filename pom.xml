@@ -219,7 +219,6 @@
 		<module>standalone</module>
 		<module>conversion</module>
 		<module>webapp-readonly</module>
-		<module>webapp-migrate</module>
 		<module>webapp-admin</module>
 	</modules>
 

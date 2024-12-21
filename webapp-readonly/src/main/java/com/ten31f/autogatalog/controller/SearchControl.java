@@ -4,7 +4,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UriUtils;
 
-import com.ten31f.autogatalog.rds.domain.Gat;
+import com.ten31f.autogatalog.rds.domain.GatView;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +29,7 @@ public class SearchControl extends PageController {
 	private static final String PAGE_NAME = "search";
 
 	private static final String MODEL_ATTRIBUTE_COUNT = "count";
+	private static final String MODEL_ATTRIBUTE_SEARCH_STRING = "searchString";
 
 	@Override
 	String getPageName() {
@@ -43,22 +43,17 @@ public class SearchControl extends PageController {
 		common(model);
 
 		if (optionSearchString.isEmpty()) {
-			model.addAttribute("searchString", "");
-			model.addAttribute(MODEL_ATTRIBUTE_IMAGESTRINGS, new HashMap<>());
+			model.addAttribute(MODEL_ATTRIBUTE_SEARCH_STRING, "");
 			model.addAttribute("gats", new ArrayList<>());
 			model.addAttribute(MODEL_ATTRIBUTE_COUNT, 0);
 		} else {
-			model.addAttribute("searchString", optionSearchString.get());
-
-			List<Gat> gats = getGatService().findAll();
-
-			model.addAttribute("searchString", optionSearchString.get());
-			
+			List<GatView> gats = getGatService().search(optionSearchString.get());
+			model.addAttribute(MODEL_ATTRIBUTE_SEARCH_STRING, optionSearchString.get());
 			model.addAttribute("gats", gats);
 			model.addAttribute(MODEL_ATTRIBUTE_COUNT, gats.size());
 		}
 
-		return "search";
+		return PAGE_NAME;
 	}
 
 	@PostMapping("/search")
@@ -73,8 +68,6 @@ public class SearchControl extends PageController {
 		} catch (UnsupportedEncodingException unsupportedEncodingException) {
 			log.error("Error encoding form String", unsupportedEncodingException);
 		}
-		
-		
 
 		return new ModelAndView(String.format("redirect:/search?searchString=%s", encodedFormString));
 	}

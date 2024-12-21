@@ -3,8 +3,8 @@
 <body>
 
 	<ul class="taglist">
-		<li th:each="tag: ${taglist}"><a th:href="@{'/tag/' + ${tag}}"
-			th:text="${tag}"></a></li>
+		<li th:each="tag: ${taglist}"><a th:href="@{'/tag/' + ${tag.value}}"
+			th:text="${tag.value}"></a></li>
 	</ul>
 
 </body>

@@ -22,6 +22,7 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.GetUrlRequest;
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
@@ -51,12 +52,18 @@ public class S3Repo {
 		PutObjectRequest request = PutObjectRequest.builder().bucket(bucketName).key(fileName).build();
 
 		getS3Client().putObject(request, RequestBody.fromBytes(inputStream.readAllBytes()));
-		GetUrlRequest getUrlRequest = GetUrlRequest.builder().bucket(bucketName).key(fileName).build();
 
-		String url = getS3Client().utilities().getUrl(getUrlRequest).toString();
+		String url = constructS3URL(bucketName, fileName);
 		log.info(String.format("%s uplaoded to s3: %s", fileName, url));
 
 		return url;
+	}
+
+	public String constructS3URL(String bucketName, String fileName) {
+
+		GetUrlRequest getUrlRequest = GetUrlRequest.builder().bucket(bucketName).key(fileName).build();
+
+		return getS3Client().utilities().getUrl(getUrlRequest).toString();
 	}
 
 	public void downloadToStream(String s3URL, HttpServletResponse httpServletResponse)
@@ -69,7 +76,7 @@ public class S3Repo {
 		String objectKey = uri.getPath().substring(1);
 
 		httpServletResponse.setContentType("application/zip");
-		httpServletResponse.setHeader("Content-disposition", String.format("attachment; filename=%s",objectKey));
+		httpServletResponse.setHeader("Content-disposition", String.format("attachment; filename=%s", objectKey));
 
 		GetObjectRequest getObjectRequest = GetObjectRequest.builder().bucket(bucketName).key(objectKey).build();
 
@@ -88,6 +95,23 @@ public class S3Repo {
 			Duration duration = Duration.ofMillis(now + System.currentTimeMillis());
 
 			log.info(String.format("Duration: %s seconds", duration.getSeconds()));
+		}
+	}
+
+	public boolean doesFileExist(String bucket, String key) {
+		try {
+
+			getS3Client().headObject(HeadObjectRequest.builder().bucket(bucket).key(key).build());
+
+			log.info(String.format("Object exists: %s", key));
+			return true;
+		} catch (S3Exception e) {
+			if (e.statusCode() == 404 || e.statusCode() == 403) {
+				log.info(String.format("Object does not exist: %s", key));
+				return false;
+			} else {
+				throw e;
+			}
 		}
 	}
 }
