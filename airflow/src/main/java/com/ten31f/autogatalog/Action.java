@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 public enum Action {
 
-	SCAN("scan"), DOWNLOAD("download"), IMAGE("image"), HEALTH("health"), JUNK("");
+	SCAN("scan"), DOWNLOAD("download"), IMAGE("image"), HEALTH("health"), JUNK(""), PENDING_DOWNLOAD("pendingDownload");
 
 	private String cliString;
 

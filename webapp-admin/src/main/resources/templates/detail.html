@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+<meta charset="UTF-8" />
+
+<title th:text="${gat.title}"></title>
+
+<link th:href="@{/css/common.css}" rel="stylesheet" />
+<link th:href="@{/css/detail.css}" rel="stylesheet" />
+<link th:href="@{/css/nav.css}" rel="stylesheet" />
+
+</head>
+
+<body>
+
+	<nav th:replace="~{fragments/nav.html :: nav}"></nav>
+
+	<main>
+		<article>
+			<header>
+				<h2 th:text="${gat.title}"></h2>
+			</header>
+			<figure>
+				<img
+					th:src="@{'data:image/jpeg;charset=utf-8;base64,'+ ${imageString}}"
+					alt="preview">
+			</figure>
+			<p th:utext="${gat.description}"></p>
+			<ul th:replace="~{fragments/taglist.html :: ul}"></ul>
+			<ul>
+				<li><a th:href="${gat.linkURL}"> <img alt="odysee logo"
+						class="download" th:src="@{'/img/odysee.jpg'}" />
+				</a></li>
+				<li><a th:href="@{'/download/' + ${guid}}"> <img
+						alt="download icon" class="download"
+						th:src="@{'/img/download.png'}" />
+				</a></li>
+				<li><a th:href="@{'/edit/' + ${guid}}"> <img
+						alt="download icon " class="download" th:src="@{'/img/edit.png'}" />
+				</a></li>
+			</ul>
+		</article>
+
+	</main>
+</body>

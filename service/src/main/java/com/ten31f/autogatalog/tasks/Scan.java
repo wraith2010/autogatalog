@@ -8,7 +8,7 @@ import java.util.Optional;
 import com.ten31f.autogatalog.action.RSSDigester;
 import com.ten31f.autogatalog.domain.Gat;
 import com.ten31f.autogatalog.domain.WatchURL;
-import com.ten31f.autogatalog.repository.GatRepo;
+import com.ten31f.autogatalog.repository.IGatRepo;
 import com.ten31f.autogatalog.repository.WatchURLRepo;
 
 import lombok.AllArgsConstructor;
@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 public class Scan implements Runnable {
 
 	private WatchURLRepo watchURLRepo;
-	private GatRepo gatRepo;
+	private IGatRepo gatRepo;
 
 	@Override
 	public void run() {

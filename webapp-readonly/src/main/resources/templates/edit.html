@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<title th:text="${gat.title}"></title>
+<link th:href="@{/css/common.css}" rel="stylesheet" />
+<link th:href="@{/css/detail.css}" rel="stylesheet" />
+<link th:href="@{/css/nav.css}" rel="stylesheet" />
+
+<script type="text/javascript">
+	function addTag() {
+
+		var liNode = document.createElement("li");
+
+		var labelNode = document.createElement("label");
+
+		liNode.appendChild(labelNode);
+
+		var textvalue = document.getElementById("newtag").value;
+
+		var text = document.createTextNode(textvalue);
+		labelNode.appendChild(text);
+
+		var inputCheckBoxNode = document.createElement("input");
+		inputCheckBoxNode.setAttribute("type", "checkbox");
+		inputCheckBoxNode.setAttribute("value", textvalue);
+		inputCheckBoxNode.setAttribute("name", "tags");
+
+		var inputHiddenNode = document.createElement("input");
+		inputHiddenNode.setAttribute("type", "hidden");
+		inputHiddenNode.setAttribute("name", "_tags");
+		inputHiddenNode.setAttribute("value", "on");
+
+		liNode.appendChild(inputCheckBoxNode);
+		liNode.appendChild(inputHiddenNode);
+		liNode.appendChild(labelNode);
+
+		document.getElementById("taglist").appendChild(liNode);
+
+	}
+</script>
+
+</head>
+
+<body>
+
+	<nav th:replace="~{fragments/nav.html :: nav}"></nav>
+
+	<main>
+
+		<form th:action="@{/savegat}" th:object="${gat}" method="post"
+			class="search">
+
+			<article>
+				<header>
+					<input type="text" id="title" name="title" th:value="*{title}" />
+				</header>
+				<figure>
+					<img
+						th:src="@{'data:image/jpeg;charset=utf-8;base64,'+ ${imageString}}"
+						alt="preview">
+				</figure>
+
+				<textarea id="description" rows="20" name="description"
+					placeholder="Description" th:field="*{description}"></textarea>
+
+				<ul id="taglist">
+					<li th:each="item : ${taglist}"><input type="checkbox"
+						th:field="*{tags}" th:value="${item}" /> <label th:text="${item}"></label>
+					</li>
+				</ul>
+
+				<input type="text" id="newtag">
+				<button type="button" onclick="addTag()" value="add">Add</button>
+
+				<input type="hidden" id="guid" name="guid" th:value="*{guid}" />
+				<button type="submit">Save</button>
+				<a th:href="@{'/gat/' + ${gat.guid}}">Cancel</a>
+			</article>
+
+		</form>
+
+	</main>
+</body>

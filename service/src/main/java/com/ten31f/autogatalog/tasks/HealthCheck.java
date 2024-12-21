@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import com.ten31f.autogatalog.domain.Health;
 import com.ten31f.autogatalog.old.repository.FileRepository;
-import com.ten31f.autogatalog.repository.GatRepo;
+import com.ten31f.autogatalog.repository.IGatRepo;
 import com.ten31f.autogatalog.repository.HealthRepo;
 
 import lombok.AllArgsConstructor;
@@ -30,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 public class HealthCheck implements Runnable {
 
 	private FileRepository fileRepository;
-	private GatRepo gatRepo;
+	private IGatRepo gatRepo;
 	private HealthRepo healthRepo;
 
 	@Override

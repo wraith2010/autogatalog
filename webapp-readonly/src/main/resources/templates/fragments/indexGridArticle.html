@@ -1,0 +1,95 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title th:text="${appName}"></title>
+
+<link th:href="@{/css/common.css}" rel="stylesheet" />
+<link th:href="@{/css/home.css}" rel="stylesheet" />
+<link th:href="@{/css/index-grid.css}" rel="stylesheet" />
+<link th:href="@{/css/nav.css}" rel="stylesheet" />
+
+<script type="text/javascript">
+	function addTag(guid, tag) {
+		const elem = document.getElementById(guid);
+		const taggedSection = document.getElementById('taggedSection');
+
+		elem.parentElement.removeChild(elem);
+		taggedSection.appendChild(elem);
+
+		var url = '/addTag/' + guid + '/' + tag;
+
+		var xmlHttpRequest = new XMLHttpRequest();
+		xmlHttpRequest.open('POST', url);
+		xmlHttpRequest.send();
+	}
+</script>
+
+</head>
+
+<body>
+
+	<article th:fragment="indexGrid(gats)" th:each="gat: ${gats}"
+		th:id="${guid}" th:with="guid=${gat.guid}">
+		<ul class="quickActions">
+			<li><a th:href="${gat.linkURL}"> <img alt="odysee logo"
+					class="download" th:src="@{'/img/odysee.jpg'}" />
+			</a></li>
+			<li><a th:href="@{'/download/' + ${guid}}"><img
+					alt="download icon" class="download"
+					th:src="@{'/img/download.png'}" /> </a></li>
+			<li
+				th:if="${page == 'tag' and (gat.tags == null or !#arrays.contains(gat.tags, tag ))}"><a
+				th:data-guid="${guid}" th:data-tag="${tag}"
+				th:onclick="addTag(this.getAttribute('data-guid'),this.getAttribute('data-tag'));">
+					<img alt="tag icon" class="download" th:src="@{'/img/tag.png'}" />
+			</a></li>
+		</ul>
+		<figure>
+			<a th:href="@{'/gat/' + ${gat.guid}}"> <img
+				th:src="${gat.s3URLImage}" th:id="${guid}" alt="preview" />
+			</a>
+		</figure>
+		<header>
+			<a th:href="@{'/gat/' + ${gat.guid}}">
+				<h3 th:text="${gat.title}"></h3>
+			</a>
+		</header>
+
+		<ul class="details">
+			<li><a
+				th:href="@{/author/{author}(author=${#uris.escapePathSegment(gat.author, 'UTF-8')})}">
+					<img class="authoricon" alt="Author"
+					th:src="@{'/img/multiple-users-silhouette.png'}">
+					<h3 th:text="${gat.author}"></h3>
+			</a></li>
+			<li th:if="${gat.views} != null"><img class="authoricon"
+				alt="Author" th:src="@{'/img/visibility.png'}">
+				<h3 th:text="${gat.views}"></h3></li>
+			<li th:if="${gat.downloads} != null"><img class="authoricon"
+				alt="Author" th:src="@{'/img/detail-download.png'}">
+				<h3 th:text="${gat.downloads}"></h3></li>
+		</ul>
+
+		<div>
+			<form method="post" th:action="@{'/image/upload/' + ${gat.guid}}"
+				enctype="multipart/form-data" th:if="${page} == 'image'">
+				<label for="orphans">Orphans:</label> <select name="orphans"
+					id="orphans">
+					<option th:value="null"></option>
+					<option th:each="orphan: ${orphanFiles}" th:value="${orphan.id}"
+						th:text="${orphan.filename}"></option>
+
+				</select>
+
+				<div class="form-group">
+					<input type="file" name="file" class="form-control-file">
+				</div>
+				<button type="submit" class="btn btn-primary">Upload File</button>
+			</form>
+		</div>
+
+	</article>
+</body>
+</html>

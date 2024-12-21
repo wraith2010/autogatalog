@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<title th:text="${appName}"></title>
+
+<link th:href="@{/css/common.css}" rel="stylesheet" />
+<link th:href="@{/css/index.css}" rel="stylesheet" />
+<link th:href="@{/css/index-grid.css}" rel="stylesheet" />
+<link th:href="@{/css/nav.css}" rel="stylesheet" />
+</head>
+
+<body>
+
+	<nav th:replace="~{fragments/nav.html :: nav}"></nav>
+
+	<main>
+		<section class="indexGrid">
+
+			<header>
+				<h2 th:text="'Index Page(' + ${page } + '/' + ${pageMax} + ')'"></h2>
+			</header>
+
+			<div class="pagenumbers">
+				<ul>
+					<li th:each="i : ${#numbers.sequence( 1, pageMax)}"><a
+						th:href="@{/index(page=${i})}" th:text="${i}"></a></li>
+				</ul>
+			</div>
+
+			<article
+				th:replace="~{fragments/indexGridArticle.html :: indexGrid(${gats})}">
+			</article>
+
+			<div class="pagenumbers">
+				<ul>
+					<li th:each="i : ${#numbers.sequence( 1, pageMax)}"><a
+						th:href="@{/index(page=${i})}" th:text="${i}"></a></li>
+				</ul>
+			</div>
+
+		</section>
+	</main>
+
+</body>
+
+</html>
