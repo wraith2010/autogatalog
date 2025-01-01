@@ -4,7 +4,10 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.springframework.stereotype.Indexed;
+
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -20,6 +23,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "gats")
+@Indexed
 public class Gat implements GatView {
 
 	@Id
@@ -28,8 +32,8 @@ public class Gat implements GatView {
 
 	private String guid;
 
-	@Lob
-	private String description;
+	@Column(columnDefinition="TEXT")
+	private String description;	
 
 	private URL linkURL;
 

@@ -23,7 +23,9 @@ public interface IGatRepositroy extends JpaRepository<Gat, Long> {
 	public List<GatView> findAllProjectedBy();
 
 	public Page<GatView> findAllProjectedBy(Pageable pageable);
-	
+
 	public List<GatView> findByTitleLikeIgnoreCase(@Param("searchString") String searchString);
+
+	public List<GatView> findByTitleOrDescriptionIgnoreCaseContaining(String searchString1, String searchString2);
 
 }

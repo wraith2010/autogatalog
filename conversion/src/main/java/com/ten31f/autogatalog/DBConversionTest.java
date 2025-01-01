@@ -57,28 +57,28 @@ public class DBConversionTest implements CommandLineRunner {
 
 		log.info(String.format("%s gats", count));
 
-		for (int x = 17; x < (count % PAGE_SIZE) + 1; x++) {
-
-			log.info(String.format("page %s / %s ",x ,(count % PAGE_SIZE) + 1));
-			
-			Page<com.ten31f.autogatalog.domain.Gat> gats = getGatRepoLocal().findAll(PageRequest.of(x, PAGE_SIZE));
-
-			for (com.ten31f.autogatalog.domain.Gat sourceGat : gats) {
-				Gat gat = gatService.findByGuid(sourceGat.getGuid());
-				if (gat == null) {
-					gat = convert(sourceGat);
-					try {
-						saveGat(gat, sourceGat);
-					} catch (OutOfMemoryError outOfMemoryError) {
-						log.error(String.format("Out of memory transfering(%s): %s", gat.getGuid(), gat.getTitle()),
-								outOfMemoryError);
-					}
-				} else {
-					imageCheck(gat, sourceGat);
-				}
-
-			}
-		}
+//		for (int x = 17; x < (count % PAGE_SIZE) + 1; x++) {
+//
+//			log.info(String.format("page %s / %s ",x ,(count % PAGE_SIZE) + 1));
+//			
+//			Page<com.ten31f.autogatalog.domain.Gat> gats = getGatRepoLocal().findAll(PageRequest.of(x, PAGE_SIZE));
+//
+//			for (com.ten31f.autogatalog.domain.Gat sourceGat : gats) {
+//				Gat gat = gatService.findByGuid(sourceGat.getGuid());
+//				if (gat == null) {
+//					gat = convert(sourceGat);
+//					try {
+//						saveGat(gat, sourceGat);
+//					} catch (OutOfMemoryError outOfMemoryError) {
+//						log.error(String.format("Out of memory transfering(%s): %s", gat.getGuid(), gat.getTitle()),
+//								outOfMemoryError);
+//					}
+//				} else {
+//					imageCheck(gat, sourceGat);
+//				}
+//
+//			}
+//		}
 	}
 
 	public Gat convert(com.ten31f.autogatalog.domain.Gat sourceGat) {
