@@ -103,9 +103,9 @@ public class GatService {
 
 	@Transactional
 	public List<GatView> search(String searchString) {
-		return getGatRepositroy().findByDescriptionLike(searchString);
+		return getGatRepositroy().findByTitleLikeIgnoreCase('%' + searchString + '%');
 	}
-	
+
 	private IGatRepositroy getGatRepositroy() {
 		return gatRepositroy;
 	}

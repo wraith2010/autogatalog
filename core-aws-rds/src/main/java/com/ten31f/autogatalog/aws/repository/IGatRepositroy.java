@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.ten31f.autogatalog.rds.domain.Gat;
@@ -25,6 +24,6 @@ public interface IGatRepositroy extends JpaRepository<Gat, Long> {
 
 	public Page<GatView> findAllProjectedBy(Pageable pageable);
 	
-	public List<GatView> findByDescriptionLike(@Param("searchString") String searchString);
+	public List<GatView> findByTitleLikeIgnoreCase(@Param("searchString") String searchString);
 
 }

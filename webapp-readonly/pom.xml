@@ -48,11 +48,7 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.ten31f.autogatalog</groupId>
-			<artifactId>core-local</artifactId>
-		</dependency>
+		</dependency>		
 		<dependency>
 			<groupId>com.ten31f.autogatalog</groupId>
 			<artifactId>core-aws-rds</artifactId>

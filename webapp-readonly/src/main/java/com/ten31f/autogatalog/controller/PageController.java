@@ -4,7 +4,6 @@ import java.time.Duration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.ui.Model;
 
 import com.ten31f.autogatalog.aws.repository.S3Repo;
@@ -28,10 +27,7 @@ public abstract class PageController {
 	private GatService gatService;
 
 	@Autowired
-	private S3Repo s3Repo;
-
-	@Autowired
-	private MongoOperations mongoOperations;
+	private S3Repo s3Repo;	
 
 	@Value("${spring.application.name}")
 	private String appName;
