@@ -7,6 +7,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Duration;
 
+import com.amazonaws.services.s3.model.ObjectMetadata;
+
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,8 +25,10 @@ import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.GetUrlRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
+import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
+import software.amazon.awssdk.utils.IoUtils;
 
 @Getter
 @Setter
@@ -45,6 +49,23 @@ public class S3Repo {
 
 		return s3Client;
 	}
+
+//	public String putFileS3(String bucketName, String fileName, InputStream inputStream)
+//			throws S3Exception, AwsServiceException, SdkClientException, IOException {
+//
+//		PutObjectRequest request = PutObjectRequest.builder().bucket(bucketName).key(fileName).build();
+//
+//		log.info(String.format("Building request Body for %s" , fileName));
+//		
+//		RequestBody requestBody =  RequestBody.fromInputStream(inputStream, IoUtils.toByteArray(inputStream).length);
+//		
+//		getS3Client().putObject(request, requestBody);
+//
+//		String url = constructS3URL(bucketName, fileName);
+//		log.info(String.format("%s uplaoded to s3: %s", fileName, url));
+//
+//		return url;
+//	}	
 
 	public String putFileS3(String bucketName, String fileName, InputStream inputStream)
 			throws S3Exception, AwsServiceException, SdkClientException, IOException {
@@ -101,10 +122,13 @@ public class S3Repo {
 	public boolean doesFileExist(String bucket, String key) {
 		try {
 
-			getS3Client().headObject(HeadObjectRequest.builder().bucket(bucket).key(key).build());
+			HeadObjectResponse headObjectResponse = getS3Client()
+					.headObject(HeadObjectRequest.builder().bucket(bucket).key(key).build());
 
-			log.info(String.format("Object exists: %s", key));
-			return true;
+			log.info(String.format("Object exists(content size: %s): %s", headObjectResponse.contentLength(), key));
+
+			return headObjectResponse.contentLength() > 0;
+
 		} catch (S3Exception e) {
 			if (e.statusCode() == 404 || e.statusCode() == 403) {
 				log.info(String.format("Object does not exist: %s", key));

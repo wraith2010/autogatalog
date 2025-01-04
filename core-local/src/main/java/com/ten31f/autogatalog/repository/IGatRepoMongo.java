@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
-public interface IGatRepo extends MongoRepository<Gat, String> {
+public interface IGatRepoMongo extends MongoRepository<Gat, String> {
 
 	@Query("{author : ?0}")
 	List<Gat> findAllByAuthor(String author);

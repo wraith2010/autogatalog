@@ -12,7 +12,7 @@ import java.util.concurrent.ScheduledFuture;
 import com.ten31f.autogatalog.domain.Gat;
 import com.ten31f.autogatalog.old.repository.FileRepository;
 import com.ten31f.autogatalog.old.repository.LbryRepository;
-import com.ten31f.autogatalog.repository.IGatRepo;
+import com.ten31f.autogatalog.repository.IGatRepoMongo;
 import com.ten31f.autogatalog.schedule.TrackingScheduledExecutorService;
 
 import lombok.AllArgsConstructor;
@@ -28,7 +28,7 @@ public class Downloadrequestor implements Runnable {
 
 	private LbryRepository lbryRepository = null;
 	private FileRepository fileRepository = null;
-	private IGatRepo gatRepo = null;
+	private IGatRepoMongo gatRepo = null;
 	private int downloadBatchLimit = 5;
 
 	private TrackingScheduledExecutorService trackingScheduledExecutorService = null;
@@ -68,11 +68,11 @@ public class Downloadrequestor implements Runnable {
 
 					if (file != null) {
 
-						DownloadMonitor thread = new DownloadMonitor(gat, file, getLbryRepository(), getFileRepository(),
-								getGatRepo(), getTrackingScheduledExecutorService());
+						DownloadMonitor thread = new DownloadMonitor(gat, file, getLbryRepository(),
+								getFileRepository(), getGatRepo(), getTrackingScheduledExecutorService());
 
 						thread.start();
-						
+
 						threads.add(thread);
 
 					}
@@ -91,7 +91,7 @@ public class Downloadrequestor implements Runnable {
 					log.error("download montior thread interrupted", e);
 				}
 		}
-		
+
 		log.info("download requestor finished");
 	}
 

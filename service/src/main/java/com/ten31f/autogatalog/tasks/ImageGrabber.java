@@ -9,7 +9,7 @@ import org.bson.types.ObjectId;
 
 import com.ten31f.autogatalog.domain.Gat;
 import com.ten31f.autogatalog.old.repository.FileRepository;
-import com.ten31f.autogatalog.repository.IGatRepo;
+import com.ten31f.autogatalog.repository.IGatRepoMongo;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -20,11 +20,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ImageGrabber implements Runnable {
 
-	private IGatRepo gatRepo;
+	private IGatRepoMongo gatRepo;
 	private FileRepository fileRepository = null;
 	private int downloadBatchLimit = 5;
 
-	public ImageGrabber(IGatRepo gatRepo, FileRepository fileRepository, int downloadBatchLimit) {
+	public ImageGrabber(IGatRepoMongo gatRepo, FileRepository fileRepository, int downloadBatchLimit) {
 		setGatRepo(gatRepo);
 		setDownloadBatchLimit(downloadBatchLimit);
 		setFileRepository(fileRepository);

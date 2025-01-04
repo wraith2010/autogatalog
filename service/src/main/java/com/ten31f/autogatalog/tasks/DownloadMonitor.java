@@ -13,7 +13,7 @@ import com.ten31f.autogatalog.domain.DownloadStatus;
 import com.ten31f.autogatalog.domain.Gat;
 import com.ten31f.autogatalog.old.repository.FileRepository;
 import com.ten31f.autogatalog.old.repository.LbryRepository;
-import com.ten31f.autogatalog.repository.IGatRepo;
+import com.ten31f.autogatalog.repository.IGatRepoMongo;
 import com.ten31f.autogatalog.schedule.TrackingScheduledExecutorService;
 import com.ten31f.autogatalog.taskinterface.GatBased;
 
@@ -34,12 +34,12 @@ public class DownloadMonitor extends Thread implements Runnable, GatBased {
 
 	private LbryRepository lbryRepository = null;
 	private FileRepository fileRepository = null;
-	private IGatRepo gatRepo = null;
+	private IGatRepoMongo gatRepo = null;
 
 	private TrackingScheduledExecutorService trackingScheduledExecutorService = null;
 
 	public DownloadMonitor(Gat gat, File file, LbryRepository lbryRepository, FileRepository fileRepository,
-			IGatRepo gatRepo, TrackingScheduledExecutorService trackingScheduledExecutorService) {
+			IGatRepoMongo gatRepo, TrackingScheduledExecutorService trackingScheduledExecutorService) {
 		setGat(gat);
 		setFile(file);
 		setLbryRepository(lbryRepository);
